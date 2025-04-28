@@ -22,3 +22,4 @@ gen
 .python-version
 web-app/.node-version
 .prod.env
+.prod.env
