@@ -28,7 +28,7 @@ from . import json_headers, DEFAULT_USER, test_project, test_project_dir, TMP_DI
 CHUNK_SIZE = 1024
 
 
-def add_user(username="random", password="random", is_admin=False) -> User:
+def add_user(username="random", password="random", is_admin=False):
     """Helper function to create not-privileged user.
     Associated user workspace is created with db hook.
 
@@ -80,6 +80,7 @@ def create_project(name, workspace, user, **kwargs):
 
     p = Project(**project_params, **kwargs)
     p.updated = datetime.utcnow()
+    p.set_role(user.id, ProjectRole.OWNER)
     db.session.add(p)
     db.session.flush()
     changes = UploadChanges(added=[], updated=[], removed=[])

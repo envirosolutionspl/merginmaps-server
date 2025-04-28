@@ -851,13 +851,10 @@ def test_username_generation(client):
 
     user = add_user("support1", "user")
     assert User.generate_username("support@example.com") == "support0"
-
-    # test long emails
-    username = "a" * 25
-    assert User.generate_username(f"{username}@example.com") == username
-    # shortened version
-    username = "a" * 50
-    assert User.generate_username(f"{username}@example.com") == username[:47]
+    assert (
+        User.generate_username("verylonglonglonglonglong@example.com")
+        == "verylonglonglonglonglo"
+    )
 
     # test username generation with existing user, case insensitive
     user = add_user("Testuser")

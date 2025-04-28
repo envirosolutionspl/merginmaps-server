@@ -21,12 +21,12 @@ services:
     networks:
       - merginmaps
   server-gunicorn:
-    image: lutraconsulting/merginmaps-backend:2025.2.2
+    image: lutraconsulting/merginmaps-backend-es:2025.2.2
     container_name: merginmaps-server
     restart: always
     user: 901:999
     volumes:
-      - ./projects:/data
+      - ./projects:/data/:z
       - ./server/entrypoint.sh:/app/entrypoint.sh
     env_file:
       - .prod.env
@@ -37,7 +37,7 @@ services:
     networks:
       - merginmaps
   celery-beat:
-    image: lutraconsulting/merginmaps-backend:2025.2.2
+    image: lutraconsulting/merginmaps-backend-es:2025.2.2
     container_name: celery-beat
     restart: always
     env_file:
@@ -54,7 +54,7 @@ services:
     networks:
       - merginmaps
   celery-worker:
-    image: lutraconsulting/merginmaps-backend:2025.2.2
+    image: lutraconsulting/merginmaps-backend-es:2025.2.2
     container_name: celery-worker
     restart: always
     user: 901:999
@@ -64,7 +64,7 @@ services:
       - GEVENT_WORKER=0
       - NO_MONKEY_PATCH=1
     volumes:
-      - ./projects:/data
+      - ./projects:/data/:z
       - ./server/entrypoint.sh:/app/entrypoint.sh
     depends_on:
       - redis
@@ -74,7 +74,7 @@ services:
     networks:
       - merginmaps
   web:
-    image: lutraconsulting/merginmaps-frontend:2025.2.2
+    image: lutraconsulting/merginmaps-frontend-es:2025.2.2
     container_name: merginmaps-web
     restart: always
     depends_on:
@@ -93,8 +93,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./projects:/data  # map data dir to host
+      - ./projects:/data/:z  # map data dir to host
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./logs:/var/log/nginx/
     networks:
       - merginmaps

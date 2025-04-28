@@ -170,15 +170,12 @@ def test_get_paginated_projects(client):
     for i in range(14):
         create_project("foo" + str(i), test_workspace, user)
 
-    resp = client.get(
-        "/v1/project/paginated?page=1&per_page=10&order_params=created_asc"
-    )
+    resp = client.get("/v1/project/paginated?page=1&per_page=10")
     assert resp.status_code == 200
     resp_data = json.loads(resp.data)
     assert len(resp_data.get("projects")) == 10
     assert resp_data.get("count") == 15
-    names = [p["name"] for p in resp_data.get("projects")]
-    assert "foo8" in resp_data.get("projects")[9]["name"]
+    assert "foo7" in resp_data.get("projects")[9]["name"]
     assert "v0" == resp_data.get("projects")[9]["version"]
 
     resp = client.get(
@@ -197,11 +194,11 @@ def test_get_paginated_projects(client):
 
     # order by workspace name
     resp = client.get(
-        "/v1/project/paginated?page=2&per_page=10&order_params=workspace_asc,created_asc"
+        "/v1/project/paginated?page=2&per_page=10&order_params=workspace_asc"
     )
     resp_data = json.loads(resp.data)
     assert len(resp_data.get("projects")) == 5
-    assert "foo13" in resp_data.get("projects")[-1]["name"]
+    assert "foo12" in resp_data.get("projects")[-1]["name"]
     # tests backward compatibility sort
     resp_alt = client.get(
         "/v1/project/paginated?page=2&per_page=10&order_by=namespace&descending=false"
@@ -298,15 +295,15 @@ def test_get_paginated_projects(client):
     Configuration.GLOBAL_READ = False
     Configuration.GLOBAL_WRITE = False
     Configuration.GLOBAL_ADMIN = False
-    # add new user and pretend he created one project (total 15+1)
+    # add new user and let him create one project (total 15+1)
     user2 = add_user("user2", "ilovemergin")
-    create_project("created", test_workspace, user2)
-    # without implicit and explicit permissions user should not see any private project (even not that he 'created')
     assert not test_workspace.user_has_permissions(user2, "read")
+    create_project("created", test_workspace, user2)
     login(client, "user2", "ilovemergin")
     # check one project is 'created', none is 'shared'
     resp = client.get("/v1/project/paginated?page=1&per_page=10&flag=created")
-    assert resp.json["count"] == 0
+    assert resp.json["count"] == 1
+    assert resp.json["projects"][0]["name"] == "created"
     resp = client.get("/v1/project/paginated?page=1&per_page=10&flag=shared")
     assert resp.json["count"] == 0
     # share project explicitly
@@ -2136,8 +2133,7 @@ def test_orphan_project(client):
     test_workspace = create_workspace()
     project = create_project("orphan", test_workspace, user)
     assert project.creator_id == user_id
-    # creator is not direct member by default
-    assert not project.get_role(user_id)
+    assert project.get_role(user_id) is ProjectRole.OWNER
 
     # user is removed by superuser
     login_as_admin(client)

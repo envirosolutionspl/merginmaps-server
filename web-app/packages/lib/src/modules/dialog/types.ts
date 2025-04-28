@@ -4,8 +4,6 @@
 
 import { Component } from 'vue'
 
-import { TipMessageProps } from '@/common'
-
 export interface ConfirmDialogProps {
   text: string
   severity?: 'primary' | 'danger' | 'warning'
@@ -13,9 +11,7 @@ export interface ConfirmDialogProps {
   cancelText?: string
   description?: string
   hint?: string
-  confirmField?: { label: string; expected: string; placeholder?: string }
-  /** Props to show a tip message under confirm input */
-  message?: TipMessageProps & { title: string; description: string }
+  confirmField?: { label: string; expected: string }
 }
 
 export interface DialogParams {

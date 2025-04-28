@@ -6,8 +6,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
 {% extends "email/components/content.html" %}
 {% block html %}
-  <p>Dear {{ username }},</p> <br>
-  <p>A user <b>{{ user }}</b> has requested access to the project <b>{{ project_name }}</b>.
-  This request will expire on {{ expire.strftime('%Y-%m-%d %H:%M') }}. You can manage your access requests <a href="{{ link }}">here</a>.
+  <p>Witaj {{ username }},</p> <br>
+  <p>Użytkownik <b>{{ user }}</b> poprosił o dostęp do projektu <b>{{ project_name }}</b>.
+  Prośba wygaśnie {{ expire.strftime('%Y-%m-%d %H:%M') }}. Możesz zarządzać dostępami <a href="{{ link }}">tutaj</a>.
   </p>
 {% endblock %}

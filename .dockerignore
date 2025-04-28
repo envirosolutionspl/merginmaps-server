@@ -62,7 +62,7 @@ coverage.xml
 *,cover
 .hypothesis/
 venv/
-server/.python-version
+.python-version
 
 # Translations
 *.mo

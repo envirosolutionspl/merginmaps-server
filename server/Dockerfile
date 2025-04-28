@@ -3,7 +3,7 @@ MAINTAINER Martin Varga "martin.varga@lutraconsulting.co.uk"
 
 # this is to do choice of timezone upfront, because when "tzdata" package gets installed,
 # it comes up with interactive command line prompt when package is being set up
-ENV TZ=Europe/London
+ENV TZ=Europe/Warsaw
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ARG BUILD_HASH="unknown"

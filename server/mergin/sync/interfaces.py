@@ -188,12 +188,6 @@ class AbstractProjectHandler(ABC):
         """
         pass
 
-    def get_email_receivers(self, project):
-        """
-        Return list of members who should receive email notifications about project changes
-        """
-        pass
-
 
 class WorkspaceRole(Enum):
     GUEST = "guest"

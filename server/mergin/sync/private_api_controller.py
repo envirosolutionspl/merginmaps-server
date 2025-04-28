@@ -17,6 +17,8 @@ from .models import (
     AccessRequest,
     ProjectRole,
     RequestStatus,
+    ProjectVersion,
+    ProjectUser,
 )
 from .schemas import (
     ProjectListSchema,
@@ -62,7 +64,16 @@ def create_project_access_request(namespace, project_name):  # noqa: E501
     db.session.add(access_request)
     db.session.commit()
     # notify project owners
-    owners = current_app.project_handler.get_email_receivers(project)
+    owners = (
+        User.query.join(UserProfile, ProjectUser)
+        .filter(
+            ProjectUser.project_id == project.id,
+            ProjectUser.role == ProjectRole.OWNER.value,
+            User.verified_email,
+            UserProfile.receive_notifications,
+        )
+        .all()
+    )
     for owner in owners:
         email_data = {
             "subject": "Project access requested",

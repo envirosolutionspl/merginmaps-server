@@ -1,0 +1,289 @@
+openapi: 3.0.0
+info:
+  description: Mergin API to synchronize your GIS data.
+  version: "0.6"
+  title: Mergin API
+servers:
+  - url: /v2
+tags:
+  - name: project
+    description: Mergin project
+paths:
+  /projects/{id}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    delete:
+      tags:
+        - project
+      summary: Delete project immediately
+      operationId: delete_project_now
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      x-openapi-router-controller: mergin.sync.public_api_v2_controller
+    patch:
+      tags:
+        - project
+      summary: Update project
+      operationId: update_project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: survey
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          description: Invalid project name
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - code
+                  - detail
+                properties:
+                  code:
+                    type: string
+                    enum:
+                      - InvalidProjectName
+                    example: InvalidProjectName
+                  detail:
+                    type: string
+                    example: "Entered project name is invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+      x-openapi-router-controller: mergin.sync.public_api_v2_controller
+  /projects/{id}/scheduleDelete:
+    post:
+      tags:
+        - project
+      summary: Schedule project to delete
+      operationId: schedule_delete_project
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      x-openapi-router-controller: mergin.sync.public_api_v2_controller
+  /projects/{id}/collaborators:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags:
+        - project
+      summary: Get project collaborators
+      operationId: get_project_collaborators
+      responses:
+        "200":
+          description: Project members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectMember"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      x-openapi-router-controller: mergin.sync.public_api_v2_controller
+    post:
+      tags:
+        - project
+      summary: Add project collaborator
+      operationId: add_project_collaborator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user
+                - role
+              properties:
+                user:
+                  type: string
+                  example: john.doe
+                  description: username or email
+                role:
+                  $ref: "#/components/schemas/ProjectRole"
+      responses:
+        "201":
+          description: New project member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectMember"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      x-openapi-router-controller: mergin.sync.public_api_v2_controller
+  /projects/{id}/collaborators/{user_id}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+      - name: user_id
+        in: path
+        description: user id
+        required: true
+        schema:
+          type: integer
+    patch:
+      tags:
+        - project
+      summary: Update project collaborator
+      operationId: update_project_collaborator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - role
+              properties:
+                role:
+                  $ref: "#/components/schemas/ProjectRole"
+      responses:
+        "200":
+          description: Updated project member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectMember"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      x-openapi-router-controller: mergin.sync.public_api_v2_controller
+    delete:
+      tags:
+        - project
+      summary: Remove project collaborator
+      operationId: remove_project_collaborator
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      x-openapi-router-controller: mergin.sync.public_api_v2_controller
+components:
+  responses:
+    NoContent:
+      description: No content
+    BadRequest:
+      description: Invalid request
+    Unauthorized:
+      description: Authentication information is missing or invalid
+    Forbidden:
+      description: Invalid token
+    NotFound:
+      description: Not found
+    Conflict:
+      description: Conflict
+  parameters:
+    ProjectId:
+      name: id
+      in: path
+      description: UUID of the project
+      required: true
+      schema:
+        type: string
+        format: uuid
+        pattern: \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+  schemas:
+    ProjectRole:
+      type: string
+      nullable: true
+      enum:
+        - owner
+        - writer
+        - editor
+        - reader
+      example: reader
+    WorkspaceRole:
+      type: string
+      enum:
+        - owner
+        - admin
+        - writer
+        - editor
+        - reader
+        - guest
+      example: writer
+    Role:
+      allOf:
+        - $ref: "#/components/schemas/ProjectRole"
+          nullable: false
+          description: combination of workspace role and project role
+    ProjectMember:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: john.doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        workspace_role:
+          $ref: "#/components/schemas/WorkspaceRole"
+        project_role:
+          $ref: "#/components/schemas/ProjectRole"
+        role:
+          $ref: "#/components/schemas/Role"

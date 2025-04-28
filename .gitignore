@@ -2,7 +2,6 @@
 projects/
 mergin_db
 
-logs
 *.log
 .DS_Store
 *.stackdump
@@ -22,8 +21,4 @@ gen
 # pyenv
 .python-version
 web-app/.node-version
-
-# datadir for database
-mergin-db-ce
-
-docker-compose.local.yml
+.prod.env

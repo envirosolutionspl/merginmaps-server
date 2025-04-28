@@ -274,7 +274,7 @@ def resend_confirm_email():  # pylint: disable=W0613,W0612
         current_user,
         "confirm-email",
         "email/email_confirmation.html",
-        "Email confirmation",
+        "Potwierdzenie wiadomości e-mail",
     )
     return "", 200
 
@@ -298,7 +298,7 @@ def password_reset():  # pylint: disable=W0613,W0612
         user,
         "change-password",
         "email/password_reset.html",
-        "Password reset",
+        "Restart hasła",
     )
     return "", 200
 
@@ -398,7 +398,7 @@ def register_user():  # pylint: disable=W0613,W0612
             password=form.password.data,
         )
         email_data = {
-            "subject": "Invitation to Mergin Maps",
+            "subject": "Zaproszenie do Mergin Maps",
             "html": html,
             "recipients": [user.email],
             "sender": current_app.config["MAIL_DEFAULT_SENDER"],
@@ -551,7 +551,7 @@ def create_user():
             user,
             "confirm-email",
             "email/user_created.html",
-            "Invitation to Mergin Maps",
+            "Zaproszenie do Mergin Maps",
             password=form.password.data,
         )
 
