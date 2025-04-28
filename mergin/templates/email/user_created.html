@@ -1,0 +1,17 @@
+<!--
+Copyright (C) Lutra Consulting Limited
+
+SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
+-->
+
+{% set base_url = config['MERGIN_BASE_URL'] %}
+{% extends "email/components/content.html" %}
+{% block html %}
+  <p>Witaj {{ user.username }}, </p> <br>
+  <p>Twoje konto Mergin Maps zostało utworzone. Aby zweryfikować Twój adres e-mail proszę przejdź do poniższego linku:</p>
+  <p><a href="{{ base_url }}/{{ confirm_url }}">{{ base_url }}/{{ confirm_url }}</a></p>
+
+Możesz się zalogować przez nazwę użytkownika <b>{{ user.username }} </b> lub adres e-mail <b>{{ user.email }}</b>. <br>
+  Twoje tymczasowe hasło to: <b>{{ password }}</b>.
+  Zalecamy, aby zostało zmienione.
+{% endblock %}
