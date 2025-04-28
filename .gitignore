@@ -1,0 +1,29 @@
+# demo data
+projects/
+mergin_db
+
+logs
+*.log
+.DS_Store
+*.stackdump
+
+# dependencies
+deps/
+.idea
+*.iml
+
+venv/
+.vscode
+
+
+# generated documentation
+gen
+
+# pyenv
+.python-version
+web-app/.node-version
+
+# datadir for database
+mergin-db-ce
+
+docker-compose.local.yml

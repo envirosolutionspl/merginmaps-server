@@ -1,0 +1,121 @@
+/* Customizations to the designer theme should be defined here */
+/** CSS reset */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $primaryDarkColor;
+  font-weight: 600;
+  margin: 0;
+  overflow-wrap: break-word;
+  min-width: 0;
+  text-wrap: balance;
+}
+body, p, dd, dl {
+  margin: 0
+}
+p, span, dl, li {
+  overflow-wrap: break-word;
+}
+p, dl, li {
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+dd {
+  overflow-wrap: anywhere;
+}
+a {
+  text-decoration: inherit;
+  color: inherit;
+}
+/** In browsers is hardcoded min width for inputs... */
+input, textarea {
+  min-width: 0;
+}
+
+label {
+  font-size: 0.75rem !important;
+  line-height: 2;
+}
+
+.p-float-label label {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+/** Primevue overrides */
+
+// Customization of infinite border of tabs using classes instead pt because, we want to have access to variables
+.p-tabview-nav-content {
+  border: $tabviewNavBorder;
+  border-width: $tabviewNavBorderWidth;
+}
+
+.p-dataview-content div {
+  word-break: break-word;
+}
+
+// Proper align of floating label for inputs (e.g. ProjectForm)
+.p-float-label {
+  padding-bottom: 0.25rem;
+}
+
+.text-color-forest {
+  color: $primaryDarkColor;
+}
+
+// When focusing, there is not layout shift with box shadow (border width have to be 2px)
+.p-inputtext:enabled:focus {
+  box-shadow: inset 0 0 0 1px $primaryDarkColor;
+}
+.p-autocomplete {
+  &:not(.p-disabled).p-focus {
+    .p-autocomplete-multiple-container {
+      box-shadow: inset 0 0 0 1px $primaryDarkColor;
+    }
+  }
+}
+.p-chips {
+  &:not(.p-disabled).p-focus {
+    .p-chips-multiple-container {
+      box-shadow: inset 0 0 0 1px $primaryDarkColor;
+    }
+  }
+}
+
+.p-tooltip {
+  ul {
+    padding-left: .5rem;
+  }
+
+  .p-tooltip-text {
+    white-space: normal;
+  }
+}
+
+
+// Custom semantic  classes
+
+.text-color-medium-green {
+  color: map-get($colors, 'medium-green');
+}
+
+.text-color-dark-green {
+  color: map-get($colors, 'dark-green');
+}
+
+.overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+
+// Color of error messages in inputs ...
+.p-error {
+  color: map-get($map: $colors, $key: grape);
+  font-weight: 600;
+}
