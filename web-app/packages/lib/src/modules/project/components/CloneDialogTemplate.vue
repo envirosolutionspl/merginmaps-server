@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         data-cy="clone-dialog-project-name"
         class="flex-grow-1"
       />
-      <label for="name">Project name</label>
+      <label for="name">{{ Translation_ProjectName }}</label>
     </span>
     <!-- Dynamic items to pass other inputs -->
     <slot name="dynamic-items"></slot>
@@ -30,21 +30,30 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
         data-cy="clone-dialog-close-btn"
-        >Cancel</PButton
+        >{{ Translation_Cancel }}</PButton
       >
 
       <PButton
         id="clone-project-btn"
-        :disabled="!newProjectName || !currentWorkspace"
+        :disabled="!newProjectName || !targetWorkspace"
         @click="onCloneProject"
         data-cy="project-form-create-btn"
         class="flex w-12 lg:w-6 justify-content-center"
       >
-        Clone project
+        {{ Translation_CloneProject }}
       </PButton>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_ProjectName = returnTranslation(lang, 'lib_project_CloneDialogTemplate_ProjectName');
+const Translation_Cancel = returnTranslation(lang, 'lib_project_CloneDialogTemplate_Cancel');
+const Translation_CloneProject = returnTranslation(lang, 'lib_project_CloneDialogTemplate_CloneProject');
+</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'
@@ -60,7 +69,8 @@ export default defineComponent({
   name: 'clone-dialog-template',
   props: {
     namespace: String,
-    project: String
+    project: String,
+    targetWorkspace: String
   },
   data() {
     return {

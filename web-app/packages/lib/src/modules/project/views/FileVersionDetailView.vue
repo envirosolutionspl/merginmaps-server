@@ -72,7 +72,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             </template>
             <template #empty>
               <div class="flex flex-column align-items-center p-4 text-center">
-                <p>No changeset for current layer</p>
+                <p>{{ Translation_NoChangesetForCurrentLayer }}</p>
               </div>
               console.log('getChangeset', this.namespace, this.projectName,
               this.version_id, this.path)
@@ -84,14 +84,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <app-container v-else-if="!versionsChangesetLoading">
       <app-section class="p-4">
         <div class="flex flex-column align-items-center text-center">
-          <h3>Changes cannot be calculated</h3>
+          <h3>{{ Translation_ChangesCannotBeCalculated }}</h3>
           <p>
-            For details please check the
+            {{ Translation_ForDetailsPleaseCheckThe }}
             <a
               class="font-semibold text-underline text-color-forest"
               :href="docsLinkManageSynchronisation"
               target="_blank"
-              >documentation</a
+              >{{ Translation_Documentation }}</a
             >.
           </p>
         </div>
@@ -100,6 +100,16 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </div>
 </template>
 
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_NoChangesetForCurrentLayer = returnTranslation(lang, 'lib_project_FileVersionDetailView_NoChangesetForCurrentLayer');
+const Translation_ChangesCannotBeCalculated = returnTranslation(lang, 'lib_project_FileVersionDetailView_ChangesCannotBeCalculated');
+const Translation_ForDetailsPleaseCheckThe = returnTranslation(lang, 'lib_project_FileVersionDetailView_ForDetailsPleaseCheckThe');
+const Translation_Documentation = returnTranslation(lang, 'lib_project_FileVersionDetailView_Documentation');
+
+</script>
 <script lang="ts">
 import groupBy from 'lodash/groupBy'
 import isArray from 'lodash/isArray'

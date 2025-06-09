@@ -18,7 +18,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             data-cy="project-download-btn"
             icon="ti ti-download"
             class="mr-2"
-            label="Download"
+            :label="Translation_Download"
+            :disabled="projectDownloading"
           />
           <PButton
             severity="secondary"
@@ -26,7 +27,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             v-if="canCloneProject"
             data-cy="project-clone-btn"
             icon="ti ti-copy"
-            label="Clone"
+            :label="Translation_Clone"
             class="mr-2"
           />
           <PButton
@@ -34,7 +35,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             @click="leaveDialog"
             data-cy="project-leave-btn"
             icon="ti ti-logout"
-            label="Leave project"
+            :label="Translation_LeaveProject"
             v-if="canLeaveProject"
           />
         </div>
@@ -78,21 +79,21 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <app-section v-if="fetchProjectsResponseStatus === 403">
         <div class="flex flex-column align-items-center p-4 text-center gap-4">
           <img src="@/assets/map-circle.svg" alt="No project" />
-          <p class="font-semibold">This is a private project</p>
+          <p class="font-semibold">{{ Translation_ThisIsAPrivateProject }}</p>
           <p class="paragraph-p5 opacity-80 mt-2 mb-4">
-            You don't have permissions to access this project.
+            {{ Translation_YouDontHavePermissionsToAccessThisProject }}
           </p>
           <PButton id="request-access-btn" @click="createAccessRequest"
-            >Request access</PButton
+            >{{ Translation_RequestAccess }}</PButton
           >
         </div>
       </app-section>
       <app-section v-else-if="fetchProjectsResponseStatus === 404">
         <div class="flex flex-column align-items-center p-4 text-center gap-4">
           <img src="@/assets/map-circle.svg" alt="No project" />
-          <p class="font-semibold">Project not found</p>
+          <p class="font-semibold">{{ Translation_ProjectNotFound }}</p>
           <p class="paragraph-p5 opacity-80 mt-2 mb-4">
-            Please check if address is written correctly
+            {{ Translation_PleaseCheckIfAddressIsWrittenCorrectly }}
           </p>
         </div>
       </app-section>
@@ -100,10 +101,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <div class="flex flex-column align-items-center p-4 text-center gap-4">
           <img src="@/assets/map-circle.svg" alt="No project" />
           <p class="font-semibold">
-            You don't have permission to access this project
+            {{ Translation_YouDontHavePermissionToAccessThisProject }}
           </p>
           <p class="paragraph-p5 opacity-80 mt-2 mb-4">
-            You already requested access
+            {{ Translation_YouAlreadyRequestedAccess }}
           </p>
         </div>
       </app-section>
@@ -111,12 +112,37 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <slot name="right">
       <upload-dialog v-if="upload" :namespace="namespace" />
     </slot>
+    <DownloadProgress />
+    <DownloadFileLarge />
   </div>
 </template>
 
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_Download = returnTranslation(lang, 'lib_user_ProjectViewTemplate_Download');
+const Translation_Clone = returnTranslation(lang, 'lib_user_ProjectViewTemplate_Clone');
+const Translation_LeaveProject = returnTranslation(lang, 'lib_user_ProjectViewTemplate_LeaveProject');
+const Translation_ThisIsAPrivateProject = returnTranslation(lang, 'lib_user_ProjectViewTemplate_ThisIsAPrivateProject');
+const Translation_YouDontHavePermissionsToAccessThisProject = returnTranslation(lang, 'lib_user_ProjectViewTemplate_YouDontHavePermissionsToAccessThisProject');
+const Translation_RequestAccess = returnTranslation(lang, 'lib_user_ProjectViewTemplate_RequestAccess');
+const Translation_ProjectNotFound = returnTranslation(lang, 'lib_user_ProjectViewTemplate_ProjectNotFound');
+const Translation_PleaseCheckIfAddressIsWrittenCorrectly = returnTranslation(lang, 'lib_user_ProjectViewTemplate_PleaseCheckIfAddressIsWrittenCorrectly');
+const Translation_YouDontHavePermissionToAccessThisProject = returnTranslation(lang, 'lib_user_ProjectViewTemplate_YouDontHavePermissionToAccessThisProject');
+const Translation_YouAlreadyRequestedAccess = returnTranslation(lang, 'lib_user_ProjectViewTemplate_YouAlreadyRequestedAccess');
+
+
+</script>
+
 <script lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
 import { mapActions, mapState } from 'pinia'
 import { defineComponent, PropType } from 'vue'
+
+import DownloadFileLarge from '../components/DownloadFileLarge.vue'
+import DownloadProgress from '../components/DownloadProgress.vue'
 
 import { AppContainer, AppSection } from '@/common'
 import { waitCursor } from '@/common/html_utils'
@@ -144,7 +170,9 @@ export default defineComponent({
   components: {
     UploadDialog,
     AppContainer,
-    AppSection
+    AppSection,
+    DownloadProgress,
+    DownloadFileLarge
   },
   props: {
     namespace: String,
@@ -168,14 +196,14 @@ export default defineComponent({
     ...mapState(useLayoutStore, ['drawer']),
     ...mapState(useProjectStore, ['project', 'uploads']),
     ...mapState(useUserStore, ['loggedUser']),
-    ...mapState(useProjectStore, ['isProjectOwner']),
+    ...mapState(useProjectStore, ['isProjectOwner', 'projectDownloading']),
     ...mapState(useUserStore, ['currentWorkspace', 'isLoggedIn']),
 
     tabs(): TabItem[] {
       const tabs: TabItem[] = [
         {
           route: ProjectRouteName.ProjectTree,
-          header: 'Files'
+          header: returnTranslation(lang, 'lib_user_ProjectViewTemplate_Files')
         }
       ]
 
@@ -189,17 +217,17 @@ export default defineComponent({
         if (this.showHistory) {
           tabs.push({
             route: ProjectRouteName.ProjectHistory,
-            header: 'History'
+            header: returnTranslation(lang, 'lib_user_ProjectViewTemplate_History')
           })
         }
         if (this.showSettings) {
           tabs.push({
             route: ProjectRouteName.ProjectCollaborators,
-            header: 'Collaborators'
+            header: returnTranslation(lang, 'lib_user_ProjectViewTemplate_Collaborators')
           })
           tabs.push({
             route: ProjectRouteName.ProjectSettings,
-            header: 'Settings'
+            header: returnTranslation(lang, 'lib_user_ProjectViewTemplate_Settings')
           })
         }
       }
@@ -237,14 +265,12 @@ export default defineComponent({
     downloadUrl() {
       if (this.$route.name === 'project-versions-detail') {
         return ProjectApi.constructDownloadProjectVersionUrl(
-          this.namespace,
-          this.projectName,
+          this.project.id,
           this.$route.params.version_id as string
         )
       } else {
         return this.constructDownloadProjectUrl({
-          namespace: this.namespace,
-          projectName: this.projectName
+          projectId: this.project.id
         })
       }
     }
@@ -306,7 +332,7 @@ export default defineComponent({
         .then(() => {
           waitCursor(false)
           this.show({
-            text: 'Access has been requested'
+            text: returnTranslation(lang, 'lib_user_ProjectViewTemplate_AccessHasBeenRequested')
           })
           this.$router.push({
             name: 'projects'
@@ -314,18 +340,18 @@ export default defineComponent({
         })
         .catch(() => {
           this.error({
-            text: 'Failed to request'
+            text: returnTranslation(lang, 'lib_user_ProjectViewTemplate_FailedToRequest')
           })
           waitCursor(false)
         })
     },
     leaveDialog() {
       const props: ConfirmDialogProps = {
-        text: `Are you sure to leave the project ${this.projectName}?`,
-        description: 'You will not have access to it anymore.',
+        text: `${returnTranslation(lang, 'lib_user_ProjectViewTemplate_AreYouSureToLeaveTheProject')} ${this.projectName}?`,
+        description: returnTranslation(lang, 'lib_user_ProjectViewTemplate_YouWillNotHaveAccessToItAnymore'),
         severity: 'danger',
-        confirmText: 'Yes',
-        cancelText: 'No'
+        confirmText: returnTranslation(lang, 'lib_user_ProjectViewTemplate_Yes'),
+        cancelText: returnTranslation(lang, 'lib_user_ProjectViewTemplate_No')
       }
       const listeners = {
         confirm: async () => {
@@ -340,7 +366,7 @@ export default defineComponent({
         params: {
           props,
           listeners,
-          dialog: { header: 'Leave project' }
+          dialog: { header: returnTranslation(lang, 'lib_user_ProjectViewTemplate_LeaveProject') }
         }
       })
     },

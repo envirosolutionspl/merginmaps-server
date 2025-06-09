@@ -12,7 +12,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       </div>
 
       <div class="flex flex-column p-input-filled">
-        <label>Project permission</label>
+        <label>{{ Translation_ProjectPermission }}</label>
         <app-dropdown :options="permissions" v-model="permission" />
       </div>
     </div>
@@ -29,7 +29,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="text-color-forest w-12 lg:w-8 font-semibold flex align-items-center"
         ><i class="ti ti-info-circle-filled mr-2 paragraph-p4" /><span
           class="underline"
-          >Learn more about permission system</span
+          >{{ Translation_LearnMoreAboutPermissionSystem }}</span
         ></a
       >.
 
@@ -40,13 +40,20 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         data-cy="project-form-create-btn"
         class="flex w-12 lg:w-4 justify-content-center"
       >
-        Share
+        {{ Translation_Share }}
       </PButton>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_ProjectPermission = returnTranslation(lang, 'lib_project_ProjectShareDialogTemplate_ProjectPermission');
+const Translation_LearnMoreAboutPermissionSystem = returnTranslation(lang, 'lib_project_ProjectShareDialogTemplate_LearnMoreAboutPermissionSystem');
+const Translation_Share = returnTranslation(lang, 'lib_project_ProjectShareDialogTemplate_Share');
+
 import { computed } from 'vue'
 
 import AppDropdown from '@/common/components/AppDropdown.vue'

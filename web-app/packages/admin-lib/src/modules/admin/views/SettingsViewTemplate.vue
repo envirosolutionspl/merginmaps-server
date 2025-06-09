@@ -8,13 +8,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   <admin-layout>
     <app-container>
       <app-section ground>
-        <template #header><h1 class="headline-h3">Settings</h1></template>
+        <template #header><h1 class="headline-h3">{{ Translation_Settings }}</h1></template>
       </app-section>
     </app-container>
 
     <app-container>
       <app-section>
-        <template #title>Advanced</template>
+        <template #title>{{ Translation_Advanced }}</template>
         <app-settings :items="settingsItems">
           <template #items-start><slot /></template>
 
@@ -27,7 +27,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             ><PButton
               severity="secondary"
               @click="downloadReport"
-              label="Download"
+              :label="Translation_Download"
           /></template>
         </app-settings>
       </app-section>
@@ -36,6 +36,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_Settings = returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_Settings')
+const Translation_Advanced = returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_Advanced')
+const Translation_Download = returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_Download')
+
 import {
   AppContainer,
   AppSection,
@@ -50,18 +57,21 @@ import { useAdminStore } from '../store'
 import AdminLayout from '@/modules/admin/components/AdminLayout.vue'
 
 withDefaults(defineProps<{ settingsItems?: AppSettingsItemConfig[] }>(), {
-  settingsItems: () => [
-    {
-      title: 'Check for updates',
-      description: 'Let Mergin Maps automatically check for new updates',
-      key: 'checkForUpdates'
-    },
-    {
-      title: 'Server usage report',
-      description: 'Download usage statistics for your server deployment.',
-      key: 'downloadReport'
-    }
-  ]
+  settingsItems: () => {
+    const lang = import.meta.env.VITE_LANG
+    return [
+      {
+        title: returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_CheckForUpdates'),
+        description: returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_LetMerginMapsAutomaticallyCheckForNewUpdates'),
+        key: 'checkForUpdates'
+      },
+      {
+        title: returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_ServerUsageReport'),
+        description: returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_DownloadUsageStatisticsForYourServerDeployment'),
+        key: 'downloadReport'
+      }
+    ]
+  }
 })
 
 const adminStore = useAdminStore()
@@ -76,7 +86,7 @@ function downloadReport() {
   dialogStore.show({
     component: ReportDownloadDialog,
     params: {
-      dialog: { header: 'Download report' }
+      dialog: { header: returnTranslation(lang, 'adminlib_admin_SettingsViewTemplate_DownloadReport') }
     }
   })
 }

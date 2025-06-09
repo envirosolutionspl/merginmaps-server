@@ -47,7 +47,7 @@
                 path: change?.path
               }
             }"
-            >Show advanced</router-link
+            >{{ Translation_ShowAdvanced }}</router-link
           >
           <file-changeset-summary-table
             :changesets="changesets?.[change.path]['summary']"
@@ -59,7 +59,7 @@
           "
           class="text-center"
         >
-          Details not available:
+          {{ Translation_DetailsNotAvailable }}
           {{ changesets?.[change.path].error }}
         </div>
       </div>
@@ -67,7 +67,14 @@
   </PAccordion>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_ShowAdvanced = returnTranslation(lang, 'lib_project_ProjectVersionChanges_ShowAdvanced');
+const Translation_DetailsNotAvailable = returnTranslation(lang, 'lib_project_ProjectVersionChanges_DetailsNotAvailable');
+
+
 import { ProjectVersion } from '@mergin/lib'
 import { computed, ref, defineProps } from 'vue'
 
@@ -89,19 +96,19 @@ const changeTabs = ref<
   {
     key: 'added',
     severity: 'success',
-    text: 'Files added',
+    text: returnTranslation(lang, 'lib_project_ProjectVersionChanges_FilesAdded'),
     icon: 'ti-plus'
   },
   {
     key: 'updated',
     severity: 'warn',
-    text: 'Files edited',
+    text: returnTranslation(lang, 'lib_project_ProjectVersionChanges_FilesEdited'),
     icon: 'ti-pencil'
   },
   {
     key: 'removed',
     severity: 'danger',
-    text: 'Files removed',
+    text: returnTranslation(lang, 'lib_project_ProjectVersionChanges_FilesRemoved'),
     icon: 'ti-trash'
   }
 ])

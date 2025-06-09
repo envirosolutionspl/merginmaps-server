@@ -11,14 +11,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <template #description
         >{{ item.description
         }}<template v-if="item.key === 'usageInformation'">
-          Click
+          {{ Translation_Click }}
           <a
             class="font-semibold text-color-forest"
             :href="instanceStore.configData?.docs_url"
             target="_blank"
-            >here</a
+            >{{ Translation_Here }}</a
           >
-          for more information.</template
+          {{ Translation_ForMoreInformation }}</template
         ></template
       >
       <template #action>
@@ -34,6 +34,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_Click = returnTranslation(lang, 'adminlib_admin_SettingsView_Click');
+const Translation_Here = returnTranslation(lang, 'adminlib_admin_SettingsView_Here');
+const Translation_ForMoreInformation = returnTranslation(lang, 'adminlib_admin_SettingsView_ForMoreInformation');
+
 import {
   AppSettingsItemConfig,
   useInstanceStore,
@@ -47,9 +54,8 @@ const instanceStore = useInstanceStore()
 
 const settingsItems = ref<AppSettingsItemConfig[]>([
   {
-    title: 'Collect statistics',
-    description:
-      'Help us improve Mergin Maps by sharing usage information. Mergin Maps collects anonymous usage information to make the service better overtime.',
+    title: returnTranslation(lang, 'adminlib_admin_SettingsView_CollectStatistics'),
+    description: returnTranslation(lang, 'adminlib_admin_SettingsView_HelpUsImproveMerginMaps'),
     key: 'usageInformation'
   }
 ])

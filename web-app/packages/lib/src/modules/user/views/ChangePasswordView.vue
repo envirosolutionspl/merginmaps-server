@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
 <template>
   <app-onboarding-page>
-    <template #header><h1 class="headline-h1">Change password</h1></template>
+    <template #header><h1 class="headline-h1">{{ Translation_ChangePassword }}</h1></template>
 
     <form
       v-if="!success"
@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     >
       <span>
         <app-password-tooltip for="newPassword"
-          ><template #label>New Password</template>
+          ><template #label>{{ Translation_NewPassword }}</template>
         </app-password-tooltip>
         <PPassword
           id="newPassword"
@@ -25,12 +25,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           toggleMask
           :feedback="false"
           aria-describedby="password-error"
-          placeholder="Please enter your password"
+          :placeholder="Translation_PleaseEnterYourPassword"
         />
         <span class="p-error paragraph-p6" id="password-error">{{
           errors.password?.[0]
             ? errors.password?.[0].startsWith('Password')
-              ? 'Password must be at least 8 characters long and include at least three of the following: lowercase letters, uppercase letters, numbers or special characters.'
+              ? Translation_PasswordMustBeAtLeast
               : errors.password[0]
             : '&nbsp;'
         }}</span>
@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
       <span>
         <app-password-tooltip for="confirm">
-          <template #label>Confirm password</template>
+          <template #label>{{ Translation_ConfirmPassword }}</template>
         </app-password-tooltip>
 
         <PPassword
@@ -49,7 +49,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           aria-describedby="confirm-password-error"
           toggleMask
           :feedback="false"
-          placeholder="Please enter your new password"
+          :placeholder="Translation_PleaseEnterYourNewPassword"
         />
 
         <span class="p-error paragraph-p6" id="confirm-password-error">{{
@@ -62,22 +62,39 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="mt-6"
         data-cy="change-password-btn"
         :disabled="!password || !confirm"
-        label="Change"
+        :label="Translation_Change"
       />
     </form>
 
     <div v-else class="flex flex-column align-items-center">
       <span
-        >Your password was changed. You can now
+        >{{ Translation_YourPasswordWasChanged }}
         <router-link
           class="text-color-forest title-t3 align-self-center"
           :to="{ name: 'login' }"
-          >Sign in</router-link
+          >{{ lib_user_ChangePasswordView_SignIn }}</router-link
         ></span
       >
     </div>
   </app-onboarding-page>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_ChangePassword = returnTranslation(lang, 'lib_user_ChangePasswordView_YourAccountWillBeClosed');
+const Translation_NewPassword = returnTranslation(lang, 'lib_user_ChangePasswordView_NewPassword');
+const Translation_PleaseEnterYourPassword = returnTranslation(lang, 'lib_user_ChangePasswordView_PleaseEnterYourPassword');
+const Translation_PasswordMustBeAtLeast = returnTranslation(lang, 'lib_user_ChangePasswordView_PasswordMustBeAtLeast');
+const Translation_ConfirmPassword = returnTranslation(lang, 'lib_user_ChangePasswordView_ConfirmPassword');
+const Translation_PleaseEnterYourNewPassword = returnTranslation(lang, 'lib_user_ChangePasswordView_PleaseEnterYourNewPassword');
+const Translation_Change = returnTranslation(lang, 'lib_user_ChangePasswordView_Change');
+const Translation_YourPasswordWasChanged = returnTranslation(lang, 'lib_user_ChangePasswordView_YourPasswordWasChanged');
+const lib_user_ChangePasswordView_SignIn = returnTranslation(lang, 'lib_user_ChangePasswordView_SignIn');
+
+</script>
+
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

@@ -18,6 +18,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
 import {
   ProjectShareDialog,
   ProjectCollaboratorsViewTemplate,
@@ -42,7 +45,7 @@ const isProjectOwner = computed(() => projectStore.isProjectOwner)
 function openShareDialog() {
   const dialog = {
     maxWidth: 600,
-    header: `Share project ${projectStore.project?.name}`
+    header: `${returnTranslation(lang, 'app_project_ProjectCollaboratorsView_ShareProject')} ${projectStore.project?.name}`
   }
   dialogStore.show({
     component: ProjectShareDialog,
@@ -53,7 +56,7 @@ function openShareDialog() {
           notificationStore.error({
             text: errorUtils.getErrorMessage(
               err,
-              'Failed to save project settings'
+              returnTranslation(lang, 'app_project_ProjectCollaboratorsView_FailedToSaveProjectSettings')
             )
           })
         }

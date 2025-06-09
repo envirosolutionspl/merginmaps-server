@@ -18,7 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     @page="onPage"
   >
     <template #header>
-      <h3 class="font-semibold paragraph-p6 text-color m-0">Access requests</h3>
+      <h3 class="font-semibold paragraph-p6 text-color m-0">{{ Translation_AccessRequests }}</h3>
     </template>
     <template #list="slotProps">
       <template v-for="item in slotProps.items" :key="item.id">
@@ -27,9 +27,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           class="flex flex-column lg:flex-row align-items-center justify-content-between px-4 py-2 mt-0 border-bottom-1 border-gray-200"
         >
           <p class="w-12 lg:w-6 paragraph-p6 m-0">
-            User
+            {{ Translation_User }}
             <span class="font-semibold">{{ item.requested_by }}</span>
-            requested an access to your project
+            {{ Translation_RequestedAnAccessToYourProject }}
             <span class="font-semibold">{{ item.project_name }}.</span>
           </p>
           <div
@@ -39,10 +39,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               <span v-tooltip.right="{ value: $filters.datetime(item.expire) }">
                 <template
                   v-if="$filters.remainingtime(item.expire) === 'expired'"
-                  >Expired</template
+                  >{{ Translation_Expired }}</template
                 >
                 <template v-else
-                  >Expiring in
+                  >{{ Translation_ExpiringIn }}
                   {{ $filters.remainingtime(item.expire) }}</template
                 >
               </span>
@@ -76,10 +76,22 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       </template>
     </template>
     <template #empty>
-      <p class="text-center p-4 m-0">No access requests found</p>
+      <p class="text-center p-4 m-0">{{ Translation_NoAccessRequestsFound }}</p>
     </template>
   </PDataView>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_AccessRequests = returnTranslation(lang, 'lib_project_ProjectAccessRequests_AccessRequests');
+const Translation_User = returnTranslation(lang, 'lib_project_ProjectAccessRequests_User');
+const Translation_RequestedAnAccessToYourProject = returnTranslation(lang, 'lib_project_ProjectAccessRequests_RequestedAnAccessToYourProject');
+const Translation_Expired = returnTranslation(lang, 'lib_project_ProjectAccessRequests_Expired');
+const Translation_ExpiringIn = returnTranslation(lang, 'lib_project_ProjectAccessRequests_ExpiringIn');
+const Translation_NoAccessRequestsFound = returnTranslation(lang, 'lib_project_ProjectAccessRequests_NoAccessRequestsFound');
+</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'
@@ -163,7 +175,7 @@ export default defineComponent({
         await this.updatePaginationOrFetch()
       } catch (err) {
         this.error({
-          text: getErrorMessage(err, 'Failed to accept access request')
+          text: getErrorMessage(err, returnTranslation(lang, 'lib_project_ProjectAccessRequests_FailedToAcceptAccessRequest'))
         })
       }
     },

@@ -30,6 +30,8 @@ services:
     build:
       context: ./web-app
       dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
   maildev:
     image: maildev/maildev
     container_name: merginmaps-maildev

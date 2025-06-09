@@ -9,7 +9,7 @@
           <span class="p-input-icon-left flex-grow-1">
             <i class="ti ti-search paragraph-p3"></i>
             <PInputText
-              placeholder="Search files"
+              :placeholder="Translation_SearchFiles"
               data-cy="search-files-field"
               v-model="searchFilter"
               class="w-full"
@@ -36,6 +36,11 @@
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_SearchFiles = returnTranslation(lang, 'adminlib_admin_ProjectFilesView_SearchFiles');
+
 import {
   AppSection,
   AppContainer,
@@ -71,10 +76,10 @@ const searchFilter = ref('')
 
 const filterMenuItems = computed<MenuItem[]>(() => {
   const items = [
-    { label: 'Sort by name A-Z', key: 'name', sortDesc: 1 },
-    { label: 'Sort by name Z-A', key: 'name', sortDesc: -1 },
-    { label: 'Sort by last modified', key: 'mtime', sortDesc: -1 },
-    { label: 'Sort by file size', key: 'size', sortDesc: -1 }
+    { label: returnTranslation(lang, 'adminlib_admin_ProjectFilesView_SortByNameAZ'), key: 'name', sortDesc: 1 },
+    { label: returnTranslation(lang, 'adminlib_admin_ProjectFilesView_SortByNameZA'), key: 'name', sortDesc: -1 },
+    { label: returnTranslation(lang, 'adminlib_admin_ProjectFilesView_SortByLastModified'), key: 'mtime', sortDesc: -1 },
+    { label: returnTranslation(lang, 'adminlib_admin_ProjectFilesView_SortByFileSize'), key: 'size', sortDesc: -1 }
   ]
 
   return items.map((item) => ({
