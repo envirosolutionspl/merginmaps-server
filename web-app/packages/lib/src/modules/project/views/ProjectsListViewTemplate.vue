@@ -20,14 +20,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               v-if="canCreateProject && loggedUser && loggedUser.email"
               @click="newProjectDialog"
               data-cy="action-button-create"
-              label="Create project"
+              :label="Translation_CreateProject"
             />
           </template>
           <div class="flex align-items-center justify-content-between mt-3">
             <span class="p-input-icon-left flex-grow-1">
               <i class="ti ti-search paragraph-p3"></i>
               <PInputText
-                placeholder="Search projects by name"
+                :placeholder="Translation_SearchProjectsByName"
                 v-model="projectsStore.projectsSearch"
                 class="w-full"
               />
@@ -42,8 +42,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <!-- TODO: Do not understand logic here :() -->
       <AppSection v-else>
         <span>
-          <b>Namespace not found</b><br />
-          Please check if address is written correctly
+          <b>{{ Translation_NamespaceNotFound }}</b><br />
+          {{ Translation_PleaseCheckIfAddressIsWrittenCorrectly }}
         </span>
       </AppSection>
     </app-container>
@@ -51,7 +51,22 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </div>
 </template>
 
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_CreateProject = returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_CreateProject');
+const Translation_SearchProjectsByName = returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_SearchProjectsByName');
+const Translation_NamespaceNotFound = returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_NamespaceNotFound');
+const Translation_PleaseCheckIfAddressIsWrittenCorrectly = returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_PleaseCheckIfAddressIsWrittenCorrectly');
+
+
+</script>
+
 <script lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
 import { mapActions, mapState } from 'pinia'
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { defineComponent, ref } from 'vue'
@@ -91,25 +106,25 @@ export default defineComponent({
     filterMenuItems(): MenuItem[] {
       return [
         {
-          label: 'Sort by name A-Z',
+          label: returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_SortByNameAZ'),
           key: 'name-asc',
           value: 'name',
           sortDesc: false
         },
         {
-          label: 'Sort by name Z-A',
+          label: returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_SortByNameZA'),
           key: 'name-desc',
           value: 'name',
           sortDesc: true
         },
         {
-          label: 'Sort by last updated',
+          label: returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_SortByLastUpdated'),
           key: 'updated',
           value: 'updated',
           sortDesc: true
         },
         {
-          label: 'Sort by files size',
+          label: returnTranslation(lang, 'lib_project_ProjectsListViewTemplate_SortByFilesSize'),
           key: 'meta.size',
           value: 'meta.size',
           sortDesc: true

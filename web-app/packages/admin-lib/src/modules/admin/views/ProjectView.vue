@@ -3,7 +3,7 @@
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">Project details</h1>
+          <h1 class="headline-h3">{{ Translation_ProjectDetails }}</h1>
         </template>
         <template #headerActions>
           <PButton
@@ -12,14 +12,15 @@
             data-cy="project-download-btn"
             icon="ti ti-download"
             class="mr-2"
-            label="Download"
+            :label="Translation_Download"
+            :disabled="projectStore.projectDownloading"
           />
           <PButton
             severity="secondary"
             @click="openDashboard"
             data-cy="project-dashboard"
             icon="ti ti-external-link"
-            label="Open in dashboard"
+            :label="Translation_OpenInDashboard"
           />
         </template>
       </app-section>
@@ -45,19 +46,19 @@
             class="project-view-detail-list paragraph-p5 flex flex-column gap-3"
           >
             <div>
-              <dt class="paragraph-p6 opacity-80">Created</dt>
+              <dt class="paragraph-p6 opacity-80">{{ Translation_Created }}</dt>
               <dd class="font-semibold" data-cy="project-owner">
                 {{ $filters.datetime(project?.created) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">Updated</dt>
+              <dt class="paragraph-p6 opacity-80">{{ Translation_Updated }}</dt>
               <dd class="font-semibold" data-cy="project-created">
                 {{ $filters.datetime(project?.updated) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">Disk usage</dt>
+              <dt class="paragraph-p6 opacity-80">{{ Translation_DiskUsage }}</dt>
               <dd class="font-semibold" data-cy="project-created">
                 {{ $filters.filesize(project?.disk_usage, 'MB') }}
               </dd>
@@ -99,15 +100,30 @@
       </PTabView>
       <router-view />
     </app-container>
+    <download-progress />
+    <download-file-large />
   </admin-layout>
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_ProjectDetails = returnTranslation(lang, 'adminlib_admin_ProjectView_ProjectDetails');
+const Translation_Download = returnTranslation(lang, 'adminlib_admin_ProjectView_Download');
+const Translation_OpenInDashboard = returnTranslation(lang, 'adminlib_admin_ProjectView_OpenInDashboard');
+const Translation_Created = returnTranslation(lang, 'adminlib_admin_ProjectView_Created');
+const Translation_Updated = returnTranslation(lang, 'adminlib_admin_ProjectView_Updated');
+const Translation_DiskUsage = returnTranslation(lang, 'adminlib_admin_ProjectView_DiskUsage');
+
+
 import {
   AppSection,
   AppContainer,
   useProjectStore,
-  ProjectApi
+  ProjectApi,
+  DownloadProgress,
+  DownloadFileLarge
 } from '@mergin/lib'
 import { computed, watch, defineProps } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -133,15 +149,15 @@ const tabs = computed(() => {
   const tabs: TabItem[] = [
     {
       route: AdminRoutes.ProjectTree,
-      header: 'Files'
+      header: returnTranslation(lang, 'adminlib_admin_ProjectView_Files')
     },
     {
       route: AdminRoutes.ProjectHistory,
-      header: 'History'
+      header: returnTranslation(lang, 'adminlib_admin_ProjectView_History')
     },
     {
       route: AdminRoutes.ProjectSettings,
-      header: 'Settings'
+      header: returnTranslation(lang, 'adminlib_admin_ProjectView_Settings')
     }
   ]
   return tabs
@@ -195,10 +211,7 @@ function tabClick(index: number) {
 }
 
 function downloadArchive() {
-  const url = ProjectApi.constructDownloadProjectUrl(
-    routeWorkspaceName.value,
-    routeProjectName.value
-  )
+  const url = ProjectApi.constructDownloadProjectUrl(project.value?.id)
   projectStore.downloadArchive({ url })
 }
 

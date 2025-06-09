@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">Projects</h1>
+          <h1 class="headline-h3">{{ Translation_Projects }}</h1>
         </template>
       </app-section>
     </app-container>
@@ -20,8 +20,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <PInputText
             :placeholder="
               showNamespace
-                ? 'Search by workspace name or project name'
-                : 'Search projects'
+                ? Translation_SearchByWorkspaceNameOrProjectName
+                : Translation_SearchProjects
             "
             v-model="search"
             class="w-full"
@@ -121,7 +121,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             >
               <template #body="slotProps">
                 <span
-                  :title="`Scheduled for removal at ${$filters.datetime(
+                  :title="`${Translation_ScheduledForRemovalAt} ${$filters.datetime(
                     slotProps.data.removed_at
                   )}`"
                 >
@@ -138,13 +138,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 >
                   <div class="flex align-items-center gap-1">
                     <PButton
-                      label="Restore"
+                      :label="Translation_Restore"
                       severity="secondary"
                       size="small"
                       @click="confirmRestore(slotProps.data)"
                     />
                     <PButton
-                      label="Delete"
+                      :label="Translation_Delete"
                       severity="danger"
                       size="small"
                       @click="confirmDelete(slotProps.data)"
@@ -178,7 +178,21 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </div>
 </template>
 
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_Projects = returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_Projects');
+const Translation_SearchByWorkspaceNameOrProjectName = returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_SearchByWorkspaceNameOrProjectName');
+const Translation_SearchProjects = returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_SearchProjects');
+const Translation_ScheduledForRemovalAt = returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_ScheduledForRemovalAt');
+const Translation_Restore = returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_Restore');
+const Translation_Delete = returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_Delete');
+</script>
+
 <script lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
 import {
   ConfirmDialog,
   useDialogStore,
@@ -231,17 +245,17 @@ export default defineComponent({
         ...(this.showNamespace
           ? [
               {
-                header: 'Workspace',
+                header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_Workspace'),
                 field: 'workspace',
                 sortable: true
               }
             ]
           : []),
-        { header: 'Name', field: 'name', sortable: true },
-        { header: 'Last Update', field: 'updated', sortable: true },
-        { header: 'Size', field: 'disk_usage', sortable: true },
-        { header: 'Scheduled removal at', field: 'removed_at', sortable: true },
-        { header: 'Removed by', field: 'removed_by', sortable: true },
+        { header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_Name'), field: 'name', sortable: true },
+        { header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_LastUpdate'), field: 'updated', sortable: true },
+        { header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_Size'), field: 'disk_usage', sortable: true },
+        { header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_ScheduledRemovalAt'), field: 'removed_at', sortable: true },
+        { header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_RemovedBy'), field: 'removed_by', sortable: true },
         { header: '', field: 'buttons', sortable: false }
       ]
     }
@@ -303,8 +317,8 @@ export default defineComponent({
 
     confirmRestore(item) {
       const props: ConfirmDialogProps = {
-        text: `Are you sure to restore project ${item.workspace}/${item.name}?`,
-        confirmText: 'Restore'
+        text: `${returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_AreYouSureToRestoreProject')} ${item.workspace}/${item.name}?`,
+        confirmText: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_Restore')
       }
       const listeners = {
         confirm: async () => {
@@ -314,19 +328,18 @@ export default defineComponent({
       }
       this.showDialog({
         component: ConfirmDialog,
-        params: { props, listeners, dialog: { header: 'Restore project' } }
+        params: { props, listeners, dialog: { header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_RestoreProject') } }
       })
     },
 
     confirmDelete(item) {
       const props: ConfirmDialogProps = {
-        text: `Are you sure you want to permanently delete this project?`,
-        description: `Deleting this project will remove it
-      and all its data. This action cannot be undone. Type in project name to confirm:`,
+        text: returnTranslation(lang, 'AreYouSureYouWantToPermanentlyDeleteThisProject'),
+        description: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_DeletingThisProjectWillRemoveItAndAllItsData'),
         hint: item.name,
-        confirmText: 'Delete permanently',
+        confirmText: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_DeletePermanently'),
         confirmField: {
-          label: 'Project name',
+          label: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_ProjectName'),
           expected: item.name
         },
         severity: 'danger'
@@ -339,7 +352,7 @@ export default defineComponent({
       }
       this.showDialog({
         component: ConfirmDialog,
-        params: { props, listeners, dialog: { header: 'Delete project' } }
+        params: { props, listeners, dialog: { header: returnTranslation(lang, 'adminlib_admin_AdminProjectsTable_DeleteProject') } }
       })
     },
 

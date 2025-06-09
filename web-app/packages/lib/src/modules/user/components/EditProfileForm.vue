@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <form @submit.prevent="submit" class="flex flex-column pb-4">
     <span class="p-input-filled">
-      <label for="first-name">First name</label>
+      <label for="first-name">{{ Translation_FirstName }}</label>
       <PInputText
         id="first-name"
         v-model="editedProfile.first_name"
@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </span>
 
     <span class="p-input-filled">
-      <label for="last-name">Last name</label>
+      <label for="last-name">{{ Translation_LastName }}</label>
       <PInputText
         id="last-name"
         v-model="editedProfile.last_name"
@@ -39,7 +39,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </span>
 
     <span class="p-input-filled">
-      <label for="email">Email</label>
+      <label for="email">{{ Translation_Email }}</label>
       <PInputText
         id="email"
         v-model="editedProfile.email"
@@ -63,7 +63,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
         data-cy="profile-edit-close-btn"
-        >Cancel</PButton
+        >{{ Translation_Cancel }}</PButton
       >
 
       <PButton
@@ -71,11 +71,24 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="flex w-12 lg:w-6 justify-content-center"
         data-cy="profile-edit-save-btn"
       >
-        Save changes
+        {{ Translation_SaveChanges }}
       </PButton>
     </div>
   </form>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_FirstName = returnTranslation(lang, 'lib_user_EditProfileForm_FirstName');
+const Translation_LastName = returnTranslation(lang, 'lib_user_EditProfileForm_LastName');
+const Translation_Email = returnTranslation(lang, 'lib_user_EditProfileForm_Email');
+const Translation_Cancel = returnTranslation(lang, 'lib_user_EditProfileForm_Cancel');
+const Translation_SaveChanges = returnTranslation(lang, 'lib_user_EditProfileForm_SaveChanges');
+
+
+</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

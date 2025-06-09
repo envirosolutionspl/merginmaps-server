@@ -14,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   >
     <app-section>
       <template #title
-        >Requests
+        >{{ Translation_Requests }}
         <span class="text-color-medium-green"
           >({{ projectStore.accessRequestsCount }})</span
         ></template
@@ -26,7 +26,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </app-container>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_Requests = returnTranslation(lang, 'lib_dialog_DashboardAccessRequestsRow_Requests');
+
 import { computed, watch } from 'vue'
 
 import { AppContainer, AppSection } from '@/common/components'

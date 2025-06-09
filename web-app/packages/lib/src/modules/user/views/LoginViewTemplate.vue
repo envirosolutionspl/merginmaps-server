@@ -8,8 +8,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   <app-onboarding-page>
     <template #header>
       <h1 class="headline-h1">
-        <template v-if="forgotPassword">Reset password</template
-        ><template v-else>Sign in</template>
+        <template v-if="forgotPassword">
+          {{ Translation_ResetPassword }}
+          </template
+        ><template v-else>
+          {{ Translation_SignIn }}
+        </template>
       </h1>
     </template>
 
@@ -23,9 +27,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       class="flex flex-column"
     >
       <div>
-        <label for="login">Email</label>
+        <label for="login">
+          {{ Translation_TypeYourEmail }}
+        </label>
         <PInputText
-          placeholder="Type your email"
+          :placeholder="Translation_TypeYourEmailPlaceholder"
           name="email"
           color="inputColor"
           data-cy="reset-form-email"
@@ -40,7 +46,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <router-link
         class="text-color-forest align-self-center font-semibold"
         :to="{ name: 'login' }"
-        >Back to login</router-link
+        >{{ Translation_BackToLogin }}</router-link
       >
 
       <PButton
@@ -48,12 +54,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         data-cy="reset-form-btn"
         :disabled="!email"
         @click="reset"
-        label="Reset password"
+        :label="Translation_ResetPassword"
       />
     </form>
     <form v-else @submit.prevent="loginUser" class="flex flex-column">
       <div>
-        <label for="login">Username or email</label>
+        <label for="login">{{ Translation_UsernameOrEmail }}</label>
         <PInputText
           id="login"
           name="login"
@@ -61,7 +67,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           data-cy="login-form-login"
           :class="['w-full', errors.login ? 'p-invalid' : '']"
           aria-describedby="login-error"
-          placeholder="Please enter username or email"
+          :placeholder="Translation_PleaseEnterUsernameOrEmail"
           :inputProps="{ autocomplete: 'on' }"
           autofocus
         />
@@ -71,7 +77,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       </div>
 
       <div>
-        <label for="password">Password</label>
+        <label for="password">{{ Translation_Password }}</label>
         <PPassword
           id="password"
           name="password"
@@ -81,7 +87,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           aria-describedby="password-error"
           toggleMask
           :feedback="false"
-          placeholder="Please enter your password"
+          :placeholder="Translation_PleaseEnterYourPassword"
           :pt="{
             input: {
               root: {
@@ -99,7 +105,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <router-link
         class="text-color-forest title-t3 align-self-center"
         :to="{ name: 'login', params: { reset: 'reset' } }"
-        >Forgot password?</router-link
+        >{{ Translation_ForgotPassword }}</router-link
       >
 
       <PButton
@@ -109,7 +115,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         id="login-btn"
         class="mt-6 w-full"
         size="large"
-        label="Sign in"
+        :label="Translation_SignIn"
       />
     </form>
     <div class="flex flex-column align-items-center">
@@ -118,9 +124,24 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </app-onboarding-page>
 </template>
 
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_ResetPassword = returnTranslation(lang, 'lib_user_LoginViewTemplate_ResetPassword');
+const Translation_TypeYourEmail = returnTranslation(lang, 'lib_user_LoginViewTemplate_TypeYourEmail');
+const Translation_SignIn = returnTranslation(lang, 'lib_user_LoginViewTemplate_SignIn');
+const Translation_TypeYourEmailPlaceholder = returnTranslation(lang, 'lib_user_LoginViewTemplate_TypeYourEmail');
+const Translation_BackToLogin = returnTranslation(lang, 'lib_user_LoginViewTemplate_BackToLogin');
+const Translation_UsernameOrEmail = returnTranslation(lang, 'lib_user_LoginViewTemplate_UsernameOrEmail');
+const Translation_PleaseEnterUsernameOrEmail = returnTranslation(lang, 'lib_user_LoginViewTemplate_PleaseEnterUsernameOrEmail');
+const Translation_Password = returnTranslation(lang, 'lib_user_LoginViewTemplate_Password');
+const Translation_PleaseEnterYourPassword = returnTranslation(lang, 'lib_user_LoginViewTemplate_PleaseEnterYourPassword');
+const Translation_ForgotPassword = returnTranslation(lang, 'lib_user_LoginViewTemplate_ForgotPassword');
+
+</script>
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'
-
 import AppOnboardingPage from '@/common/components/AppOnboardingPage.vue'
 import { useFormStore } from '@/modules/form/store'
 import { useUserStore } from '@/modules/user/store'

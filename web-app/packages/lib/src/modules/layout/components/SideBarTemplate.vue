@@ -60,7 +60,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           </ul>
         </nav>
       </div>
-      <footer class="flex flex-column row-gap-3 p-3">
+      <footer class="flex flex-column row-gap-3 p-4">
         <slot name="footer">
           <!-- footer content -->
           <template v-if="userStore.isSuperUser">
@@ -69,7 +69,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               href="/admin"
               target="__blank"
               class="flex justify-content-between align-items-center title-t5 no-underline cursor-pointer"
-              >Admin Panel <i class="title-t1 ti ti-external-link"
+              >{{ Translation_AdminPanel }} <i class="title-t1 ti ti-external-link"
             /></a>
           </template>
         </slot>
@@ -79,6 +79,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_AdminPanel = returnTranslation(lang, 'lib_layout_NotFoundView_AdminPanel');
+
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -103,7 +108,7 @@ const initialSidebarItems = computed<SideBarItemModel[]>(() => {
         active: route.matched.some(
           (item) => item.name === DashboardRouteName.Dashboard
         ),
-        title: 'Dashboard',
+        title: returnTranslation(lang, 'lib_layout_SideBarTemplate_Dashboard'),
         to: '/dashboard',
         icon: 'ti ti-home'
       },
@@ -113,7 +118,7 @@ const initialSidebarItems = computed<SideBarItemModel[]>(() => {
             item.name === ProjectRouteName.Projects ||
             item.name === ProjectRouteName.Project
         ),
-        title: 'Projects',
+        title: returnTranslation(lang, 'lib_layout_SideBarTemplate_Projects'),
         to: '/projects',
         icon: 'ti ti-article'
       }

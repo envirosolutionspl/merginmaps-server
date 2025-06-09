@@ -15,9 +15,9 @@
       showPagination && options && versionsCount > options.itemsPerPage
     "
     data-cy="project-version-table"
-    :empty-message="'No versions found.'"
+    :empty-message="Translation_NoVersionsFound"
   >
-    <template #header-title>Versions</template>
+    <template #header-title>{{ Translation_Versions }}</template>
 
     <template #actions="{ item }">
       <PButton
@@ -72,6 +72,12 @@
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_NoVersionsFound = returnTranslation(lang, 'lib_project_ProjectVersionsTable_NoVersionsFound');
+const Translation_Versions = returnTranslation(lang, 'lib_project_ProjectVersionsTable_Versions');
+
 import { storeToRefs } from 'pinia'
 import { ref, computed, StyleValue, watch } from 'vue'
 
@@ -80,7 +86,11 @@ import {
   DataViewWrapperColumnItem,
   DataViewWrapperOptions
 } from '@/common/components/data-view/types'
-import { FetchProjectVersionsParams, ProjectVersionsTableItem } from '@/modules'
+import {
+  FetchProjectVersionsParams,
+  ProjectApi,
+  ProjectVersionsTableItem
+} from '@/modules'
 import { useProjectStore } from '@/modules/project/store'
 
 const props = withDefaults(
@@ -100,21 +110,22 @@ const emit = defineEmits<{
 }>()
 
 const projectStore = useProjectStore()
-const { versions, versionsLoading, versionsCount } = storeToRefs(projectStore)
+const { versions, versionsLoading, versionsCount, project } =
+  storeToRefs(projectStore)
 
 const columns = ref<DataViewWrapperColumnItem[]>([
   {
-    text: 'Version',
+    text: returnTranslation(lang, 'lib_project_ProjectVersionsTable_Version'),
     value: 'name',
     textClass: 'white-space-normal',
     cols: 1
   },
-  { text: 'Created', value: 'created' },
-  { text: 'Author', value: 'author' },
-  { text: 'Files added', value: 'changes.added' },
-  { text: 'Files edited', value: 'changes.updated' },
-  { text: 'Files removed', value: 'changes.removed' },
-  { text: 'Size', value: 'project_size', cols: 1 },
+  { text: returnTranslation(lang, 'lib_project_ProjectVersionsTable_Created'), value: 'created' },
+  { text: returnTranslation(lang, 'lib_project_ProjectVersionsTable_Author'), value: 'author' },
+  { text: returnTranslation(lang, 'lib_project_ProjectVersionsTable_FilesAdded'), value: 'changes.added' },
+  { text: returnTranslation(lang, 'lib_project_ProjectVersionsTable_FilesEdited'), value: 'changes.updated' },
+  { text: returnTranslation(lang, 'lib_project_ProjectVersionsTable_FilesRemoved'), value: 'changes.removed' },
+  { text: returnTranslation(lang, 'lib_project_ProjectVersionsTable_Size'), value: 'project_size', cols: 1 },
   { text: '', value: 'archived', fixed: true }
 ])
 
@@ -151,7 +162,11 @@ const updateOptions = (newOptions: DataViewWrapperOptions) => {
 
 const downloadClick = (item: ProjectVersionsTableItem) => {
   projectStore.downloadArchive({
-    url: `/v1/project/download/${props.namespace}/${props.projectName}?version=${item.name}&format=zip`
+    url: ProjectApi.constructDownloadProjectVersionUrl(
+      project.value.id,
+      item.name
+    ),
+    versionId: item.name
   })
 }
 

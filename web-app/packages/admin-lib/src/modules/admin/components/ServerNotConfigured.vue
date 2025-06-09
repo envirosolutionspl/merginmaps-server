@@ -7,25 +7,33 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <app-container v-if="displayBanner">
     <app-section-banner>
-      <template #title> Server is not properly configured</template>
+      <template #title>{{ Translation_ServerIsNotProperlyConfigured }}</template>
       <template #description
-        >Your server is not configured properly for use in the production
-        environment. Read more in the
-        <a :href="docsLinkDocumentation" target="_blank">documentation</a> how
-        to properly set up the deployment.</template
+        >{{ Translation_YourServerIsNotConfiguredProperlyForUse }}
+        <a :href="docsLinkDocumentation" target="_blank">{{ Translation_Documentation }}</a>
+        {{ Translation_HowToProperlySetUpTheDeployment }}.</template
       >
       <template #header-actions
         ><PButton
           @click="dismiss"
           severity="secondary"
           data-cy="dismiss-server-configured-btn"
-          label="Dismiss"
+          :label="Translation_Dismiss"
       /></template>
     </app-section-banner>
   </app-container>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_ServerIsNotProperlyConfigured = returnTranslation(lang, 'adminlib_admin_ServerNotConfigured_ServerIsNotProperlyConfigured');
+const Translation_YourServerIsNotConfiguredProperlyForUse = returnTranslation(lang, 'adminlib_admin_ServerNotConfigured_YourServerIsNotConfiguredProperlyForUse');
+const Translation_Documentation = returnTranslation(lang, 'adminlib_admin_ServerNotConfigured_Documentation');
+const Translation_HowToProperlySetUpTheDeployment = returnTranslation(lang, 'adminlib_admin_ServerNotConfigured_HowToProperlySetUpTheDeployment');
+const Translation_Dismiss = returnTranslation(lang, 'adminlib_admin_ServerNotConfigured_Dismiss');
+
 import { useInstanceStore, AppSectionBanner, AppContainer } from '@mergin/lib'
 import { computed } from 'vue'
 

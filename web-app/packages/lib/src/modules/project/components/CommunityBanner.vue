@@ -12,19 +12,26 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       </template>
       <template #header-actions
         ><PButton
-          label="Browse community projects"
+          :label="Translation_BrowseCommunityProjects"
           @click.stop="click"
           data-cy="community-project-btn"
       /></template>
-      <template #title>Community projects</template>
+      <template #title>{{ Translation_CommunityProjects }}</template>
       <template #description
-        >Explore various template projects within our community.</template
+        >{{ Translation_ExploreVariousTemplateProjectsWithinOurCommunity }}</template
       >
     </app-section-banner>
   </app-container>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_CommunityProjects = returnTranslation(lang, 'lib_project_CommunityBanner_CommunityProjects');
+const Translation_ExploreVariousTemplateProjectsWithinOurCommunity = returnTranslation(lang, 'lib_project_CommunityBanner_ExploreVariousTemplateProjectsWithinOurCommunity');
+const Translation_BrowseCommunityProjects = returnTranslation(lang, 'lib_project_CommunityBanner_BrowseCommunityProjects');
+
 import { useRouter } from 'vue-router'
 
 import { ProjectRouteName } from '../routes'

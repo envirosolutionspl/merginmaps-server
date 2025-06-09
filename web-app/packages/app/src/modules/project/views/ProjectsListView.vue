@@ -24,6 +24,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
 import {
   ProjectsListViewTemplate,
   ProjectsTableDataLoader,
@@ -54,7 +57,7 @@ export default defineComponent({
       formStore.handleError({
         componentId: data.componentId,
         error: err,
-        generalMessage: 'Failed to create project.'
+        generalMessage: returnTranslation(lang, 'app_project_ProjectsListView_FailedToCreateProject')
       })
     }
 

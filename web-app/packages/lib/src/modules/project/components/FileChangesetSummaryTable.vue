@@ -54,6 +54,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
 import { PropType, defineComponent } from 'vue'
 
 import { ChangesetSuccessSummaryItem } from '../types'
@@ -64,16 +66,16 @@ export default defineComponent({
     changesets: Array as PropType<ChangesetSuccessSummaryItem[]>
   },
   data() {
-    return {
+    return { // returnTranslation(lang, 'lib_project_FileDetailSidebar_NewFile')
       columns: [
-        { text: 'Layer', value: 'table' },
+        { text: returnTranslation(lang, 'lib_project_FileChangesetSummaryTable_Layer'), value: 'table' },
         {
-          text: 'Inserts',
+          text: returnTranslation(lang, 'lib_project_FileChangesetSummaryTable_Inserts'),
           icon: 'ti-plus',
           value: 'insert'
         },
-        { text: 'Updates', icon: 'ti-pencil', value: 'update' },
-        { text: 'Deletes', icon: 'ti-trash', value: 'delete' }
+        { text: returnTranslation(lang, 'lib_project_FileChangesetSummaryTable_Updates'), icon: 'ti-pencil', value: 'update' },
+        { text: returnTranslation(lang, 'lib_project_FileChangesetSummaryTable_Deletes'), icon: 'ti-trash', value: 'delete' }
       ],
       itemsPerPage: 10
     }

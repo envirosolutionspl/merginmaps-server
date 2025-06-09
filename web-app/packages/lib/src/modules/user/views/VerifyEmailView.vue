@@ -7,28 +7,38 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <app-onboarding-page>
     <template #header>
-      <h1 class="headline-h1">Email confirmation</h1>
+      <h1 class="headline-h1">{{ Translation_EmailConfirmation }}</h1>
     </template>
     <div class="flex flex-column gap-4 align-items-center">
       <template v-if="verified"
         ><img src="@/assets/neutral.svg" alt="MerginMaps neutral" /><span
           class="opacity-80 paragraph-p5"
-          >Your email address has been verified.</span
+          >{{ Translation_YourEmailAddressHasBeenVerified }}</span
         ></template
       >
       <template v-else
-        ><img src="@/assets/negative.svg" alt="MerginMaps negative" />Invalid
-        token</template
+        ><img src="@/assets/negative.svg" alt="MerginMaps negative" />{{ Translation_InvalidToken }}</template
       >
       <PButton
         data-cy="verify-email-btn"
         @click="$router.push({ name: 'home' })"
         class="w-full"
-        label="Continue"
+        :label="Translation_Continue"
       />
     </div>
   </app-onboarding-page>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_EmailConfirmation = returnTranslation(lang, 'lib_user_VerifyEmailView_EmailConfirmation');
+const Translation_YourEmailAddressHasBeenVerified = returnTranslation(lang, 'lib_user_VerifyEmailView_YourEmailAddressHasBeenVerified');
+const Translation_InvalidToken = returnTranslation(lang, 'lib_user_VerifyEmailView_InvalidToken');
+const Translation_Continue = returnTranslation(lang, 'lib_user_VerifyEmailView_Continue');
+
+</script>
 
 <script lang="ts">
 import { defineComponent } from 'vue'

@@ -11,8 +11,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     >
       <app-section
         ><template #title
-          >Requests
-          <span class="opacity-80"
+          >{{ Translation_Requests }}
+          <span class="text-color-medium-green"
             >({{ projectStore.accessRequestsCount }})</span
           ></template
         ><project-access-requests
@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <span class="p-input-icon-left flex-grow-1">
             <i class="ti ti-search paragraph-p3"></i>
             <PInputText
-              placeholder="Search members"
+              :placeholder="Translation_SearchMembers"
               data-cy="search-members-field"
               v-model="projectStore.accessSearch"
               class="w-full"
@@ -35,7 +35,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             v-if="allowShare"
             @click="$emit('share')"
             icon="ti ti-send"
-            label="Share"
+            :label="Translation_Share"
             data-cy="project-share-btn"
           />
           <AppMenu :items="filterMenuItems" />
@@ -51,6 +51,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Translation_Requests = returnTranslation(lang, 'lib_project_ProjectCollaboratorsViewTemplate_Requests');
+const Translation_SearchMembers = returnTranslation(lang, 'lib_project_ProjectCollaboratorsViewTemplate_SearchMembers');
+const Translation_Share = returnTranslation(lang, 'lib_project_ProjectCollaboratorsViewTemplate_Share');
+
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { computed, watchEffect } from 'vue'
 
@@ -78,13 +85,13 @@ const userStore = useUserStore()
 const filterMenuItems = computed<MenuItem[]>(() =>
   [
     {
-      label: 'Sort by name A-Z',
+      label: returnTranslation(lang, 'lib_project_ProjectCollaboratorsViewTemplate_SortByNameAZ'),
       key: 'username',
       value: 'username',
       sortDesc: false
     },
     {
-      label: 'Sort by name Z-A',
+      label: returnTranslation(lang, 'lib_project_ProjectCollaboratorsViewTemplate_SortByNameZA'),
       key: 'name-desc',
       value: 'username',
       sortDesc: true
