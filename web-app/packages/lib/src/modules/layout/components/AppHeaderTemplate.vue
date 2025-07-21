@@ -110,9 +110,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
 import { mapActions, mapState } from 'pinia'
 import { MenuItem } from 'primevue/menuitem'
 import { defineComponent, ref, PropType } from 'vue'
@@ -166,7 +163,7 @@ export default defineComponent({
         ...(this.$router.hasRoute(UserRouteName.UserProfile)
           ? [
               {
-                label: returnTranslation(lang, 'lib_layout_SideBarTemplate_YourProfile'),
+                label: 'Your profile',
                 icon: 'ti ti-user-circle',
                 command: () => {
                   this.$router.push({
@@ -177,7 +174,7 @@ export default defineComponent({
             ]
           : []),
         {
-          label: returnTranslation(lang, 'lib_layout_SideBarTemplate_SignOut'),
+          label: 'Sign out',
           icon: 'ti ti-logout',
           command: () => {
             this.logout()
@@ -188,12 +185,12 @@ export default defineComponent({
     _helpMenuItems() {
       return [
         {
-          label: returnTranslation(lang, 'lib_layout_SideBarTemplate_Documentation'),
+          label: 'Documentation',
           url: this.configData?.docs_url,
           target: '_blank',
         },
         {
-          label: returnTranslation(lang, 'lib_layout_SideBarTemplate_CommunityChat'),
+          label: 'Community chat',
           url: import.meta.env.VITE_VUE_APP_JOIN_COMMUNITY_LINK,
           target: '_blank'
         },

@@ -13,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   >
     <template #header>
       <p class="font-semibold">
-        {{ Translation_DataSync }}
+        Data Sync
         <span v-if="upload.diff" class="text-color-secondary"
           >({{ $filters.filesize(uploadSize) }})</span
         >
@@ -36,24 +36,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="confirmUpload"
         :disabled="upload.running || remainingAnalyzingFiles > 0"
         class="mt-2 w-full my-4"
-        :label="Translation_UpdateChanges"
+        label="Update Changes"
       />
     </div>
   </PDialog>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_DataSync = returnTranslation(lang, 'lib_project_UploadDialog_DataSync');
-const Translation_UpdateChanges = returnTranslation(lang, 'lib_project_UploadDialog_UpdateChanges');
-
-</script>
-
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
 import axios from 'axios'
 import pick from 'lodash/pick'
 import { mapActions, mapState } from 'pinia'
@@ -141,7 +130,7 @@ export default defineComponent({
     resetUpload() {
       this.discardUpload({ projectPath: this.project.path })
       if (this.source) {
-        this.source.cancel(returnTranslation(lang, 'lib_project_UploadDialog_OperationCanceledByTheUser'))
+        this.source.cancel('Operation canceled by the user.')
         delete this.source
       }
     },
@@ -169,7 +158,7 @@ export default defineComponent({
       if (!transaction) {
         this.discardUpload({ projectPath })
         await this.show({
-          text: returnTranslation(lang, 'lib_project_UploadDialog_ProjectUpdated')
+          text: 'Project updated'
         })
         this.setProject({ project: resp.data })
         return
@@ -214,10 +203,11 @@ export default defineComponent({
     },
     confirmUpload() {
       const props: ConfirmDialogProps = {
-        text: returnTranslation(lang, 'lib_project_UploadDialog_AreYouReallySureYouWantToContinue'),
-        description: returnTranslation(lang, 'lib_project_UploadDialog_ChangesFromOtherUsersMayGetLost'),
-        confirmText: returnTranslation(lang, 'lib_project_UploadDialog_Update'),
-        cancelText: returnTranslation(lang, 'lib_project_UploadDialog_Cancel')
+        text: `Are you really sure you want to continue?`,
+        description:
+          'Changes from other users may get lost when uploading data from browser. It is highly recommended to use Mergin Maps QGIS plugin instead.',
+        confirmText: 'Update',
+        cancelText: 'Cancel'
       }
       const listeners = {
         confirm: () => this.uploadChanges()
@@ -228,7 +218,7 @@ export default defineComponent({
           params: {
             props,
             listeners,
-            dialog: { maxWidth: 500, header: returnTranslation(lang, 'lib_project_UploadDialog_ConfirmContinueUpload') }
+            dialog: { maxWidth: 500, header: 'Confirm continue upload' }
           }
         })
       } else {

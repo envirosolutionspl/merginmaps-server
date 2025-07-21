@@ -272,15 +272,19 @@ export const ProjectApi = {
     )
   },
 
-  constructDownloadProjectUrl(projectId: string) {
+  constructDownloadProjectUrl(namespace: string, projectName: string) {
     return ProjectModule.httpService.absUrl(
-      `/app/projects/${projectId}/download`
+      `/v1/project/download/${namespace}/${projectName}?format=zip`
     )
   },
 
-  constructDownloadProjectVersionUrl(projectId: string, versionId: string) {
+  constructDownloadProjectVersionUrl(
+    namespace: string,
+    projectName: string,
+    versionId: string
+  ) {
     return ProjectModule.httpService.absUrl(
-      `/app/projects/${projectId}/download?version=${versionId}`
+      `/v1/project/download/${namespace}/${projectName}?version=${versionId}&format=zip`
     )
   },
 
@@ -309,11 +313,6 @@ export const ProjectApi = {
 
   async downloadFile(url: string): Promise<AxiosResponse<Blob>> {
     return ProjectModule.httpService.get(url, { responseType: 'blob' })
-  },
-
-  /** Request head of file download */
-  async getHeadDownloadFile(url: string): Promise<AxiosResponse<void>> {
-    return ProjectModule.httpService.head(url)
   },
 
   // Kept for EE (collaborators + invitation) access, TODO: remove when a separate invitation endpoint is implemented

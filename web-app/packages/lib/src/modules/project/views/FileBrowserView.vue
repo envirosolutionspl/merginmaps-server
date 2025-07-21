@@ -6,45 +6,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
 <template>
   <div>
-    <app-container
-      v-if="project && $route.name === 'project-tree' && isProjectWriter"
-    >
-      <app-panel-toggleable :collapsed="dataTableOpen">
-        <template #title>{{ Translation_UploadFiles }}</template>
-        <div class="flex flex-column lg:flex-row">
-          <div
-            class="flex flex-column text-center align-items-center w-12 lg:w-6 mb-4 lg:mb-0 lg:mr-4 border-round-xl surface-ground p-4 row-gap-3"
-          >
-            <div class="w-full flex justify-content-end mb-0">
-              <PTag>{{ Translation_Recommended }}</PTag>
-            </div>
-
-            <div
-              class="flex align-items-center justify-content-center text-2xl surface-section border-circle p-4 text-color-forest w-5rem h-5rem"
-            >
-              <img src="@/assets/Icon/24/QGIS.svg" width="24" height="24" />
-            </div>
-
-            <h4 class="title-t1 text-color-forest">
-              {{ Translation_MerginMapsPluginForQGIS }}
-            </h4>
-            <p class="paragraph-p6 opacity-80 m-0">
-              {{ Translation_ThisIsTheEasiestAndRecommendedWay }}
-              <a
-                target="_blank"
-                class="text-color-forest font-semibold no-underline"
-                :href="docsLinkManageCreateProject"
-                >{{ Translation_LearnHowToUseIt }}</a
-              >
-            </p>
-          </div>
-          <div class="w-12 lg:w-6 border-round-xl surface-ground">
-            <drop-area :location="location" data-cy="project-drop-area">
-            </drop-area>
-          </div>
-        </div>
-      </app-panel-toggleable>
-    </app-container>
     <!-- Searching -->
     <app-container
       v-if="searchFilter !== '' || Object.keys(project?.files ?? {}).length > 0"
@@ -63,6 +24,46 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <AppMenu :items="filterMenuItems" />
         </div>
       </app-section>
+    </app-container>
+
+    <app-container
+      v-if="project && $route.name === 'project-tree' && isProjectWriter"
+    >
+      <app-panel-toggleable :collapsed="dataTableOpen">
+        <template #title>Upload files</template>
+        <div class="flex flex-column lg:flex-row">
+          <div
+            class="flex flex-column text-center align-items-center w-12 lg:w-6 mb-4 lg:mb-0 lg:mr-4 border-round-xl surface-ground p-4 row-gap-3"
+          >
+            <div class="w-full flex justify-content-end mb-0">
+              <PTag>Recommended</PTag>
+            </div>
+
+            <div
+              class="flex align-items-center justify-content-center text-2xl surface-section border-circle p-4 text-color-forest w-5rem h-5rem"
+            >
+              <img src="@/assets/Icon/24/QGIS.svg" width="24" height="24" />
+            </div>
+
+            <h4 class="title-t1 text-color-forest">
+              Mergin Maps plugin for QGIS
+            </h4>
+            <p class="paragraph-p6 opacity-80 m-0">
+              This is the easiest and recommended way.
+              <a
+                target="_blank"
+                class="text-color-forest font-semibold no-underline"
+                :href="docsLinkManageCreateProject"
+                >Learn how to use it.</a
+              >
+            </p>
+          </div>
+          <div class="w-12 lg:w-6 border-round-xl surface-ground">
+            <drop-area :location="location" data-cy="project-drop-area">
+            </drop-area>
+          </div>
+        </div>
+      </app-panel-toggleable>
     </app-container>
 
     <app-container v-if="dataTableOpen && projectName">
@@ -84,21 +85,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </div>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_UploadFiles = returnTranslation(lang, 'lib_project_FileBrowserView_UploadFiles');
-const Translation_Recommended = returnTranslation(lang, 'lib_project_FileBrowserView_Recommended');
-const Translation_MerginMapsPluginForQGIS = returnTranslation(lang, 'lib_project_FileBrowserView_MerginMapsPluginForQGIS');
-const Translation_ThisIsTheEasiestAndRecommendedWay = returnTranslation(lang, 'lib_project_FileBrowserView_ThisIsTheEasiestAndRecommendedWay');
-const Translation_LearnHowToUseIt = returnTranslation(lang, 'lib_project_FileBrowserView_LearnHowToUseIt');
-
-</script>
-
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
 import { mapState } from 'pinia'
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { defineComponent } from 'vue'
@@ -161,22 +148,22 @@ export default defineComponent({
     filterMenuItems(): MenuItem[] {
       return [
         {
-          label: returnTranslation(lang, 'lib_project_FileBrowserView_SortByNameAZ'),
+          label: 'Sort by name A-Z',
           key: 'name',
           sortDesc: 1
         },
         {
-          label: returnTranslation(lang, 'lib_project_FileBrowserView_SortByNameZA'),
+          label: 'Sort by name Z-A',
           key: 'name',
           sortDesc: -1
         },
         {
-          label: returnTranslation(lang, 'lib_project_FileBrowserView_SortByLastModified'),
+          label: 'Sort by last modified',
           key: 'mtime',
           sortDesc: -1
         },
         {
-          label: returnTranslation(lang, 'lib_project_FileBrowserView_SortByFileSize'),
+          label: 'Sort by file size',
           key: 'size',
           sortDesc: -1
         }

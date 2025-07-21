@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   <!-- Projects -->
   <app-container>
     <app-section>
-      <template #title>{{ Translation_RecentActiveProjects }}</template>
+      <template #title>Recent active projects</template>
       <slot>
         <projects-table-data-loader
           :show-namespace="false"
@@ -23,11 +23,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_RecentActiveProjects = returnTranslation(lang, 'lib_dialog_DashboardProjectsRow_RecentActiveProjects');
-
 import { reactive } from 'vue'
 
 import { AppContainer, AppSection } from '@/common'

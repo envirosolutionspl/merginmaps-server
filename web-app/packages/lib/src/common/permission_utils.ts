@@ -28,18 +28,20 @@ export enum GlobalRole {
   global_admin
 }
 
-export enum ProjectPermission {
-  read,
-  edit,
-  write,
-  owner
-}
+export type WorkspaceRoleName =
+  | 'guest'
+  | 'reader'
+  | 'editor'
+  | 'writer'
+  | 'admin'
+  | 'owner'
 
-export type WorkspaceRoleName = keyof typeof WorkspaceRole
+export type ProjectRoleName = Extract<
+  WorkspaceRoleName,
+  'reader' | 'editor' | 'writer' | 'owner'
+>
 
-export type ProjectRoleName = keyof typeof ProjectRole
-
-export type ProjectPermissionName = keyof typeof ProjectPermission
+export type ProjectPermissionName = 'owner' | 'write' | 'edit' | 'read'
 
 export const USER_ROLE_NAME_BY_ROLE: Record<WorkspaceRole, WorkspaceRoleName> =
   {
@@ -51,6 +53,15 @@ export const USER_ROLE_NAME_BY_ROLE: Record<WorkspaceRole, WorkspaceRoleName> =
     [WorkspaceRole.owner]: 'owner'
   }
 
+export const USER_ROLE_BY_NAME: Record<WorkspaceRoleName, WorkspaceRole> = {
+  guest: WorkspaceRole.guest,
+  reader: WorkspaceRole.reader,
+  editor: WorkspaceRole.editor,
+  writer: WorkspaceRole.writer,
+  admin: WorkspaceRole.admin,
+  owner: WorkspaceRole.owner
+}
+
 export const PROJECT_ROLE_NAME_BY_ROLE: Record<ProjectRole, ProjectRoleName> = {
   [ProjectRole.reader]: 'reader',
   [ProjectRole.editor]: 'editor',
@@ -58,26 +69,59 @@ export const PROJECT_ROLE_NAME_BY_ROLE: Record<ProjectRole, ProjectRoleName> = {
   [ProjectRole.owner]: 'owner'
 }
 
+export const PROJECT_ROLE_BY_NAME: Record<ProjectRoleName, ProjectRole> = {
+  reader: ProjectRole.reader,
+  editor: ProjectRole.editor,
+  writer: ProjectRole.writer,
+  owner: ProjectRole.owner
+}
+
+export enum ProjectPermission {
+  read,
+  edit,
+  write,
+  owner
+}
+
+export const PROJECT_PERMISSION_NAME_BY_PERMISSION: Record<
+  ProjectPermission,
+  ProjectPermissionName
+> = {
+  [ProjectPermission.read]: 'read',
+  [ProjectPermission.edit]: 'edit',
+  [ProjectPermission.write]: 'write',
+  [ProjectPermission.owner]: 'owner'
+}
+
+export const PROJECT_PERMISSION_BY_NAME: Record<
+  ProjectPermissionName,
+  ProjectPermission
+> = {
+  read: ProjectPermission.read,
+  edit: ProjectPermission.edit,
+  write: ProjectPermission.write,
+  owner: ProjectPermission.owner
+}
 
 export function isAtLeastRole(
   roleName: WorkspaceRoleName,
   role: WorkspaceRole
 ): boolean {
-  return WorkspaceRole[roleName] >= role
+  return USER_ROLE_BY_NAME[roleName] >= role
 }
 
 export function isAtLeastProjectRole(
   roleName: ProjectRoleName,
   role: ProjectRole
 ): boolean {
-  return ProjectRole[roleName] >= role
+  return PROJECT_ROLE_BY_NAME[roleName] >= role
 }
 
 export function isAtLeastProjectPermission(
   permissionName: ProjectPermissionName,
   permission: ProjectPermission
 ): boolean {
-  return ProjectPermission[permissionName] >= permission
+  return PROJECT_PERMISSION_BY_NAME[permissionName] >= permission
 }
 
 export function isAtLeastGlobalRole(
@@ -89,7 +133,7 @@ export function isAtLeastGlobalRole(
     [GlobalRole.global_write]: ProjectRole.writer,
     [GlobalRole.global_admin]: ProjectRole.owner
   }
-  return ProjectRole[roleName] >= globalProjectRole[globalRole]
+  return PROJECT_ROLE_BY_NAME[roleName] >= globalProjectRole[globalRole]
 }
 
 export function getProjectRoleNameValues(): DropdownOption<ProjectRoleName>[] {

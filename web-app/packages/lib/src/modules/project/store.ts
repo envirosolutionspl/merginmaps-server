@@ -57,8 +57,6 @@ export interface UploadFilesPayload {
   files: File[]
 }
 
-let downloadArchiveTimeout = null
-
 export interface ProjectState {
   accessRequests: AccessRequest[]
   accessRequestsCount: number
@@ -79,8 +77,6 @@ export interface ProjectState {
   availableRoles: DropdownOption<ProjectRoleName>[]
   versionsChangesetLoading: boolean
   collaborators: ProjectCollaborator[]
-  projectDownloading: boolean
-  projectDownloadingVersion: string
 }
 
 export const useProjectStore = defineStore('projectModule', {
@@ -106,9 +102,7 @@ export const useProjectStore = defineStore('projectModule', {
     availablePermissions: permissionUtils.getProjectPermissionsValues(),
     availableRoles: permissionUtils.getProjectRoleNameValues(),
     versionsChangesetLoading: false,
-    collaborators: [],
-    projectDownloading: false,
-    projectDownloadingVersion: null
+    collaborators: []
   }),
 
   getters: {
@@ -708,72 +702,33 @@ export const useProjectStore = defineStore('projectModule', {
 
     async downloadArchive(payload: DownloadPayload) {
       const notificationStore = useNotificationStore()
-      await this.cancelDownloadArchive()
-      this.projectDownloadingVersion = payload.versionId
-      this.projectDownloading = true
 
-      const errorMessage =
-        'Failed to download project archive. Please try again later.'
-      const exceedMessage =
-        'It seems like preparing your ZIP file is taking longer than expected. Please try again in a little while to download your file.'
-
-      const delays = [...Array(3).fill(1000), ...Array(3).fill(3000), 5000]
-      let retryCount = 0
-      const pollDownloadArchive = async () => {
-        try {
-          if (retryCount > 125) {
-            notificationStore.warn({
-              text: exceedMessage,
-              life: 6000
-            })
-            await this.cancelDownloadArchive()
-            return
-          }
-
-          const head = await ProjectApi.getHeadDownloadFile(payload.url)
-          const polling = head.status == 202
-          if (polling) {
-            const delay = delays[Math.min(retryCount, delays.length - 1)] // Select delay based on retry count
-            retryCount++ // Increment retry count
-            downloadArchiveTimeout = setTimeout(async () => {
-              await pollDownloadArchive()
-            }, delay)
-            return
-          }
-
-          // Use browser download instead of playing around with the blob
-          FileSaver.saveAs(payload.url)
-          notificationStore.closeNotification()
-          this.cancelDownloadArchive()
-        } catch (e) {
-          if (axios.isAxiosError(e) && e.response?.status === 400) {
-            notificationStore.error({
-              group: 'download-large-error',
-              text: '',
-              life: 6000
-            })
-          } else {
-            notificationStore.error({
-              text: errorMessage
-            })
-          }
-          this.cancelDownloadArchive()
+      try {
+        const resp = await ProjectApi.downloadFile(payload.url)
+        const fileName =
+          resp.headers['content-disposition'].split('filename=')[1]
+        FileSaver.saveAs(resp.data, fileName)
+      } catch (e) {
+        // parse error details from blob
+        if (axios.isAxiosError(e)) {
+          let resp
+          const blob = new Blob([e.response.data], { type: 'text/plain' })
+          blob.text().then((text) => {
+            resp = JSON.parse(text)
+            notificationStore.error({ text: resp.detail })
+          })
         }
       }
-      pollDownloadArchive()
     },
 
-    async cancelDownloadArchive() {
-      if (downloadArchiveTimeout) {
-        clearTimeout(downloadArchiveTimeout)
-        downloadArchiveTimeout = null
-      }
-      this.projectDownloading = false
-      this.projectDownloadingVersion = null
-    },
-
-    constructDownloadProjectUrl(payload: { projectId: string }) {
-      return ProjectApi.constructDownloadProjectUrl(payload.projectId)
+    constructDownloadProjectUrl(payload: {
+      namespace: string
+      projectName: string
+    }) {
+      return ProjectApi.constructDownloadProjectUrl(
+        payload.namespace,
+        payload.projectName
+      )
     },
 
     setProjectsSorting(payload: SortingParams) {

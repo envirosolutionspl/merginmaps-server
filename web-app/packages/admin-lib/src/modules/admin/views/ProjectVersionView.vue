@@ -3,13 +3,13 @@
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">{{ Translation_ProjectVersion }}</h1>
+          <h1 class="headline-h3">Project version</h1>
         </template>
         <template #headerActions>
           <PButton
             severity="secondary"
             @click="download"
-            :label="Translation_Download"
+            label="Download"
             icon="ti ti-download"
           />
         </template>
@@ -34,25 +34,25 @@
           </h2>
           <dl class="paragraph-p5 flex flex-column gap-3">
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Translation_Author }}</dt>
+              <dt class="paragraph-p6 opacity-80">Author</dt>
               <dd class="font-semibold">
                 {{ data?.author }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Translation_ProjectSize }}</dt>
+              <dt class="paragraph-p6 opacity-80">Project size</dt>
               <dd class="font-semibold">
                 {{ $filters.filesize(data?.project_size) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Translation_Created }}</dt>
+              <dt class="paragraph-p6 opacity-80">Created</dt>
               <dd class="font-semibold">
                 {{ $filters.datetime(data?.created) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Translation_UserAgent }}</dt>
+              <dt class="paragraph-p6 opacity-80">User agent</dt>
               <dd class="font-semibold">
                 {{ data?.user_agent }}
               </dd>
@@ -66,17 +66,6 @@
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_ProjectVersion = returnTranslation(lang, 'adminlib_admin_ProjectVersionView_ProjectVersion');
-const Translation_Download = returnTranslation(lang, 'adminlib_admin_ProjectVersionView_Download');
-const Translation_Author = returnTranslation(lang, 'adminlib_admin_ProjectVersionView_Author');
-const Translation_ProjectSize = returnTranslation(lang, 'adminlib_admin_ProjectVersionView_ProjectSize');
-const Translation_Created = returnTranslation(lang, 'adminlib_admin_ProjectVersionView_Created');
-const Translation_UserAgent = returnTranslation(lang, 'adminlib_admin_ProjectVersionView_UserAgent');
-
-
 import {
   AppContainer,
   AppSection,
@@ -127,7 +116,7 @@ async function fetchVersion() {
   } catch (err) {
     console.error(err)
     notificationStore.error({
-      text: errorUtils.getErrorMessage(err, returnTranslation(lang, 'adminlib_admin_ProjectVersionView_FailedToFetchProjectVersion'))
+      text: errorUtils.getErrorMessage(err, 'Failed to fetch project version')
     })
   }
 }
@@ -145,9 +134,10 @@ watch(
 
 function download() {
   const url = ProjectApi.constructDownloadProjectVersionUrl(
-    project.value?.id,
+    project.value?.namespace,
+    project.value?.name,
     versionId.value
   )
-  projectStore.downloadArchive({ url, versionId: versionId.value })
+  window.location.href = url
 }
 </script>

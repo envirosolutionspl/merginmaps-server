@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <div class="flex flex-column pb-4">
     <span class="p-input-filled">
-      <label for="oldPassowrd">{{ Translation_OldPassword }}</label>
+      <label for="oldPassowrd">Old password</label>
       <PPassword
         id="oldPassowrd"
         v-model="oldPassword"
@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         toggleMask
         :feedback="false"
         aria-describedby="old-password-error"
-        :placeholder="Translation_MustBeAtLeastCharacters"
+        placeholder="Must be at least 8 characters"
       />
       <span class="p-error paragraph-p6" id="old-password-error">{{
         errors.old_password?.[0] || '&nbsp;'
@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <span class="p-input-filled">
       <app-password-tooltip for="newPassword"
-        ><template #label>{{ Translation_NewPassword }}</template>
+        ><template #label>New password</template>
       </app-password-tooltip>
 
       <PPassword
@@ -36,12 +36,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         aria-describedby="password-error"
         toggleMask
         :feedback="false"
-        :placeholder="Translation_MustBeAtLeastCharacters"
+        placeholder="Must be at least 8 characters"
       />
       <span class="p-error paragraph-p6" id="password-error">{{
         errors.password?.[0]
           ? errors.password?.[0].startsWith('Password')
-            ? Translation_PasswordMustBeAtLeast
+            ? 'Password must be at least 8 characters long and include at least three of the following: lowercase letters, uppercase letters, numbers or special characters.'
             : errors.password[0]
           : '&nbsp;'
       }}</span>
@@ -49,7 +49,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <span class="p-input-filled">
       <app-password-tooltip for="confirm">
-        <template #label>{{ Translation_ConfirmPassword }}</template>
+        <template #label>Confirm password</template>
       </app-password-tooltip>
 
       <PPassword
@@ -60,7 +60,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         aria-describedby="confirm-password-error"
         toggleMask
         :feedback="false"
-        :placeholder="Translation_MustBeAtLeastCharacters"
+        placeholder="Must be at least 8 characters"
       />
 
       <span class="p-error paragraph-p6" id="confirm-password-error">{{
@@ -77,7 +77,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
         data-cy="user-change-password-close-btn"
-        >{{ Translation_Cancel }}</PButton
+        >Cancel</PButton
       >
 
       <PButton
@@ -86,25 +86,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="flex w-12 lg:w-6 justify-content-center"
         data-cy="user-change-password-change-btn"
       >
-        {{ Translation_SaveChanges }}
+        Save changes
       </PButton>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_OldPassword = returnTranslation(lang, 'lib_user_ChangePasswordForm_OldPassword');
-const Translation_MustBeAtLeastCharacters = returnTranslation(lang, 'lib_user_ChangePasswordForm_MustBeAtLeastCharacters');
-const Translation_NewPassword = returnTranslation(lang, 'lib_user_ChangePasswordForm_NewPassword');
-const Translation_ConfirmPassword = returnTranslation(lang, 'lib_user_ChangePasswordForm_ConfirmPassword');
-const Translation_Cancel = returnTranslation(lang, 'lib_user_ChangePasswordForm_Cancel');
-const Translation_SaveChanges = returnTranslation(lang, 'lib_user_ChangePasswordForm_SaveChanges');
-
-
-</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

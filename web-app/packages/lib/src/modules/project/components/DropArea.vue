@@ -40,24 +40,15 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <i class="ti ti-download" />
         </div>
         <h4 class="title-t1 font-semibold text-color-forest">
-          {{ Translation_DragAndDropFiles }}
+          Drag and drop files
         </h4>
         <p class="paragraph-p6 opacity-80 m-0">
-          {{ Translation_YouCanDropFilesFromYourComputerToStartUploading }}
+          You can drop files from your computer to start uploading
         </p>
       </div>
     </slot>
   </div>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_DragAndDropFiles = returnTranslation(lang, 'lib_project_DropArea_DragAndDropFiles');
-const Translation_YouCanDropFilesFromYourComputerToStartUploading = returnTranslation(lang, 'lib_project_DropArea_YouCanDropFilesFromYourComputerToStartUploading');
-
-</script>
 
 <script lang="ts">
 import debounce from 'lodash/debounce'
@@ -119,7 +110,7 @@ export default defineComponent({
       }
       if (this.upload && this.upload.running) {
         return this.error({
-          text: returnTranslation(lang, 'lib_project_DropArea_YouCannotUpdateFilesDuringUpload')
+          text: 'You cannot update files during upload'
         })
       }
       // prepare all entries because they will be not accessible after this callback ends (after 'await')
@@ -128,7 +119,7 @@ export default defineComponent({
       ).map((i) => i.webkitGetAsEntry())
       if (entries.some((e) => e === null)) {
         return this.error({
-          text: returnTranslation(lang, 'lib_project_DropArea_DropOnlyFilesOrFolders')
+          text: 'Drop only files or folders'
         })
       }
       this.createUpload(entries)

@@ -23,5 +23,3 @@ gen
 web-app/.node-version
 .prod.env
 .prod.env
-
-.history

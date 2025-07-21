@@ -18,7 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     @page="onPage"
   >
     <template #header>
-      <h3 class="font-semibold paragraph-p6 text-color">{{ Translation_AccessRequests }}</h3>
+      <h3 class="font-semibold paragraph-p6 text-color">Access requests</h3>
     </template>
     <template #list="slotProps">
       <template v-for="item in slotProps.items" :key="item.id">
@@ -30,14 +30,15 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             v-if="loggedUser.username === item.requested_by"
             class="w-12 lg:w-6 paragraph-p6"
           >
-            {{ Translation_YouRequestedAnAccessToProject }}
-            <span class="font-semibold">{{ item.project_name }}</span> {{ Translation_InWorkspace }} <span class="font-semibold">{{ item.namespace }}</span
+            You requested an access to project
+            <span class="font-semibold">{{ item.project_name }}</span> in
+            workspace <span class="font-semibold">{{ item.namespace }}</span
             >.
           </p>
           <p v-else class="w-12 lg:w-6 paragraph-p6">
-            {{ Translation_User }}
+            User
             <span class="font-semibold">{{ item.requested_by }}</span>
-            {{ Translation_RequestedAnAccessToYourProject }}
+            requested an access to your project
             <span class="font-semibold">{{ item.project_name }}.</span>
           </p>
           <div
@@ -47,10 +48,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               <span v-tooltip.right="{ value: $filters.datetime(item.expire) }">
                 <template
                   v-if="$filters.remainingtime(item.expire) === 'expired'"
-                  >{{ Translation_Expired }}</template
+                  >Expired</template
                 >
                 <template v-else
-                  >{{ lib_project_AccessRequestTableTemplate_ExpiringIn }}
+                  >Expiring in
                   {{ $filters.remainingtime(item.expire) }}</template
                 >
               </span>
@@ -87,22 +88,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       </template>
     </template>
     <template #empty>
-      <p>{{ Translation_NoAccessRequestsFound }}</p>
+      <p>No access requests found</p>
     </template>
   </PDataView>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_AccessRequests = returnTranslation(lang, 'lib_project_AccessRequestTableTemplate_AccessRequests');
-const Translation_YouRequestedAnAccessToProject = returnTranslation(lang, 'lib_project_AccessRequestTableTemplate_YouRequestedAnAccessToProject');
-const Translation_InWorkspace = returnTranslation(lang, 'lib_project_AccessRequestTableTemplate_InWorkspace');
-const Translation_RequestedAnAccessToYourProject = returnTranslation(lang, 'lib_project_AccessRequestTableTemplate_RequestedAnAccessToYourProject');
-const Translation_Expired = returnTranslation(lang, 'lib_project_AccessRequestTableTemplate_Expired');
-const Translation_NoAccessRequestsFound = returnTranslation(lang, 'lib_project_AccessRequestTableTemplate_NoAccessRequestsFound');
-</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

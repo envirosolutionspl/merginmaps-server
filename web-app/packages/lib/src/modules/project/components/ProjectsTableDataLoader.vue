@@ -19,15 +19,16 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <img src="@/assets/map-circle.svg" alt="No projects" />
           <p class="title-t2 m-0 p-4">
             <template v-if="projectsSearch"
-              >{{ Translation_WeCouldntFindAnyProjects }}</template
+              >We couldn't find any projects matching your search
+              criteria.</template
             >
-            <template v-else>{{ Translation_YouDontHaveAnyProjectsYet }}</template>
+            <template v-else>You don't have any projects yet.</template>
           </p>
           <template v-if="canCreateProject">
             <p class="paragraph-p6 opacity-80 pb-4">
-              {{ Translation_LetsStartByCreatingAFirstOne }}
+              Let’s start by creating a first one!
             </p>
-            <PButton @click="newProjectDialog">{{ Translation_CreateNewProject }}</PButton>
+            <PButton @click="newProjectDialog">Create new project</PButton>
           </template>
         </div>
       </template>
@@ -35,22 +36,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </div>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_WeCouldntFindAnyProjects = returnTranslation(lang, 'lib_project_ProjectsTableDataLoader_WeCouldntFindAnyProjects');
-const Translation_YouDontHaveAnyProjectsYet = returnTranslation(lang, 'lib_project_ProjectsTableDataLoader_YouDontHaveAnyProjectsYet');
-const Translation_LetsStartByCreatingAFirstOne = returnTranslation(lang, 'lib_project_ProjectsTableDataLoader_LetsStartByCreatingAFirstOne');
-const Translation_CreateNewProject = returnTranslation(lang, 'lib_project_ProjectsTableDataLoader_CreateNewProject');
-
-</script>
-
-
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
 import { mapState, mapActions } from 'pinia'
 import { defineComponent, PropType } from 'vue'
 
@@ -161,11 +147,11 @@ export default defineComponent({
         if (onFinish) {
           onFinish()
         }
-        await this.error({ text: returnTranslation(lang, 'lib_project_ProjectsTableDataLoader_FailedToFetchListOfProjects') })
+        await this.error({ text: 'Failed to fetch list of projects' })
       }
     },
     newProjectDialog() {
-      const dialog = { persistent: true, header: returnTranslation(lang, 'lib_project_ProjectsTableDataLoader_NewProject') }
+      const dialog = { persistent: true, header: 'New project' }
       this.show({
         component: ProjectForm,
         params: {

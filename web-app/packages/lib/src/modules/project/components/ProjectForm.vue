@@ -18,7 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           data-cy="project-form-name"
           class="flex-grow-1"
         />
-        <label for="name">{{ Translation_ProjectName }}</label>
+        <label for="name">Project name</label>
         <small class="p-error" id="text-error">{{
           errors.detail || '&nbsp;'
         }}</small>
@@ -27,7 +27,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <tip-message class="mb-6">
       ><template #description
-        >{{ Translation_AGoodCandidateForAProjectName }}</template
+        >A good candidate for a project name is name of the location or purpose
+        of the field survey.</template
       ></tip-message
     >
 
@@ -38,7 +39,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         severity="secondary"
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
-        >{{ Translation_Cancel }}</PButton
+        >Cancel</PButton
       >
 
       <PButton
@@ -48,21 +49,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         data-cy="project-form-create-btn"
         class="flex w-12 lg:w-6 justify-content-center"
       >
-        {{ Translation_CreateProject }}
+        Create project
       </PButton>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_ProjectName = returnTranslation(lang, 'lib_project_ProjectForm_ProjectName');
-const Translation_AGoodCandidateForAProjectName = returnTranslation(lang, 'lib_project_ProjectForm_AGoodCandidateForAProjectName');
-const Translation_Cancel = returnTranslation(lang, 'lib_project_ProjectForm_Cancel');
-const Translation_CreateProject = returnTranslation(lang, 'lib_project_ProjectForm_CreateProject');
-</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

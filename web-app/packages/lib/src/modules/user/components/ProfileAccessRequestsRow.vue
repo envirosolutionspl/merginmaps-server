@@ -6,19 +6,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
 <template>
   <app-section v-if="accessRequests && accessRequestsCount > 0">
-    <template #title>{{ Translation_SaveChanges }}</template>
+    <template #title>You requested access to these projects</template>
     <access-request-table />
   </app-section>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_SaveChanges = returnTranslation(lang, 'lib_user_ProfileAccessRequestsRow_SaveChanges');
-
-
-</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

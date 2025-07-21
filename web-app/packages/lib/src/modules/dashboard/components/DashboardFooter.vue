@@ -30,10 +30,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
         <div class="col-12 xl:col-5 mb-2 xl:mb-0 text-center xl:text-left">
           <h2 class="text-color paragraph-p5">
-            {{ Translation_DownloadMerginMapsToYourPhone }}
+            Download Mergin Maps to your phone
           </h2>
           <p class="opacity-60 paragraph-p6">
-            {{ Translation_CaptureGeoInfoEasilyThroughYourMobileTabletWithOurMobile }}
+            Capture geo-info easily through your mobile/tablet with our mobile
+            app.
           </p>
         </div>
 
@@ -68,14 +69,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </footer>
 </template>
 
-
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_DownloadMerginMapsToYourPhone = returnTranslation(lang, 'lib_dialog_DashboardFooter_DownloadMerginMapsToYourPhone');
-const Translation_CaptureGeoInfoEasilyThroughYourMobileTabletWithOurMobile = returnTranslation(lang, 'lib_dialog_DashboardFooter_CaptureGeoInfoEasilyThroughYourMobileTabletWithOurMobile');
-
 import { ref } from 'vue'
 
 import { AppContainer, AppSection } from '@/common'

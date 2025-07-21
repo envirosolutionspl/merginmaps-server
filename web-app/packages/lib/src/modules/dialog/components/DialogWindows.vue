@@ -32,9 +32,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </PDialog>
 </template>
 
-
-
-
 <script lang="ts">
 import { mapState, mapActions } from 'pinia'
 import { defineComponent } from 'vue'

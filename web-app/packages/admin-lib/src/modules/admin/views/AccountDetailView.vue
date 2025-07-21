@@ -3,7 +3,7 @@
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">{{ Translation_AccountDetails }}</h1>
+          <h1 class="headline-h3">Account details</h1>
         </template>
       </app-section>
     </app-container>
@@ -35,7 +35,7 @@
             <i
               v-if="!user?.verified_email"
               v-tooltip.top="{
-                value: Translation_EmailVerificationStatus
+                value: 'Email verification status'
               }"
               class="ti ti-alert-circle-filled"
               style="color: var(--grape-color)"
@@ -46,13 +46,13 @@
             <div
               class="col-6 flex flex-column align-items-start text-left flex-wrap"
             >
-              <dt class="paragraph-p6 opacity-80 mb-2">{{ Translation_FullName }}</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">Full name</dt>
               <dd class="font-semibold" data-cy="profile-name">
                 {{ profile?.name || '-' }}
               </dd>
             </div>
             <div class="col-6 flex flex-column align-items-end">
-              <dt class="paragraph-p6 opacity-80 mb-2">{{ Translation_Registered }}</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">Registered</dt>
               <dd class="font-semibold" data-cy="profile-registered">
                 {{ $filters.date(user?.registration_date) }}
               </dd>
@@ -63,7 +63,7 @@
     </app-container>
     <app-container v-if="userStore.loggedUser?.id !== user?.id">
       <app-section>
-        <template #title>{{ Translation_Advanced }}</template>
+        <template #title>Advanced</template>
 
         <app-settings :items="settingsItems">
           <template #notifications>
@@ -88,8 +88,8 @@
                   @click="switchAdminAccess"
                   :label="
                     !user?.is_admin
-                      ? Translation_GrantAdminAccess
-                      : Translation_RevokeAdminAccess
+                      ? 'Grant admin access'
+                      : 'Revoke admin access'
                   "
                 />
               </div>
@@ -101,7 +101,7 @@
                 @click="changeStatusDialog"
                 :severity="user?.active ? 'warning' : 'secondary'"
                 :label="
-                  user?.active ? Translation_DeactivateAccount : Translation_ActivateAccount
+                  user?.active ? 'Deactivate account' : 'Activate account'
                 "
                 class="w-auto mr-1"
               />
@@ -113,7 +113,7 @@
                 @click="confirmDeleteUser"
                 severity="danger"
                 data-cy="profile-close-account-btn"
-                :label="Translation_DeleteAccount"
+                label="Delete account"
               />
             </div>
           </template>
@@ -123,22 +123,7 @@
   </admin-layout>
 </template>
 
-
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_AccountDetails = returnTranslation(lang, 'adminlib_admin_AccountDetailView_AccountDetails');
-const Translation_EmailVerificationStatus = returnTranslation(lang, 'adminlib_admin_AccountDetailView_EmailVerificationStatus');
-const Translation_FullName = returnTranslation(lang, 'adminlib_admin_AccountDetailView_FullName');
-const Translation_Registered = returnTranslation(lang, 'adminlib_admin_AccountDetailView_Registered');
-const Translation_Advanced = returnTranslation(lang, 'adminlib_admin_AccountDetailView_Advanced');
-const Translation_GrantAdminAccess = returnTranslation(lang, 'adminlib_admin_AccountDetailView_GrantAdminAccess');
-const Translation_RevokeAdminAccess = returnTranslation(lang, 'adminlib_admin_AccountDetailView_RevokeAdminAccess');
-const Translation_DeactivateAccount = returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeactivateAccount');
-const Translation_ActivateAccount = returnTranslation(lang, 'adminlib_admin_AccountDetailView_ActivateAccount');
-const Translation_DeleteAccount = returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeleteAccount');
-
 import {
   ConfirmDialog,
   useDialogStore,
@@ -165,30 +150,30 @@ const userStore = useUserStore()
 const settingsItems = computed<AppSettingsItemConfig[]>(() => [
   {
     key: 'notifications',
-    title: returnTranslation(lang, 'adminlib_admin_AccountDetailView_ReceiveNotifications'),
+    title: 'Receive notifications',
     description: profile?.value?.receive_notifications
-      ? returnTranslation(lang, 'adminlib_admin_AccountDetailView_UserHasEnabledReceivingNotifications')
-      : returnTranslation(lang, 'adminlib_admin_AccountDetailView_UserHasDisabledNotifications')
+      ? 'User has enabled receiving notifications'
+      : 'User has disabled notifications.'
   },
   {
     key: 'adminAccess',
-    title: returnTranslation(lang, 'adminlib_admin_AccountDetailView_AccessToAdminPanel'),
+    title: 'Access to admin panel',
     description: user.value?.is_admin
-      ? returnTranslation(lang, 'adminlib_admin_AccountDetailView_UserHasAccessToTheAdminPanel')
-      : returnTranslation(lang, 'adminlib_admin_AccountDetailView_UserDoesNotHaveAccessToTheAdminPanel')
+      ? 'User has access to the admin panel.'
+      : 'User does not have access to the admin panel.'
   },
   {
     key: 'accountActivation',
-    title: returnTranslation(lang, 'adminlib_admin_AccountDetailView_AccountActivation'),
+    title: 'Account activation',
     description: user?.value?.active
-      ? returnTranslation(lang, 'adminlib_admin_AccountDetailView_TheUsersAccountIsCurrentlyActive')
-      : returnTranslation(lang, 'adminlib_admin_AccountDetailView_TheUsersAccountIsCurrentlyInactive')
+      ? "The user's account is currently active. Deactivation will lead to a temporary ban from Mergin Maps usage."
+      : "The user's account is currently inactive. Activating it will allow access to Mergin Maps."
   },
   {
     key: 'deleteAccount',
-    title: returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeleteAccount'),
+    title: 'Delete account',
     description:
-      returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeletingThisUserWillRemoveThemAndAllTheirData')
+      'Deleting this user will remove them and all their data. This action cannot be undone.'
   }
 ])
 
@@ -214,17 +199,17 @@ watch(
 const changeStatusDialog = () => {
   const props: ConfirmDialogProps = user.value.active
     ? {
-        confirmText: returnTranslation(lang, 'adminlib_admin_AccountDetailView_Deactivate'),
+        confirmText: 'Deactivate',
         severity: 'warning',
-        text: returnTranslation(lang, 'adminlib_admin_AccountDetailView_DoYouReallyWantDeactivateThisAccount'),
+        text: 'Do you really want deactivate this account?',
         description:
-          returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeactivatingThisAccountWillLead')
+          'Deactivating this account will lead to a temporary ban from Mergin Maps usage.'
       }
     : {
-        text: returnTranslation(lang, 'adminlib_admin_AccountDetailView_DoYouReallyWantActivateThisAccount'),
-        confirmText: returnTranslation(lang, 'adminlib_admin_AccountDetailView_Activate')
+        text: 'Do you really want activate this account?',
+        confirmText: 'Activate'
       }
-  const dialog = { header: returnTranslation(lang, 'adminlib_admin_AccountDetailView_UserActivation') }
+  const dialog = { header: 'User activation' }
   const listeners = {
     confirm: async () => {
       await adminStore.updateUser({
@@ -247,12 +232,13 @@ const changeStatusDialog = () => {
 
 const confirmDeleteUser = () => {
   const props: ConfirmDialogProps = {
-    text: returnTranslation(lang, 'adminlib_admin_AccountDetailView_AreYouSureYouWantToPermanentlyDeleteThisAccount'),
-    description: returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeletingThisUserWillRemoveThemAndAllTheirDataConfirm'),
+    text: `Are you sure you want to permanently delete this account?`,
+    description: `Deleting this user will remove them
+      and all their data. This action cannot be undone. Type in username to confirm:`,
     hint: user.value.username,
-    confirmText: returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeletePermanently'),
+    confirmText: 'Delete permanently',
     confirmField: {
-      label: returnTranslation(lang, 'adminlib_admin_AccountDetailView_Username'),
+      label: 'Username',
       expected: user.value.username
     },
     severity: 'danger'
@@ -263,30 +249,30 @@ const confirmDeleteUser = () => {
   }
   dialogStore.show({
     component: ConfirmDialog,
-    params: { props, listeners, dialog: { header: returnTranslation(lang, 'adminlib_admin_AccountDetailView_DeleteUser') } }
+    params: { props, listeners, dialog: { header: 'Delete user' } }
   })
 }
 
 const switchAdminAccess = async () => {
   const props: ConfirmDialogProps = !user.value?.is_admin
     ? {
-        text: returnTranslation(lang, 'adminlib_admin_AccountDetailView_AreYouSureToGrantAccessToAdminPanelToThisUser'),
-        description: returnTranslation(lang, 'adminlib_admin_AccountDetailView_ThisPersonWillHaveFullManagementAccessToAllData'),
+        text: `Are you sure to grant access to admin panel to this user?`,
+        description: `This person will have full management access to all data on the server. They will see all users and projects and can update or remove them.`,
         hint: user.value.username,
-        confirmText: returnTranslation(lang, 'adminlib_admin_AccountDetailView_GrantAccess'),
+        confirmText: 'Grant access',
         confirmField: {
-          label: returnTranslation(lang, 'adminlib_admin_AccountDetailView_Username'),
+          label: 'Username',
           expected: user.value.username
         },
         severity: 'warning'
       }
     : {
-        text: returnTranslation(lang, 'adminlib_admin_AccountDetailView_AreYouSureYouWantToRevokeAccessToAdminPanel'),
-        description: returnTranslation(lang, 'adminlib_admin_AccountDetailView_ThisPersonWillNoLongerHaveAccessToTheAdminPanel'),
+        text: `Are you sure you want to revoke access to admin panel to this user?`,
+        description: `This person will no longer have access to the admin panel.`,
         hint: user.value.username,
-        confirmText: returnTranslation(lang, 'adminlib_admin_AccountDetailView_RevokeAccess'),
+        confirmText: 'Revoke access',
         confirmField: {
-          label: returnTranslation(lang, 'adminlib_admin_AccountDetailView_Username'),
+          label: 'Username',
           expected: user.value.username
         },
         severity: 'danger'
@@ -302,7 +288,7 @@ const switchAdminAccess = async () => {
   }
   dialogStore.show({
     component: ConfirmDialog,
-    params: { props, listeners, dialog: { header: returnTranslation(lang, 'adminlib_admin_AccountDetailView_AdminAccess') } }
+    params: { props, listeners, dialog: { header: 'Admin access' } }
   })
 }
 </script>

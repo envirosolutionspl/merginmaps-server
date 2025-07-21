@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         :columns="columns"
         :paginator="searchedItems.length > itemsPerPage"
         :loading="projectStore.accessLoading"
-        :empty-message="Translation_ShareWith"
+        :empty-message="'No members found.'"
         :row-cursor-pointer="false"
         :options="{
           itemsPerPage,
@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           sortDesc: projectStore.accessSorting?.sortDesc
         }"
       >
-        <template #header-title>{{ Translation_Members }}</template>
+        <template #header-title>Members</template>
         <template #actions="{ item }">
           <PButton
             icon="ti ti-trash"
@@ -62,7 +62,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               >{{ item[column.value] }}
               <template
                 v-if="column.value === 'email' && item.id === loggedUser.id"
-                >{{ Translation_Me }}</template
+                >(me)</template
               ></span
             >
           </div>
@@ -83,13 +83,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_ShareWith = returnTranslation(lang, 'lib_project_ProjectMembersTable_ShareWith');
-const Translation_Members = returnTranslation(lang, 'lib_project_ProjectMembersTable_Members');
-const Translation_Me = returnTranslation(lang, 'lib_project_ProjectMembersTable_Me');
-
 import { computed, ref, onUnmounted } from 'vue'
 
 import { useProjectStore } from '../store'
@@ -116,23 +109,23 @@ const instanceStore = useInstanceStore()
 const itemsPerPage = ref(10)
 const columns = ref<DataViewWrapperColumnItem[]>([
   {
-    text: returnTranslation(lang, 'lib_project_ProjectMembersTable_EmailAddress'),
+    text: 'Email address',
     value: 'email',
     textClass: 'font-semibold',
     cols: 5
   },
   {
-    text: returnTranslation(lang, 'lib_project_ProjectMembersTable_Username'),
+    text: 'Username',
     value: 'username',
     cols: 5
   },
   {
-    text: returnTranslation(lang, 'lib_project_ProjectMembersTable_ProjectPermissions'),
+    text: 'Project permissions',
     value: 'roles',
     cols: 2
   },
   {
-    text: returnTranslation(lang, 'lib_project_ProjectMembersTable_Remove'),
+    text: 'Remove',
     value: 'remove',
     fixed: true
   }

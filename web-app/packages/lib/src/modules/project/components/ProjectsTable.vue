@@ -47,12 +47,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 v-if="slotProps.data.access.public && !onlyPublic"
                 severity="success"
                 :pt="{ root: { class: 'ml-1' } }"
-                >{{ Translation_Public }}</PTag
+                >Public</PTag
               >
               <i
                 v-if="!slotProps.data.tags.includes('valid_qgis')"
                 v-tooltip.right="{
-                  value: Translation_FailedToFindAQGISProjectFile
+                  value: 'Failed to find a QGIS project file'
                 }"
                 class="ti ti-alert-circle-filled ml-1"
                 data-cy="project-form-missing-project"
@@ -61,7 +61,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               <i
                 v-if="slotProps.data.has_conflict"
                 v-tooltip.right="{
-                  value: Translation_ConflictingFileInProject
+                  value: 'Conflicting file in project'
                 }"
                 class="ti ti-alert-triangle-filled ml-1"
                 style="margin-right: 20px"
@@ -75,7 +75,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               }"
               class="opacity-80 m-0 paragraph-p7"
             >
-              {{ Translation_Updated }} {{ $filters.timediff(slotProps.data.updated) }}
+              Updated {{ $filters.timediff(slotProps.data.updated) }}
             </span>
           </template>
         </PColumn>
@@ -122,20 +122,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </div>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_Public = returnTranslation(lang, 'lib_project_ProjectsTable_Public');
-const Translation_FailedToFindAQGISProjectFile = returnTranslation(lang, 'lib_project_ProjectsTable_FailedToFindAQGISProjectFile');
-const Translation_ConflictingFileInProject = returnTranslation(lang, 'lib_project_ProjectsTable_ConflictingFileInProject');
-const Translation_Updated = returnTranslation(lang, 'lib_project_ProjectsTable_Updated');
-
-</script>
-
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
 import debounce from 'lodash/debounce'
 import { mapState } from 'pinia'
 import { DataTablePageEvent, DataTableRowClickEvent } from 'primevue/datatable'
@@ -180,9 +167,9 @@ export default defineComponent({
     ...mapState(useProjectStore, ['projectsSearch', 'projectsSorting']),
     columns(): TableDataHeader[] {
       return [
-        { header: returnTranslation(lang, 'lib_project_ProjectsTable_ProjectName'), field: 'name' },
-        { header: returnTranslation(lang, 'lib_project_ProjectsTable_Versions'), field: 'version' },
-        { header: returnTranslation(lang, 'lib_project_ProjectsTable_Size'), field: 'meta.size' }
+        { header: 'Project name', field: 'name' },
+        { header: 'Versions', field: 'version' },
+        { header: 'Size', field: 'meta.size' }
         // {
         //   header: 'Collaborators',
         //   field: 'access.readers'

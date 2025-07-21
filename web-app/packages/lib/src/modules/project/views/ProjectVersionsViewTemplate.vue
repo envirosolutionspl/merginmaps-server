@@ -24,11 +24,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </app-container>
 </template>
 
-
-
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { defineComponent, PropType } from 'vue'
 
@@ -68,15 +64,15 @@ export default defineComponent({
     }
   },
   computed: {
-    filterMenuItems(): MenuItem[] { // returnTranslation(lang, 'lib_user_ProjectViewTemplate_No')
+    filterMenuItems(): MenuItem[] {
       return [
         {
-          label: returnTranslation(lang, 'lib_user_ProjectViewTemplate_NewestVersions'),
+          label: 'Newest versions',
           key: 'newest',
           sortDesc: true
         },
         {
-          label: returnTranslation(lang, 'lib_user_ProjectViewTemplate_OldestVersions'),
+          label: 'Oldest versions',
           key: 'oldest',
           sortDesc: false
         }

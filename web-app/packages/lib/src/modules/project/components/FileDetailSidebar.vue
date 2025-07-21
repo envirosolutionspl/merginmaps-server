@@ -28,7 +28,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
         <dl class="grid grid-nogutter row-gap-4">
           <div class="col-12">
-            <dt class="paragraph-p6 opacity-80">{{ Translation_File }}</dt>
+            <dt class="paragraph-p6 opacity-80">File</dt>
             <dd class="font-semibold">
               <h3 class="headline-h3 mt-0">
                 <FileIcon :file="{ ...file, name: fileName }" />{{ fileName }}
@@ -37,7 +37,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           </div>
           <PDivider class="m-0" />
           <div class="col-6">
-            <dt class="paragraph-p6 opacity-80">{{ Translation_Modified }}</dt>
+            <dt class="paragraph-p6 opacity-80">Modified</dt>
             <dd class="font-semibold paragraph-p5">
               <span v-tooltip="$filters.datetime(file.mtime)">{{
                 $filters.timediff(file.mtime)
@@ -45,34 +45,26 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             </dd>
           </div>
           <div class="col-6 flex flex-column align-items-end">
-            <dt class="paragraph-p6 opacity-80">{{ Translation_Size }}</dt>
+            <dt class="paragraph-p6 opacity-80">Size</dt>
             <dd class="font-semibold paragraph-p5">
               {{ $filters.filesize(file.size) }}
               <span v-if="state === 'updated'"
-                >({{ Translation_New }}
+                >(new:
                 {{ $filters.filesize(upload.files[file.path].size) }})</span
               >
             </dd>
           </div>
         </dl>
 
-        <!--     render only if file is smaller than 10MB-->
-        <p
-          v-if="isOverLimit"
-          class="flex justify-content-center m-4 opacity-60"
-        >
-          {{ Translation_FileTooLargeToPreviewDownloadToViewInstead }}
-        </p>
+        <!--     render only if file is smaller than 100MB-->
         <output
-          v-else-if="mimetype"
+          v-if="mimetype && file.size < 104857600"
           class="flex flex-column align-items-center w-full py-4"
         >
-          <template v-if="mimetype.match('image')">
-            <PImage :src="downloadUrl" v-if="mimetype.match('image')" preview />
-          </template>
+          <PImage :src="downloadUrl" v-if="mimetype.match('image')" preview />
           <div
             class="file-detail-code border-round-xl p-4 paragraph-p4 w-full"
-            v-else-if="content"
+            v-else-if="mimetype.match('text')"
           >
             <span class="opacity-80 paragraph-p5">{{ content }}</span>
           </div>
@@ -88,30 +80,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           class="flex justify-content-center w-full text-center"
           data-cy="file-detail-remove-btn"
         >
-          {{ Translation_DeleteFile }}
+          Delete file
         </PButton>
       </template>
     </AppSidebarRight>
   </div>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_File = returnTranslation(lang, 'lib_project_FileDetailSidebar_File');
-const Translation_Modified = returnTranslation(lang, 'lib_project_FileDetailSidebar_Modified');
-const Translation_Size = returnTranslation(lang, 'lib_project_FileDetailSidebar_Size');
-const Translation_New = returnTranslation(lang, 'lib_project_FileDetailSidebar_New');
-const Translation_FileTooLargeToPreviewDownloadToViewInstead = returnTranslation(lang, 'lib_project_FileDetailSidebar_FileTooLargeToPreviewDownloadToViewInstead');
-const Translation_DeleteFile = returnTranslation(lang, 'lib_project_FileDetailSidebar_DeleteFile');
-
-
-</script>
-
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
 import Path from 'path'
 import { mapActions, mapState } from 'pinia'
 import { defineComponent } from 'vue'
@@ -128,7 +104,6 @@ enum State {
   UPDATED = 'updated'
 }
 
-const MAX_PREVIEW_FILE_SIZE = 40000000 // 20MB
 export default defineComponent({
   name: 'FileDetailSidebar',
   props: {
@@ -180,17 +155,14 @@ export default defineComponent({
     },
     stateText() {
       const stateText: Record<State, string> = {
-        added: returnTranslation(lang, 'lib_project_FileDetailSidebar_NewFile'),
-        removed: returnTranslation(lang, 'lib_project_FileDetailSidebar_DeletedFile'),
-        updated: returnTranslation(lang, 'lib_project_FileDetailSidebar_ModifiedFile')
+        added: 'New file',
+        removed: 'Deleted file',
+        updated: 'Modified file'
       }
       return this.state && stateText[this.state]
     },
     filePath(): string {
       return this.$route.query.file_path as string
-    },
-    isOverLimit() {
-      return this.file.size > MAX_PREVIEW_FILE_SIZE
     },
     sidebarVisible: {
       get() {
@@ -222,19 +194,13 @@ export default defineComponent({
           this.txtPreview()
           return
         }
-        this.cleanup()
+        this.sidebarVisible = false
       }
     }
   },
   methods: {
     ...mapActions(useProjectStore, ['deleteFiles']),
     txtPreview() {
-      if (this.isOverLimit) {
-        this.content = null
-        this.mimetype = null
-        return
-      }
-
       ProjectApi.getProjectFileByUrl(this.downloadUrl).then((resp) => {
         this.mimetype = resp.headers['content-type']
         if (resp.headers['content-type'].match('text')) {
@@ -259,11 +225,6 @@ export default defineComponent({
     },
     downloadFile() {
       window.location.href = this.downloadUrl
-    },
-    cleanup() {
-      this.sidebarVisible = false
-      this.content = null
-      this.mimetype = null
     }
   },
   components: { AppSidebarRight, FileIcon }

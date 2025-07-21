@@ -1,7 +1,7 @@
 <template>
   <app-container>
     <app-section>
-      <template #title>{{ Translation_Advanced }}</template>
+      <template #title>Advanced</template>
       <app-settings :items="settingsItems">
         <template #publicProject>
           <div class="flex-shrink-0 paragraph-p1">
@@ -14,7 +14,7 @@
               @click="confirmDelete"
               severity="danger"
               data-cy="project-delete-btn"
-              :label="Translation_DeleteProject"
+              label="Delete project"
             />
           </div>
         </template>
@@ -23,13 +23,7 @@
   </app-container>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_Advanced = returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_Advanced');
-const Translation_DeleteProject = returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_DeleteProject');
-
+<script lang="ts" setup>
 import {
   AppContainer,
   AppSection,
@@ -53,26 +47,27 @@ const project = computed(() => projectStore.project)
 const settingsItems = computed<AppSettingsItemConfig[]>(() => [
   {
     key: 'publicProject',
-    title: returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_PublicProject'),
+    title: 'Public project',
     description:
-      returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_TheProjectWillBeVisibleToEveryone')
+      'The project will be visible to everyone if it is marked as public.'
   },
   {
     key: 'deleteProject',
-    title: returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_DeleteProject'),
+    title: 'Delete project',
     description:
-      returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_DeletingThisProjectWillRemove')
+      'Deleting this project will remove it and all its data. This action cannot be undone.'
   }
 ])
 
 const confirmDelete = () => {
   const props: ConfirmDialogProps = {
-    text: returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_AreYouSureYouWantToPermanentlyDelete'),
-    description: returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_DeletingThisProjectWillRemoveIt'),
+    text: `Are you sure you want to permanently delete this project?`,
+    description: `Deleting this project will remove it
+      and all its data. This action cannot be undone. Type in project name to confirm:`,
     hint: project.value.name,
-    confirmText: returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_DeletePermanently'),
+    confirmText: 'Delete permanently',
     confirmField: {
-      label: returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_ProjectName'),
+      label: 'Project name',
       expected: project.value.name
     },
     severity: 'danger'
@@ -83,7 +78,7 @@ const confirmDelete = () => {
   }
   dialogStore.show({
     component: ConfirmDialog,
-    params: { props, listeners, dialog: { header: returnTranslation(lang, 'adminlib_admin_ProjectSettingsView_DeleteProject') } }
+    params: { props, listeners, dialog: { header: 'Delete project' } }
   })
 }
 </script>

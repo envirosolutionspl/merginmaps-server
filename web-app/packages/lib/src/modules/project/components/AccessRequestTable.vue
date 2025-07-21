@@ -12,9 +12,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
 import { AxiosError } from 'axios'
 import { mapActions } from 'pinia'
 import { defineComponent } from 'vue'
@@ -39,7 +36,7 @@ export default defineComponent({
     // TODO: Add more handlers from template, add more emits from template
     async onAcceptAccessRequestError(err: AxiosError) {
       this.error({
-        text: getErrorMessage(err, returnTranslation(lang, 'lib_project_AccessRequestTableTemplate_FailedToAcceptAccessRequest'))
+        text: getErrorMessage(err, 'Failed to accept access request')
       })
     }
   }

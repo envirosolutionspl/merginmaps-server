@@ -4,7 +4,7 @@
       <app-section ground>
         <template #header>
           <h1 class="headline-h3">
-            {{ adminlib_admin_AccountsTable_Accounts }}
+            Accounts
             <span class="text-color-medium-green">({{ users.count }})</span>
           </h1>
         </template>
@@ -12,7 +12,7 @@
           <PButton
             icon="ti ti-users-plus"
             @click="createUserDialog"
-            :label="Translation_AddUser"
+            label="Add user"
           />
         </template>
       </app-section>
@@ -22,7 +22,7 @@
         <span class="p-input-icon-left w-full">
           <i class="ti ti-search paragraph-p3"></i>
           <PInputText
-            :placeholder="Translation_SearchAccounts"
+            placeholder="Search accounts"
             data-cy="search-members-field"
             v-model="searchByName"
             class="w-full"
@@ -103,20 +103,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const adminlib_admin_AccountsTable_Accounts = returnTranslation(lang, 'adminlib_admin_AccountsTable_Accounts');
-const Translation_AddUser = returnTranslation(lang, 'adminlib_admin_AccountsTable_AddUser');
-const Translation_SearchAccounts = returnTranslation(lang, 'adminlib_admin_AccountsTable_SearchAccounts');
-
-</script>
-
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
 import {
   PaginatedUsersParams,
   useDialogStore,
@@ -154,10 +141,10 @@ export default defineComponent({
       },
       searchByName: '',
       headers: [
-        { field: 'username', header: returnTranslation(lang, 'adminlib_admin_AccountsTable_Username'), sortable: true },
-        { field: 'email', header: returnTranslation(lang, 'adminlib_admin_AccountsTable_Email'), sortable: true },
-        { field: 'profile.name', header: returnTranslation(lang, 'adminlib_admin_AccountsTable_FullName') },
-        { field: 'active', header: returnTranslation(lang, 'adminlib_admin_AccountsTable_DeleteProject') }
+        { field: 'username', header: 'Username', sortable: true },
+        { field: 'email', header: 'Email', sortable: true },
+        { field: 'profile.name', header: 'Full name' },
+        { field: 'active', header: 'Active' }
       ] as TableDataHeader[]
     }
   },
@@ -220,7 +207,7 @@ export default defineComponent({
     },
 
     createUserDialog() {
-      const dialog = { maxWidth: 500, header: returnTranslation(lang, 'adminlib_admin_AccountsTable_CreateUser') }
+      const dialog = { maxWidth: 500, header: 'Create user' }
       const listeners = {
         success: () => {
           this.resetPaging()

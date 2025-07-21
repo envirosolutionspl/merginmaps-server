@@ -13,7 +13,6 @@ import {
   useNotificationStore,
   UserResponse
 } from '@mergin/lib'
-import axios from 'axios'
 import FileSaver from 'file-saver'
 import { defineStore, getActivePinia } from 'pinia'
 import Cookies from 'universal-cookie'
@@ -29,6 +28,7 @@ import {
   UpdateUserPayload,
   UsersResponse
 } from '@/modules/admin/types'
+import axios from 'axios'
 
 export interface AdminState {
   loading: boolean
@@ -350,7 +350,7 @@ export const useAdminStore = defineStore('adminModule', {
         const fileName =
           resp.headers['content-disposition'].split('filename=')[1]
         const extension = fileName.split('.')[1]
-        FileSaver.saveAs(
+        new FileSaver.saveAs(
           resp.data,
           `usage-report-${date.toISOString().split('T')[0]}.${extension}`
         )

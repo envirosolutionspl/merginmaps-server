@@ -5,7 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 -->
 
 <template>
-  <div class="flex flex-column align-items-center pb-4 text-center gap-2">
+  <div class="flex flex-column align-items-center pb-4 text-center gap-4">
     <img
       v-if="severity === 'danger'"
       src="@/assets/trash.svg"
@@ -18,31 +18,20 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     />
     <img v-else src="@/assets/neutral.svg" alt="Cover for confirm dialog" />
     <span class="text-color-forest title-t1">{{ text }}</span>
-    <span class="paragraph-p5 opacity-80">{{ description }}</span>
-    <span v-if="hint" class="title-t2 my-2">{{ hint }}</span>
-    <div class="flex flex-column gap-3 w-full">
-      <span
-        v-if="confirmField"
-        class="flex flex-column p-input-filled text-left"
-      >
-        <label for="confirmValue">{{ confirmField.label }}</label>
-        <PInputText
-          autofocus
-          :id="'confirmValue'"
-          v-model="confirmValue"
-          type="text"
-          :placeholder="confirmField.placeholder ?? Translation_TypeInValueToConfirm"
-        />
-      </span>
+    <span class="paragraph-p6 opacity-80">{{ description }}</span>
+    <span class="title-t2">{{ hint }}</span>
+    <span v-if="confirmField" class="flex p-float-label w-full p-input-filled">
+      <PInputText
+        autofocus
+        id="confirmValue"
+        v-model="confirmValue"
+        type="text"
+        class="flex-grow-1"
+      />
+      <label for="confirmValue">{{ confirmField.label }}</label>
+    </span>
 
-      <slot></slot>
-
-      <!-- Show tip message -->
-      <tip-message v-if="message" :severity="message.severity">
-        <template #title>{{ message.title }}</template>
-        <template #description>{{ message.description }}</template>
-      </tip-message>
-    </div>
+    <slot></slot>
 
     <!-- Footer -->
     <div
@@ -69,25 +58,16 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Translation_TypeInValueToConfirm = returnTranslation(lang, 'lib_dialog_ConfirmDialog_TypeInValueToConfirm');
-
 import { ref, computed, defineEmits, withDefaults } from 'vue'
 
 import { ConfirmDialogProps } from '../types'
 
-import TipMessage from '@/common/components/TipMessage.vue'
 import { useDialogStore } from '@/modules/dialog/store'
 
-const props = withDefaults(defineProps<ConfirmDialogProps>(), () => {
-  const lang = import.meta.env.VITE_LANG
-  return {
-    confirmText: returnTranslation(lang, 'lib_dialog_ConfirmDialog_Ok'),
-    cancelText: returnTranslation(lang, 'lib_dialog_ConfirmDialog_Cancel'),
-    severity: 'primary'
-  }
+const props = withDefaults(defineProps<ConfirmDialogProps>(), {
+  confirmText: 'Ok',
+  cancelText: 'Cancel',
+  severity: 'primary'
 })
 
 const confirmValue = ref('')
