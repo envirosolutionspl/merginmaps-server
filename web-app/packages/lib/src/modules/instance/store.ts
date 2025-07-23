@@ -14,6 +14,10 @@ import {
 import { useNotificationStore } from '@/modules/notification/store'
 import { useUserStore } from '@/modules/user/store'
 
+import returnTranslation from '@/../../lang/translate';
+// @ts-ignore
+const lang = import.meta.env.VITE_LANG
+
 export interface InstanceState {
   initData: InitResponse
   initialized: boolean
@@ -72,7 +76,8 @@ export const useInstanceStore = defineStore('instanceModule', {
         }
         return response
       } catch {
-        notificationStore.error({ text: 'Failed to init application.' })
+        const FailedToInitApplication = returnTranslation(lang, "FailedToInitApplication");
+        notificationStore.error({ text: FailedToInitApplication })
       }
     },
 
@@ -83,7 +88,8 @@ export const useInstanceStore = defineStore('instanceModule', {
         this.setPingData(response.data)
         return response
       } catch {
-        await notificationStore.error({ text: 'Failed to fetch ping data.' })
+        const FailedToFetchPingData = returnTranslation(lang, "FailedToFetchPingData");
+        await notificationStore.error({ text: FailedToFetchPingData })
       }
     },
 
@@ -94,7 +100,8 @@ export const useInstanceStore = defineStore('instanceModule', {
         this.setConfigData(response.data)
         return response
       } catch {
-        await notificationStore.error({ text: 'Failed to fetch config data.' })
+        const FailedToFetchConfigData = returnTranslation(lang, "FailedToFetchConfigData");
+        await notificationStore.error({ text: FailedToFetchConfigData })
       }
     }
   }

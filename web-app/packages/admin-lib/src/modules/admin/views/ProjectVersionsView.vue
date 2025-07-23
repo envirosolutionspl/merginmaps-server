@@ -29,6 +29,11 @@
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const ProjectVersion = returnTranslation(lang, 'ProjectVersion');
+
 import {
   AppSection,
   AppContainer,
@@ -59,12 +64,12 @@ const options = ref<DataViewWrapperOptions>({
 const filterMenuItems = computed<MenuItem[]>(() => {
   return [
     {
-      label: 'Newest versions',
+      label: returnTranslation(lang, 'NewestVersions'),
       key: 'newest',
       sortDesc: true
     },
     {
-      label: 'Oldest versions',
+      label: returnTranslation(lang, 'OldestVersions'),
       key: 'oldest',
       sortDesc: false
     }

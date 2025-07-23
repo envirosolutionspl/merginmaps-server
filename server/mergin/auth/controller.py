@@ -38,6 +38,7 @@ from ..app import db
 from ..sync.models import Project
 from ..sync.utils import files_size
 
+from ..lang.current import returnTranslation
 
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
@@ -123,7 +124,7 @@ def _extract_first_error(errors):
             # show both key and value
             return val + "(" + key + ")"
 
-    return "Unknown error in input fields"
+    return returnTranslation("UnknownErrorInInputFields")
 
 
 def login_public():  # noqa: E501
@@ -157,7 +158,7 @@ def login_public():  # noqa: E501
             LoginHistory.add_record(user.id, request)
             return data
         else:
-            abort(401, "Invalid username or password")
+            abort(401, returnTranslation("InvalidUsernameOrPassword"))
     abort(400, _extract_first_error(form.errors))
 
 
@@ -182,10 +183,10 @@ def search_users():  # pylint: disable=W0613,W0612
     like = request.args.get("like")
     workspace = current_app.ws_handler.get_by_name(request.args.get("namespace"))
     if not workspace:
-        abort(404, "Workspace not found")
+        abort(404, returnTranslation("WorkspaceNotFound"))
 
     if not workspace.user_is_member(current_user):
-        abort(403, "You do not have permissions to search within workspace")
+        abort(403, returnTranslation("YouDoNotHavePermissionsToSearchWithinWorkspace"))
 
     if ids:
         ids = request.args.get("id")
@@ -226,7 +227,7 @@ def login():  # pylint: disable=W0613,W0612
                 LoginHistory.add_record(user.id, request)
             return "", 200
         else:
-            abort(401, "Invalid username or password")
+            abort(401, returnTranslation("InvalidUsernameOrPassword"))
     return jsonify(form.errors), 401
 
 
@@ -242,9 +243,9 @@ def admin_login():  # pylint: disable=W0613,W0612
             login_user(user)
             return "", 200
         else:
-            abort(403, "You do not have permissions")
+            abort(403, returnTranslation("YouDoNotHavePermissions"))
     else:
-        abort(401, "Invalid username or password")
+        abort(401, returnTranslation("InvalidUsernameOrPassword"))
 
 
 @auth_required
@@ -258,7 +259,7 @@ def change_password():  # pylint: disable=W0613,W0612
     form = UserChangePasswordForm()
     if form.validate_on_submit():
         if not current_user.check_password(form.old_password.data):
-            form.old_password.errors.append("The old password is incorrect")
+            form.old_password.errors.append(returnTranslation("TheOldPasswordIsIncorrect"))
             return jsonify(form.errors), 400
         current_user.assign_password(form.password.data)
         db.session.add(current_user)
@@ -288,10 +289,10 @@ def password_reset():  # pylint: disable=W0613,W0612
         func.lower(User.email) == func.lower(form.email.data.strip())
     ).one_or_none()
     if not user:
-        return jsonify({"email": ["Account with given email does not exist"]}), 404
+        return jsonify({"email": [returnTranslation("AccountWithGivenEmailDoesNotExist")]}), 404
     if not user.active:
         # user should confirm email first
-        return jsonify({"email": ["Account is not active"]}), 400
+        return jsonify({"email": [returnTranslation("AccountIsNotActive")]}), 400
 
     send_confirmation_email(
         current_app,
@@ -306,11 +307,11 @@ def password_reset():  # pylint: disable=W0613,W0612
 def confirm_new_password(token):  # pylint: disable=W0613,W0612
     email = confirm_token(token, salt=current_app.config["SECURITY_PASSWORD_SALT"])
     if not email:
-        abort(400, "Invalid token")
+        abort(400, returnTranslation("InvalidToken"))
 
     user = User.query.filter_by(email=email).first_or_404()
     if not user.active:
-        abort(400, "Account is not active")
+        abort(400, returnTranslation("AccountIsNotActive"))
 
     form = UserPasswordForm.from_json(request.json)
     if form.validate():
@@ -328,7 +329,7 @@ def confirm_email(token):  # pylint: disable=W0613,W0612
         salt=current_app.config["SECURITY_EMAIL_SALT"],
     )
     if not email:
-        abort(400, "Invalid token")
+        abort(400, returnTranslation("InvalidToken"))
 
     user = User.query.filter_by(email=email).first_or_404()
     if user.verified_email:
@@ -353,7 +354,7 @@ def update_user_profile():  # pylint: disable=W0613,W0612
             func.lower(User.email) == func.lower(form.email.data.strip())
         ).first()
         if user:
-            form.email.errors.append("Email already exists")
+            form.email.errors.append(returnTranslation("EmailAlreadyExists"))
             return jsonify(form.errors), 400
         current_user.verified_email = False
 
@@ -398,7 +399,7 @@ def register_user():  # pylint: disable=W0613,W0612
             password=form.password.data,
         )
         email_data = {
-            "subject": "Zaproszenie do Mergin Maps",
+            "subject": returnTranslation("InvitationToMerginMaps"),
             "html": html,
             "recipients": [user.email],
             "sender": current_app.config["MAIL_DEFAULT_SENDER"],
@@ -424,9 +425,9 @@ def update_user(username):  # pylint: disable=W0613,W0612
     if request.json.get("is_admin") is not None and not current_app.config.get(
         "ENABLE_SUPERADMIN_ASSIGNMENT"
     ):
-        abort(400, "Unable to assign super admin role")
+        abort(400, returnTranslation("UnableToAssignSuperAdminRole"))
 
-    user = User.query.filter_by(username=username).first_or_404("User not found")
+    user = User.query.filter_by(username=username).first_or_404(returnTranslation("UserNotFound"))
     form.update_obj(user)
 
     # remove inactive since flag for ban or re-activation
@@ -439,7 +440,7 @@ def update_user(username):  # pylint: disable=W0613,W0612
 
 @auth_required(permissions=["admin"])
 def delete_user(username):  # pylint: disable=W0613,W0612
-    user = User.query.filter_by(username=username).first_or_404("User not found")
+    user = User.query.filter_by(username=username).first_or_404(returnTranslation("UserNotFound"))
     user.inactivate()
     user_account_closed.send(user)
     # force 'delete' user
@@ -551,7 +552,7 @@ def create_user():
             user,
             "confirm-email",
             "email/user_created.html",
-            "Zaproszenie do Mergin Maps",
+            returnTranslation("InvitationToMerginMaps"),
             password=form.password.data,
         )
 

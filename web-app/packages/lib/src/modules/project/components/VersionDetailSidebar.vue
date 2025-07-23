@@ -22,7 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       ></template>
       <dl class="grid grid-nogutter row-gap-4">
         <div class="col-12">
-          <dt class="paragraph-p6 opacity-80">Version</dt>
+          <dt class="paragraph-p6 opacity-80">{{ Version }}</dt>
           <dd>
             <h3 class="headline-h3 mt-0">
               {{ version.name }}
@@ -31,25 +31,25 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         </div>
         <PDivider class="m-0" />
         <div class="col-6">
-          <dt class="paragraph-p6 opacity-80">Author</dt>
+          <dt class="paragraph-p6 opacity-80">{{ Author }}</dt>
           <dd class="font-semibold paragraph-p5">
             {{ version.author }}
           </dd>
         </div>
         <div class="col-6 flex flex-column align-items-end">
-          <dt class="paragraph-p6 opacity-80">Project size</dt>
+          <dt class="paragraph-p6 opacity-80">{{ ProjectSize }}</dt>
           <dd class="font-semibold paragraph-p5">
             {{ $filters.filesize(version.project_size) }}
           </dd>
         </div>
         <div class="col-12">
-          <dt class="paragraph-p6 opacity-80">Created</dt>
+          <dt class="paragraph-p6 opacity-80">{{ Created }}</dt>
           <dd class="font-semibold paragraph-p5">
             {{ $filters.datetime(version.created) }}
           </dd>
         </div>
         <div class="col-12">
-          <dt class="paragraph-p6 opacity-80">User agent</dt>
+          <dt class="paragraph-p6 opacity-80">{{ UserAgent }}</dt>
           <dd class="font-semibold paragraph-p5">
             {{ version.user_agent }}
           </dd>
@@ -59,6 +59,18 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </app-sidebar-right>
   </div>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Version = returnTranslation(lang, 'Version');
+const Author = returnTranslation(lang, 'Author');
+const ProjectSize = returnTranslation(lang, 'ProjectSize');
+const Created = returnTranslation(lang, 'Created');
+const UserAgent = returnTranslation(lang, 'UserAgent');
+
+</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'
@@ -128,8 +140,9 @@ export default defineComponent({
         )
         this.version = response.data
       } catch (err) {
+        const FailedToFetchProjectVersion = returnTranslation(lang, 'FailedToFetchProjectVersion');
         this.error({
-          text: getErrorMessage(err, 'Failed to fetch project version')
+          text: getErrorMessage(err, FailedToFetchProjectVersion)
         })
       }
     },

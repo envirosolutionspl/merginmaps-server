@@ -72,10 +72,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             </template>
             <template #empty>
               <div class="flex flex-column align-items-center p-4 text-center">
-                <p>No changeset for current layer</p>
+                <p>{{ NoChangesetForCurrentLayer }}</p>
               </div>
-              console.log('getChangeset', this.namespace, this.projectName,
-              this.version_id, this.path)
             </template>
           </PDataTable>
         </app-section>
@@ -84,14 +82,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <app-container v-else-if="!versionsChangesetLoading">
       <app-section class="p-4">
         <div class="flex flex-column align-items-center text-center">
-          <h3>Changes cannot be calculated</h3>
+          <h3>{{ ChangesCannotBeCalculated }}</h3>
           <p>
-            For details please check the
+            {{ ForDetailsPleaseCheckThe }}
             <a
               class="font-semibold text-underline text-color-forest"
               :href="docsLinkManageSynchronisation"
               target="_blank"
-              >documentation</a
+              >{{ Documentation }}</a
             >.
           </p>
         </div>
@@ -99,6 +97,17 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </app-container>
   </div>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const NoChangesetForCurrentLayer = returnTranslation(lang, 'NoChangesetForCurrentLayer');
+const ChangesCannotBeCalculated = returnTranslation(lang, 'ChangesCannotBeCalculated');
+const ForDetailsPleaseCheckThe = returnTranslation(lang, 'ForDetailsPleaseCheckThe');
+const Documentation = returnTranslation(lang, 'Documentation');
+
+</script>
 
 <script lang="ts">
 import groupBy from 'lodash/groupBy'
@@ -170,7 +179,7 @@ export default defineComponent({
       for (const [key, value] of Object.entries(changeset)) {
         _this.tables[key] = {}
         const headers = [
-          { text: 'Change', value: 'operationTypeHeader', width: 50 }
+          { text: returnTranslation(lang, 'Change'), value: 'operationTypeHeader', width: 50 }
         ]
         const changes = []
         if (isArray(value)) {

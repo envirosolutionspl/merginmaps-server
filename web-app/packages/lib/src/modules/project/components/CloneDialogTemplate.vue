@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         data-cy="clone-dialog-project-name"
         class="flex-grow-1"
       />
-      <label for="name">Project name</label>
+      <label for="name">{{ ProjectName }}</label>
     </span>
     <!-- Dynamic items to pass other inputs -->
     <slot name="dynamic-items"></slot>
@@ -30,7 +30,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
         data-cy="clone-dialog-close-btn"
-        >Cancel</PButton
+        >{{ Cancel }}</PButton
       >
 
       <PButton
@@ -40,11 +40,20 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         data-cy="project-form-create-btn"
         class="flex w-12 lg:w-6 justify-content-center"
       >
-        Clone project
+      {{ CloneProject }}
       </PButton>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const ProjectName = returnTranslation(lang, 'ProjectName');
+const Cancel = returnTranslation(lang, 'Cancel');
+const CloneProject = returnTranslation(lang, 'CloneProject');
+</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

@@ -28,7 +28,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
         <dl class="grid grid-nogutter row-gap-4">
           <div class="col-12">
-            <dt class="paragraph-p6 opacity-80">File</dt>
+            <dt class="paragraph-p6 opacity-80">{{ File }}</dt>
             <dd class="font-semibold">
               <h3 class="headline-h3 mt-0">
                 <FileIcon :file="{ ...file, name: fileName }" />{{ fileName }}
@@ -37,7 +37,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           </div>
           <PDivider class="m-0" />
           <div class="col-6">
-            <dt class="paragraph-p6 opacity-80">Modified</dt>
+            <dt class="paragraph-p6 opacity-80">{{ Modified }}</dt>
             <dd class="font-semibold paragraph-p5">
               <span v-tooltip="$filters.datetime(file.mtime)">{{
                 $filters.timediff(file.mtime)
@@ -45,11 +45,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             </dd>
           </div>
           <div class="col-6 flex flex-column align-items-end">
-            <dt class="paragraph-p6 opacity-80">Size</dt>
+            <dt class="paragraph-p6 opacity-80">{{ Size }}</dt>
             <dd class="font-semibold paragraph-p5">
               {{ $filters.filesize(file.size) }}
               <span v-if="state === 'updated'"
-                >(new:
+                >({{ New }}
                 {{ $filters.filesize(upload.files[file.path].size) }})</span
               >
             </dd>
@@ -80,12 +80,24 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           class="flex justify-content-center w-full text-center"
           data-cy="file-detail-remove-btn"
         >
-          Delete file
+          {{ DeleteFile }}
         </PButton>
       </template>
     </AppSidebarRight>
   </div>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const File = returnTranslation(lang, 'File');
+const Modified = returnTranslation(lang, 'Modified');
+const Size = returnTranslation(lang, 'Size');
+const New = returnTranslation(lang, 'New');
+const DeleteFile = returnTranslation(lang, 'DeleteFile');
+
+</script>
 
 <script lang="ts">
 import Path from 'path'
@@ -155,9 +167,9 @@ export default defineComponent({
     },
     stateText() {
       const stateText: Record<State, string> = {
-        added: 'New file',
-        removed: 'Deleted file',
-        updated: 'Modified file'
+        added: returnTranslation(lang, 'NewFile'),
+        removed: returnTranslation(lang, 'DeletedFile'),
+        updated: returnTranslation(lang, 'ModifiedFile')
       }
       return this.state && stateText[this.state]
     },

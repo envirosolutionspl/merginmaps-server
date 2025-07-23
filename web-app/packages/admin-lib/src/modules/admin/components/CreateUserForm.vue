@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <form @submit.prevent="submit" class="flex flex-column pb-4">
     <span class="p-input-filled">
-      <label for="email">Email</label>
+      <label for="email">{{ Email }}</label>
       <PInputText
         id="email"
         v-model="email"
@@ -24,7 +24,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <span class="p-input-filled">
       <app-password-tooltip for="newPassword"
-        ><template #label>Password</template>
+        ><template #label>{{ Password }}</template>
       </app-password-tooltip>
       <PPassword
         id="newPassword"
@@ -50,7 +50,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
         data-cy="profile-edit-close-btn"
-        >Cancel</PButton
+        >{{ Cancel }}</PButton
       >
 
       <PButton
@@ -58,11 +58,21 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="flex w-12 lg:w-6 justify-content-center"
         data-cy="profile-edit-save-btn"
       >
-        Create
+        {{ Create }}
       </PButton>
     </div>
   </form>
 </template>
+
+<script lang="ts" setup>
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Email = returnTranslation(lang, 'Email');
+const Password = returnTranslation(lang, 'Password');
+const Cancel = returnTranslation(lang, 'Cancel');
+const Create = returnTranslation(lang, 'Create');
+</script>
 
 <script lang="ts">
 import {
@@ -130,7 +140,7 @@ export default defineComponent({
           this.close()
           this.$emit('success')
           this.show({
-            text: 'User created'
+            text: returnTranslation(lang, 'UserCreated')
           })
         })
         .catch((err) => {
@@ -139,7 +149,7 @@ export default defineComponent({
             error: err,
             generalMessage: errorUtils.getErrorMessage(
               err,
-              'Failed to create user'
+              returnTranslation(lang, 'FailedToCreateUser')
             )
           })
         })

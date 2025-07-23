@@ -13,10 +13,15 @@ from .commands import add_commands
 from .config import Configuration
 from .models import User, UserProfile
 
+from ..lang.current import returnTranslation
+
 # signal for other versions to listen to
 user_account_closed = signal("user_account_closed")
 user_created = signal("user_created")
 
+YouCannotEditProfileOfThisUser = returnTranslation("YouCannotEditProfileOfThisUser")
+
+CANNOT_EDIT_PROFILE_MSG = YouCannotEditProfileOfThisUser
 
 def register(app):
     """Register mergin auth module in Flask app
@@ -53,18 +58,19 @@ def auth_required(f=None, permissions=None):
             permissions_fn = []
             for name in permissions:
                 if name not in _permissions:
-                    raise KeyError("Unknown permission: {}".format(name))
+                    UnknownPermission = returnTranslation("UnknownPermission")
+                    raise KeyError(f"{UnknownPermission}: {name}")
                 permissions_fn.append(_permissions[name])
         return functools.partial(auth_required, permissions=permissions_fn)
 
     @functools.wraps(f)
     def wrapped_func(*args, **kwargs):
         if not current_user or not current_user.is_authenticated:
-            return "Authentication information is missing or invalid.", 401
+            return returnTranslation("AuthenticationInformationIsMissingOrInvalid"), 401
         if permissions:
             for check_permission in permissions:
                 if not check_permission(current_user):
-                    return "Permission denied.", 403
+                    return returnTranslation("PermissionDenied"), 403
         return f(*args, **kwargs)
 
     return wrapped_func

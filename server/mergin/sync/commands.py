@@ -15,6 +15,7 @@ from .models import Project, ProjectVersion
 from .utils import split_project_path
 from ..auth.models import User
 
+from ..lang.current import returnTranslation
 
 def add_commands(app: Flask):
     @app.cli.group()
@@ -30,15 +31,18 @@ def add_commands(app: Flask):
         """Create blank project"""
         workspace = current_app.ws_handler.get_by_name(namespace)
         if not workspace:
-            print("ERROR: Workspace not found")
+            WorkspaceNotFound = returnTranslation("WorkspaceNotFound")
+            print(f"ERROR: {WorkspaceNotFound}")
             return
         user = User.query.filter_by(username=username).first()
         if not user:
-            print("ERROR: User not found")
+            UserNotFound = returnTranslation("UserNotFound")
+            print(f"ERROR: {UserNotFound}")
             return
         p = Project.query.filter_by(name=name, workspace_id=workspace.id).first()
         if p:
-            print("ERROR: Project name already exists")
+            ProjectNameAlreadyExists = returnTranslation("ProjectNameAlreadyExists")
+            print(f"ERROR: {ProjectNameAlreadyExists}")
             return
         project_params = dict(
             creator=user,
@@ -57,7 +61,8 @@ def add_commands(app: Flask):
         pv.project = p
         db.session.commit()
         os.makedirs(p.storage.project_dir, exist_ok=True)
-        print("Project created")
+        ProjectCreated = returnTranslation("ProjectCreated")
+        print(ProjectCreated)
 
     @project.command()
     @click.argument("project-name")
@@ -73,14 +78,18 @@ def add_commands(app: Flask):
             .first()
         )
         if not project:
-            print("ERROR: Project does not exist")
+            ProjectDoesNotExist = returnTranslation("ProjectDoesNotExist")
+            print(f"ERROR: {ProjectDoesNotExist}")
             return
         pv = ProjectVersion.query.filter_by(project_id=project.id, name=version).first()
         if not pv:
-            print("ERROR:Project version does not exist")
+            ProjectVersionDoesNotExist = returnTranslation("ProjectVersionDoesNotExist")
+            print(f"ERROR: {ProjectVersionDoesNotExist}")
             return
         if os.path.exists(directory):
-            print(f"ERROR: Destination directory {directory} already exist")
+            DestinationDirectory = returnTranslation("DestinationDirectory")
+            AlreadyExist = returnTranslation("AlreadyExist")
+            print(f"ERROR: {DestinationDirectory} {directory} {AlreadyExist}")
             return
 
         os.mkdir(directory)
@@ -94,7 +103,8 @@ def add_commands(app: Flask):
                 os.path.join(project.storage.project_dir, f.location),
                 os.path.join(directory, f.path),
             )
-        print("Project downloaded successfully")
+        ProjectDownloadedSuccessfully = returnTranslation("ProjectDownloadedSuccessfully")
+        print(ProjectDownloadedSuccessfully)
 
     @project.command()
     @click.argument("project-name")
@@ -103,7 +113,8 @@ def add_commands(app: Flask):
         ws, name = split_project_path(project_name)
         workspace = current_app.ws_handler.get_by_name(ws)
         if not workspace:
-            print("ERROR: Workspace does not exist")
+            WorkspaceDoesNotExist = returnTranslation("WorkspaceDoesNotExist")
+            print(f"ERROR: {WorkspaceDoesNotExist}")
             return
         project = (
             Project.query.filter_by(workspace_id=workspace.id, name=name)
@@ -111,9 +122,11 @@ def add_commands(app: Flask):
             .first()
         )
         if not project:
-            print("ERROR: Project does not exist")
+            ProjectDoesNotExist = returnTranslation("ProjectDoesNotExist")
+            print(f"ERROR: {ProjectDoesNotExist}")
             return
         project.removed_at = datetime.utcnow()
         project.removed_by = None
         db.session.commit()
-        print("Project removed successfully")
+        ProjectRemovedSuccessfully = returnTranslation("ProjectRemovedSuccessfully")
+        print(ProjectRemovedSuccessfully)

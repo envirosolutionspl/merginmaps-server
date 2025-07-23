@@ -49,6 +49,10 @@ import {
 } from '@/modules/project/types'
 import { useUserStore } from '@/modules/user/store'
 
+import returnTranslation from '@/../../lang/translate';
+// @ts-ignore
+const lang = import.meta.env.VITE_LANG
+
 interface File {
   chunks: unknown
 }
@@ -211,8 +215,9 @@ export const useProjectStore = defineStore('projectModule', {
 
       // Check if there are any changes to upload
       if (upload.diff.changes < 1) {
+        const NoChangesDetectedFileAlreadyExists = returnTranslation(lang, "NoChangesDetectedFileAlreadyExists");
         notificationStore.error({
-          text: 'No changes detected. File already exists?'
+          text: NoChangesDetectedFileAlreadyExists
         })
         this.discardUpload({ projectPath: this.project.path })
         return
@@ -293,8 +298,9 @@ export const useProjectStore = defineStore('projectModule', {
           count: response.data?.count
         })
       } catch (_err) {
+        const FailedToLoadProjects = returnTranslation(lang, "FailedToLoadProjects");
         await notificationStore.error({
-          text: 'Failed to load projects'
+          text: FailedToLoadProjects
         })
       }
       return response
@@ -334,8 +340,9 @@ export const useProjectStore = defineStore('projectModule', {
         waitCursor(false)
         getActivePinia().router.replace({ path: '/' })
       } catch (e) {
+        const FailedToRemoveProject = returnTranslation(lang, "FailedToRemoveProject");
         await notificationStore.error({
-          text: getErrorMessage(e, 'Failed to remove project')
+          text: getErrorMessage(e, FailedToRemoveProject)
         })
         waitCursor(false)
       }
@@ -363,8 +370,9 @@ export const useProjectStore = defineStore('projectModule', {
           count: accessRequestResponse.data?.count
         })
       } catch {
+        const FailedToFetchProjectAccessRequests = returnTranslation(lang, "FailedToFetchProjectAccessRequests");
         await notificationStore.error({
-          text: 'Failed to fetch project access requests'
+          text: FailedToFetchProjectAccessRequests
         })
       }
     },
@@ -399,8 +407,9 @@ export const useProjectStore = defineStore('projectModule', {
           count: accessRequestResponse.data?.count
         })
       } catch {
+        const FailedToFetchProjectAccessRequests = returnTranslation(lang, "FailedToFetchProjectAccessRequests");
         await notificationStore.error({
-          text: 'Failed to fetch project access requests'
+          text: FailedToFetchProjectAccessRequests
         })
       }
     },
@@ -425,8 +434,9 @@ export const useProjectStore = defineStore('projectModule', {
       try {
         await ProjectApi.cancelProjectAccessRequest(payload.itemId, true)
       } catch (err) {
+        const FailedToCancelAccessRequest = returnTranslation(lang, "FailedToCancelAccessRequest");
         await notificationStore.error({
-          text: getErrorMessage(err, 'Failed to cancel access request')
+          text: getErrorMessage(err, FailedToCancelAccessRequest)
         })
       } finally {
         waitCursor(false)
@@ -479,7 +489,8 @@ export const useProjectStore = defineStore('projectModule', {
         )
         this.setProject({ project: projectResponse.data })
       } catch {
-        await notificationStore.error({ text: 'Failed to load project data' })
+        const FailedToLoadProjectData = returnTranslation(lang, "FailedToLoadProjectData");
+        await notificationStore.error({ text: FailedToLoadProjectData })
       }
     },
 
@@ -492,8 +503,9 @@ export const useProjectStore = defineStore('projectModule', {
         this.setProject({ project: null })
         waitCursor(false)
       } catch (err) {
+        const FailedToUnsubscribeFromProject = returnTranslation(lang, "FailedToUnsubscribeFromProject");
         await notificationStore.error({
-          text: getErrorMessage(err, 'Failed to unsubscribe from project')
+          text: getErrorMessage(err, FailedToUnsubscribeFromProject)
         })
         waitCursor(false)
       }
@@ -511,8 +523,9 @@ export const useProjectStore = defineStore('projectModule', {
         this.setProject({ project: projectResponse.data })
       } catch (e) {
         if (!axios.isAxiosError(e)) {
+          const FailedToLoadProjectData = returnTranslation(lang, "FailedToLoadProjectData");
           notificationStore.error({
-            text: 'Failed to load project data'
+            text: FailedToLoadProjectData
           })
           return
         }
@@ -538,8 +551,9 @@ export const useProjectStore = defineStore('projectModule', {
               }
             })
             .catch(() => {
+              const FailedToLoadProjectAccessRequestsData = returnTranslation(lang, "FailedToLoadProjectAccessRequestsData");
               notificationStore.error({
-                text: 'Failed to load project access requests data'
+                text: FailedToLoadProjectAccessRequestsData
               })
             })
         }
@@ -559,8 +573,9 @@ export const useProjectStore = defineStore('projectModule', {
         this.versions = response.data?.versions
         this.versionsCount = response.data?.count
       } catch {
+        const FailedToFetchProjectVersions = returnTranslation(lang, "FailedToFetchProjectVersions");
         await notificationStore.error({
-          text: 'Failed to fetch project versions'
+          text: FailedToFetchProjectVersions
         })
       } finally {
         this.versionsLoading = false
@@ -593,9 +608,10 @@ export const useProjectStore = defineStore('projectModule', {
         const code = error?.response?.data?.code as ErrorCodes
         // First handle specific error code from BE
         if (code === 'UpdateProjectAccessError') {
+          const UnableToShareProjectWithTheFollowingUsers = returnTranslation(lang, "UnableToShareProjectWithTheFollowingUsers");
           notificationStore.warn({
             life: 1000000,
-            text: 'Unable to share project with the following users',
+            text: UnableToShareProjectWithTheFollowingUsers,
             detail: (error.response.data?.invalid_usernames ?? []).join(', ')
           })
         }
@@ -639,8 +655,10 @@ export const useProjectStore = defineStore('projectModule', {
         projectName
       })
 
+      const FollowingUsersHaveBeenAddedToTheProject = returnTranslation(lang, "FollowingUsersHaveBeenAddedToTheProject");
+
       notificationStore.show({
-        text: 'Following users have been added to the project',
+        text: FollowingUsersHaveBeenAddedToTheProject,
         detail: userNames.join(', ')
       })
     },
@@ -666,8 +684,9 @@ export const useProjectStore = defineStore('projectModule', {
         const pushFinishTransactionResponse =
           await ProjectApi.pushFinishTransaction(transaction, token, true)
         this.discardUpload({ projectPath })
+        const UploadFinished = returnTranslation(lang, "UploadFinished");
         notificationStore.show({
-          text: `Upload finished: ${projectPath}`
+          text: `${UploadFinished}: ${projectPath}`
         })
         this.setProject({ project: pushFinishTransactionResponse.data })
         await userStore.fetchUserProfile()
@@ -743,8 +762,9 @@ export const useProjectStore = defineStore('projectModule', {
         const response = await ProjectApi.getProjectAccess(projectId)
         this.access = response.data
       } catch {
+        const FailedToGetProjectAccess = returnTranslation(lang, "FailedToGetProjectAccess");
         notificationStore.error({
-          text: 'Failed to get project access'
+          text: FailedToGetProjectAccess
         })
       } finally {
         this.accessLoading = false
@@ -759,8 +779,9 @@ export const useProjectStore = defineStore('projectModule', {
         const response = await ProjectApi.getProjectCollaborators(projectId)
         this.collaborators = response.data
       } catch {
+        const FailedToGetProjectCollaborators = returnTranslation(lang, "FailedToGetProjectCollaborators");
         notificationStore.error({
-          text: 'Failed to get project collaborators'
+          text: FailedToGetProjectCollaborators
         })
       } finally {
         this.accessLoading = false
@@ -787,8 +808,9 @@ export const useProjectStore = defineStore('projectModule', {
           (collaborators) => collaborators.id !== item.id
         )
       } catch {
+        const FailedToUpdateProjectAccessForUser = returnTranslation(lang, "FailedToUpdateProjectAccessForUser");
         notificationStore.error({
-          text: `Failed to update project access for user ${item.username}`
+          text: `${FailedToUpdateProjectAccessForUser} ${item.username}`
         })
       } finally {
         this.accessLoading = false
@@ -828,7 +850,8 @@ export const useProjectStore = defineStore('projectModule', {
           return access
         })
       } catch (err) {
-        this.handleProjectAccessError(err, 'Failed to update project access')
+        const FailedToUpdateProjectAccess = returnTranslation(lang, "FailedToUpdateProjectAccess");
+        this.handleProjectAccessError(err, FailedToUpdateProjectAccess)
       } finally {
         this.accessLoading = false
       }
@@ -861,9 +884,10 @@ export const useProjectStore = defineStore('projectModule', {
           return collaborator
         })
       } catch (err) {
+        const FailedToUpdateProjectCollaborator = returnTranslation(lang, "FailedToUpdateProjectCollaborator");
         this.handleProjectAccessError(
           err,
-          'Failed to update project collaborator'
+          FailedToUpdateProjectCollaborator
         )
       } finally {
         this.accessLoading = false
@@ -887,8 +911,9 @@ export const useProjectStore = defineStore('projectModule', {
         await ProjectApi.updatePublicFlag(payload.projectId, payload.data)
         this.project.access.public = !this.project.access?.public
       } catch {
+        const FailedToUpdatePublicFlag = returnTranslation(lang, "FailedToUpdatePublicFlag");
         notificationStore.error({
-          text: `Failed to update public flag`
+          text: FailedToUpdatePublicFlag
         })
       } finally {
         this.accessLoading = false
@@ -913,8 +938,9 @@ export const useProjectStore = defineStore('projectModule', {
           path
         )
       } catch (err) {
+        const FailedToDisplayChangesetOfFile = returnTranslation(lang, "FailedToDisplayChangesetOfFile");
         await notificationStore.error({
-          text: getErrorMessage(err, 'Failed to display changeset of file')
+          text: getErrorMessage(err, FailedToDisplayChangesetOfFile)
         })
       } finally {
         this.versionsChangesetLoading = false
@@ -924,8 +950,9 @@ export const useProjectStore = defineStore('projectModule', {
 
     async handlePushError(err: unknown) {
       const notificationStore = useNotificationStore()
+      const FailedToPushChanges = returnTranslation(lang, "FailedToPushChanges");
       await notificationStore.error({
-        text: getErrorMessage(err, 'Failed to push changes')
+        text: getErrorMessage(err, FailedToPushChanges)
       })
     }
   }

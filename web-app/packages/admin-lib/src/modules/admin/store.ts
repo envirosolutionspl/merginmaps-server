@@ -30,6 +30,10 @@ import {
 } from '@/modules/admin/types'
 import axios from 'axios'
 
+import returnTranslation from '@/../../lang/translate';
+// @ts-ignore
+const lang = import.meta.env.VITE_LANG
+
 export interface AdminState {
   loading: boolean
   users: {
@@ -139,7 +143,8 @@ export const useAdminStore = defineStore('adminModule', {
         const response = await AdminApi.fetchUserByName(payload.username)
         this.user = response.data
       } catch (e) {
-        await notificationStore.error({ text: 'Failed to fetch user profile' })
+        const FailedToFetchUserProfile = returnTranslation(lang, "FailedToFetchUserProfile");
+        await notificationStore.error({ text: FailedToFetchUserProfile })
       } finally {
         htmlUtils.waitCursor(false)
       }
@@ -153,8 +158,9 @@ export const useAdminStore = defineStore('adminModule', {
         await AdminApi.deleteUser(payload.username)
         await getActivePinia().router.push({ name: AdminRoutes.ACCOUNTS })
       } catch (err) {
+        const UnableToCloseAccount = returnTranslation(lang, "UnableToCloseAccount");
         await notificationStore.error({
-          text: errorUtils.getErrorMessage(err, 'Unable to close account')
+          text: errorUtils.getErrorMessage(err, UnableToCloseAccount)
         })
       } finally {
         htmlUtils.waitCursor(false)
@@ -175,10 +181,11 @@ export const useAdminStore = defineStore('adminModule', {
           this.user = response.data
         }
       } catch (err) {
+        const UnableToPermanentlyRemoveAccount = returnTranslation(lang, "UnableToPermanentlyRemoveAccount");
         await notificationStore.error({
           text: errorUtils.getErrorMessage(
             err,
-            'Unable to permanently remove account'
+            UnableToPermanentlyRemoveAccount
           )
         })
       } finally {
@@ -194,10 +201,11 @@ export const useAdminStore = defineStore('adminModule', {
         await AdminApi.login(payload.data)
         await instanceStore.initApp()
       } catch (error) {
+        const FailedToLogin = returnTranslation(lang, "FailedToLogin");
         await formStore.handleError({
           componentId: payload.componentId,
           error,
-          generalMessage: 'Failed to login'
+          generalMessage: FailedToLogin
         })
       }
     },
@@ -281,8 +289,9 @@ export const useAdminStore = defineStore('adminModule', {
         this.projects.items = response.data.items
         this.projects.count = response.data.count
       } catch (e) {
+        const FailedToFetchProjects = returnTranslation(lang, "FailedToFetchProjects");
         notificationStore.error({
-          text: 'Failed to fetch projects'
+          text: FailedToFetchProjects
         })
       } finally {
         this.projects.loading = false
@@ -296,8 +305,9 @@ export const useAdminStore = defineStore('adminModule', {
         this.projects.loading = true
         await AdminApi.restoreProject(payload.projectId)
       } catch (e) {
+        const FailedToRestoreProject = returnTranslation(lang, "FailedToRestoreProject");
         notificationStore.error({
-          text: 'Failed to restore project'
+          text: FailedToRestoreProject
         })
       } finally {
         this.projects.loading = false
@@ -310,12 +320,14 @@ export const useAdminStore = defineStore('adminModule', {
       try {
         await AdminApi.deleteProject(payload.projectId)
         await getActivePinia().router.push({ name: AdminRoutes.PROJECTS })
+        const ProjectRemovedSuccessfully = returnTranslation(lang, "ProjectRemovedSuccessfully");
         notificationStore.show({
-          text: 'Project removed successfully'
+          text: ProjectRemovedSuccessfully
         })
       } catch (e) {
+        const UnableToRemoveProject = returnTranslation(lang, "UnableToRemoveProject");
         notificationStore.error({
-          text: 'Unable to remove project'
+          text: UnableToRemoveProject
         })
       }
     },

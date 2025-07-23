@@ -11,12 +11,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="flex flex-column lg:flex-row lg:align-items-center row-gap-3"
       >
         <!-- Title with buttons -->
-        <h1 class="headline-h3 text-color font-semibold">Account details</h1>
+        <h1 class="headline-h3 text-color font-semibold">{{ AccountDetails }}</h1>
         <div class="flex flex-grow-1 align-items-center lg:justify-content-end">
           <PButton
             @click="editProfileDialog"
             icon="ti ti-pencil"
-            label="Edit account"
+            :label="EditAccount"
             class="w-auto mr-1"
             data-cy="profile-edit-btn"
           />
@@ -26,7 +26,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             data-cy="profile-change-password-btn"
             class="w-auto"
             icon="ti ti-lock"
-            label="Change password"
+            :label="ChangePassword"
           />
         </div></section
     ></app-container>
@@ -38,17 +38,16 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <template #header-image
           ><img width="50" height="50" src="@/assets/warning.svg"
         /></template>
-        <template #title>Please verify your email</template>
+        <template #title>{{ PleaseVerifyYourEmail }}</template>
         <template #description
-          >We sent you a verification email to the account you provided during
-          signup.</template
+          >{{ WeSentYouAVerificationEmailToTheAccountYouProvidedDuringSignup }}</template
         >
         <template #header-actions
           ><PButton
             @click="resendConfirmationEmail"
             severity="secondary"
             data-cy="profile-send-email-btn"
-            label="Send confirmation email"
+            :label="SendConfirmationEmail"
         /></template>
       </app-section-banner>
     </app-container>
@@ -90,13 +89,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             <div
               class="col-6 flex flex-column align-items-start text-left flex-wrap"
             >
-              <dt class="paragraph-p6 opacity-80 mb-2">Full name</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">{{ FullName }}</dt>
               <dd class="font-semibold" data-cy="profile-name">
                 {{ loggedUser?.name || '-' }}
               </dd>
             </div>
             <div class="col-6 flex flex-column align-items-end">
-              <dt class="paragraph-p6 opacity-80 mb-2">Registered</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">{{ Registered }}</dt>
               <dd class="font-semibold" data-cy="profile-registered">
                 {{ $filters.date(loggedUser?.registration_date) }}
               </dd>
@@ -107,7 +106,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </app-container>
     <app-container>
       <app-section>
-        <template #title>Advanced</template>
+        <template #title>{{ Advanced }}</template>
         <div class="flex flex-column row-gap-3 paragraph-p5 px-4 pb-4">
           <div
             :class="[
@@ -117,9 +116,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             ]"
           >
             <div class="flex-grow-1">
-              <p class="title-t3">Receive notifications</p>
+              <p class="title-t3">{{ ReceiveNotifications }}</p>
               <span class="paragraph-p6 opacity-80"
-                >We will send you information about workspace activity</span
+                >{{ WeWillSendYouInformationAboutWorkspaceActivity }}</span
               >
             </div>
             <div
@@ -140,11 +139,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             ]"
           >
             <div class="flex-grow-1">
-              <p class="title-t3">Close account</p>
+              <p class="title-t3">{{ CloseAccount }}</p>
               <span class="paragraph-p6 opacity-80"
-                >Your account will be closed. In case you are an owner of a
-                workspace, you might need to transfer the ownership first or
-                close the workspace.</span
+                >{{ YourAccountWillBeClosedInCaseYouAreAnOwnerOfAWorkspaceYouMightNeedToTransferTheOwnershipFirstOrCloseTheWorkspace }}</span
               >
             </div>
             <div class="flex-shrink-0">
@@ -152,7 +149,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 @click="confirmDeleteUser"
                 severity="danger"
                 data-cy="profile-close-account-btn"
-                label="Close account"
+                :label="CloseAccount"
               />
             </div>
           </div>
@@ -162,6 +159,26 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <app-container><slot name="additionalContent"></slot></app-container>
   </article>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const AccountDetails = returnTranslation(lang, 'AccountDetails');
+const EditAccount = returnTranslation(lang, 'EditAccount');
+const ChangePassword = returnTranslation(lang, 'ChangePassword');
+const PleaseVerifyYourEmail = returnTranslation(lang, 'PleaseVerifyYourEmail');
+const WeSentYouAVerificationEmailToTheAccountYouProvidedDuringSignup = returnTranslation(lang, 'WeSentYouAVerificationEmailToTheAccountYouProvidedDuringSignup');
+const SendConfirmationEmail = returnTranslation(lang, 'SendConfirmationEmail');
+const FullName = returnTranslation(lang, 'FullName');
+const Registered = returnTranslation(lang, 'Registered');
+const Advanced = returnTranslation(lang, 'Advanced');
+const ReceiveNotifications = returnTranslation(lang, 'ReceiveNotifications');
+const WeWillSendYouInformationAboutWorkspaceActivity = returnTranslation(lang, 'WeWillSendYouInformationAboutWorkspaceActivity');
+const CloseAccount = returnTranslation(lang, 'CloseAccount');
+const YourAccountWillBeClosedInCaseYouAreAnOwnerOfAWorkspaceYouMightNeedToTransferTheOwnershipFirstOrCloseTheWorkspace = returnTranslation(lang, 'YourAccountWillBeClosedInCaseYouAreAnOwnerOfAWorkspaceYouMightNeedToTransferTheOwnershipFirstOrCloseTheWorkspace');
+
+</script>
 
 <script lang="ts">
 import { mapState, mapActions } from 'pinia'
@@ -220,12 +237,12 @@ export default defineComponent({
         params: {
           props,
           listeners,
-          dialog: { header: 'Close account' }
+          dialog: { header: returnTranslation(lang, 'CloseAccount') }
         }
       })
     },
     changePasswordDialog() {
-      const dialog = { persistent: true, header: 'Change password' }
+      const dialog = { persistent: true, header: returnTranslation(lang, 'ChangePassword') }
       this.show({
         component: ChangePasswordForm,
         params: {
@@ -235,7 +252,7 @@ export default defineComponent({
     },
     editProfileDialog() {
       const props = { profile: this.loggedUser }
-      const dialog = { header: 'Edit account' }
+      const dialog = { header: returnTranslation(lang, 'EditAccount') }
       this.show({
         component: EditProfileForm,
         params: {

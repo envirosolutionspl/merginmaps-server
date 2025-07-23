@@ -14,6 +14,7 @@ from ..app import db
 from ..auth.models import User
 from .models import Project, Upload, ProjectRole, ProjectUser
 
+from ..lang.current import returnTranslation
 
 def _is_superuser(f):
     """Decorator to bypass project permissions checks if passed user is a superuser"""
@@ -197,7 +198,8 @@ def require_project(ws, project_name, permission) -> Project:
     if not workspace:
         abort(404)
     if not is_active_workspace(workspace):
-        abort(404, "Workspace doesn't exist")
+        WorkspaceDoesntExist = returnTranslation("WorkspaceDoesntExist")
+        abort(404, WorkspaceDoesntExist)
     project = (
         Project.query.filter_by(name=project_name, workspace_id=workspace.id)
         .filter(Project.storage_params.isnot(None))
@@ -205,7 +207,8 @@ def require_project(ws, project_name, permission) -> Project:
         .first_or_404()
     )
     if not permission.check(project, current_user):
-        abort(403, "You do not have permissions for this project")
+        YouDoNotHavePermissionsForThisProject = returnTranslation("YouDoNotHavePermissionsForThisProject")
+        abort(403, YouDoNotHavePermissionsForThisProject)
     return project
 
 
@@ -223,9 +226,11 @@ def require_project_by_uuid(uuid: str, permission: ProjectPermissions, scheduled
     if not workspace:
         abort(404)
     if not is_active_workspace(workspace):
-        abort(404, "Workspace doesn't exist")
+        WorkspaceDoesntExist = returnTranslation("WorkspaceDoesntExist")
+        abort(404, WorkspaceDoesntExist)
     if not permission.check(project, current_user):
-        abort(403, "You do not have permissions for this project")
+        YouDoNotHavePermissionsForThisProject = returnTranslation("YouDoNotHavePermissionsForThisProject")
+        abort(403, YouDoNotHavePermissionsForThisProject)
     return project
 
 
@@ -236,7 +241,8 @@ def get_upload(transaction_id):
         abort(404)
 
     if upload.user_id != current_user.id:
-        abort(403, "You do not have permissions for ongoing upload")
+        YouDoNotHavePermissionsForOngoingUpload = returnTranslation("YouDoNotHavePermissionsForOngoingUpload")
+        abort(403, YouDoNotHavePermissionsForOngoingUpload)
 
     upload_dir = os.path.join(upload.project.storage.project_dir, "tmp", transaction_id)
     return upload, upload_dir

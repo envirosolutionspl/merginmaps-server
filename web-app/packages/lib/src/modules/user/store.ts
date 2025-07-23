@@ -30,6 +30,10 @@ import {
 } from '@/modules/user/types'
 import { UserApi } from '@/modules/user/userApi'
 
+import returnTranslation from '@/../../lang/translate';
+// @ts-ignore
+const lang = import.meta.env.VITE_LANG
+
 export interface UserState {
   loggedUser?: UserDetailResponse
   workspaces: WorkspaceResponse[]
@@ -155,12 +159,14 @@ export const useUserStore = defineStore('userModule', {
           loggedUser: payload.editedUser
         })
         await this.fetchUserProfile()
-        await notificationStore.show({ text: 'Profile has been changed' })
+        const ProfileHasBeenChanged = returnTranslation(lang, "ProfileHasBeenChanged");
+        await notificationStore.show({ text: ProfileHasBeenChanged })
       } catch (error) {
+        const FailedToChangeProfile = returnTranslation(lang, "FailedToChangeProfile");
         await formStore.handleError({
           componentId: payload.componentId,
           error,
-          generalMessage: 'Failed to change profile'
+          generalMessage: FailedToChangeProfile
         })
       } finally {
         waitCursor(false)
@@ -178,8 +184,9 @@ export const useUserStore = defineStore('userModule', {
           verifiedEmail: resp.data.verified_email
         })
       } catch {
+        const FailedToFetchUsersProfile = returnTranslation(lang, "FailedToFetchUsersProfile");
         await notificationStore.error({
-          text: "Failed to fetch user's profile"
+          text: FailedToFetchUsersProfile
         })
       }
       return resp?.data
@@ -197,8 +204,9 @@ export const useUserStore = defineStore('userModule', {
         // taken from logout action, router would return error because user is considered as logged in
         location.href = '/'
       } catch (err) {
+        const UnableToCloseAccount = returnTranslation(lang, "UnableToCloseAccount");
         await notificationStore.error({
-          text: getErrorMessage(err, 'Unable to close account')
+          text: UnableToCloseAccount
         })
       } finally {
         waitCursor(false)
@@ -243,10 +251,11 @@ export const useUserStore = defineStore('userModule', {
         await UserApi.login(payload.data)
         await instanceStore.initApp()
       } catch (error) {
+        const FailedTologin = returnTranslation(lang, "FailedTologin");
         await formStore.handleError({
           componentId: payload.componentId,
           error,
-          generalMessage: 'Failed to login'
+          generalMessage: FailedTologin
         })
       }
     },
@@ -258,14 +267,16 @@ export const useUserStore = defineStore('userModule', {
       try {
         await UserApi.resetPassword({ email: payload.email })
         await getActivePinia().router.push({ path: '/login' })
+        const EmailWithPasswordResetLinkWasSentToYourEmailAddress = returnTranslation(lang, "EmailWithPasswordResetLinkWasSentToYourEmailAddress");
         await notificationStore.show({
-          text: 'Email with password reset link was sent to your email address'
+          text: EmailWithPasswordResetLinkWasSentToYourEmailAddress
         })
       } catch (error) {
+        const FailedToSendConfirmationEmail = returnTranslation(lang, "FailedToSendConfirmationEmail");
         await formStore.handleError({
           componentId: payload.componentId,
           error,
-          generalMessage: 'Failed to send confirmation email'
+          generalMessage: FailedToSendConfirmationEmail
         })
       }
     },
@@ -283,10 +294,11 @@ export const useUserStore = defineStore('userModule', {
         waitCursor(false)
         // callback - set => this.success = false
         payload.callback(false)
+        const FailedToChangePassword = returnTranslation(lang, "FailedToChangePassword");
         await formStore.handleError({
           componentId: payload.componentId,
           error: e,
-          generalMessage: 'Failed to change password'
+          generalMessage: FailedToChangePassword
         })
       }
     },
@@ -296,12 +308,14 @@ export const useUserStore = defineStore('userModule', {
 
       try {
         await UserApi.resendEmail()
+        const EmailWasSentToAddress = returnTranslation(lang, "EmailWasSentToAddress");
         await notificationStore.show({
-          text: `Email was sent to address: ${payload.email}`
+          text: `${EmailWasSentToAddress}: ${payload.email}`
         })
       } catch (err) {
+        const FailedToSendConfirmationEmailPleaseCheckYourAddressInUserProfileSettings = returnTranslation(lang, "FailedToSendConfirmationEmailPleaseCheckYourAddressInUserProfileSettings");
         await notificationStore.error({
-          text: 'Failed to send confirmation email, please check your address in user profile settings'
+          text: FailedToSendConfirmationEmailPleaseCheckYourAddressInUserProfileSettings
         })
       }
     },
@@ -315,12 +329,14 @@ export const useUserStore = defineStore('userModule', {
       try {
         await UserApi.changePassword(payload.data, true)
         dialogStore.close()
-        await notificationStore.show({ text: 'Password has been changed' })
+        const PasswordHasBeenChanged = returnTranslation(lang, "PasswordHasBeenChanged");
+        await notificationStore.show({ text: PasswordHasBeenChanged })
       } catch (error) {
+        const FailedToChangePassword = returnTranslation(lang, "FailedToChangePassword");
         await formStore.handleError({
           componentId: payload.componentId,
           error,
-          generalMessage: 'Failed to change password'
+          generalMessage: FailedToChangePassword
         })
       } finally {
         waitCursor(false)
@@ -346,8 +362,9 @@ export const useUserStore = defineStore('userModule', {
           workspace: newWorkspace
         })
       } catch (_err) {
+        const FailedToLoadWorkspace = returnTranslation(lang, "FailedToLoadWorkspace");
         await notificationStore.error({
-          text: 'Failed to load workspace'
+          text: FailedToLoadWorkspace
         })
       }
       return newWorkspace
@@ -362,8 +379,9 @@ export const useUserStore = defineStore('userModule', {
         workspacesResponse = await UserApi.getWorkspaces()
         this.setWorkspaces({ workspaces: workspacesResponse.data })
       } catch (_err) {
+        const FailedToLoadWorkspaces = returnTranslation(lang, "FailedToLoadWorkspaces");
         await notificationStore.error({
-          text: 'Failed to load workspaces'
+          text: FailedToLoadWorkspaces
         })
       } finally {
         this.workspacesLoading = false
@@ -471,7 +489,8 @@ export const useUserStore = defineStore('userModule', {
           await this.cleanupLastSeenWorkspaces()
         }
       } catch (e) {
-        console.warn('Loading of stored user workspace id has failed.', e)
+        const LoadingOfStoredUserWorkspaceIdHasFailed = returnTranslation(lang, "LoadingOfStoredUserWorkspaceIdHasFailed");
+        console.warn(LoadingOfStoredUserWorkspaceIdHasFailed, e)
       }
     },
 
