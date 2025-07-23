@@ -5,6 +5,7 @@
 from typing import List, Dict
 from ..app import ResponseError
 
+from ..lang.current import returnTranslation
 
 class UpdateProjectAccessError(ResponseError):
     code = "UpdateProjectAccessError"
