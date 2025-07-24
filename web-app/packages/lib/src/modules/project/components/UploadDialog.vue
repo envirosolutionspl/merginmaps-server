@@ -139,6 +139,7 @@ export default defineComponent({
     resetUpload() {
       this.discardUpload({ projectPath: this.project.path })
       if (this.source) {
+        const lang = import.meta.env.VITE_LANG
         const OperationCanceledByTheUser = returnTranslation(lang, 'OperationCanceledByTheUser');
         this.source.cancel(OperationCanceledByTheUser)
         delete this.source
@@ -167,6 +168,7 @@ export default defineComponent({
       const { transaction } = resp.data
       if (!transaction) {
         this.discardUpload({ projectPath })
+        const lang = import.meta.env.VITE_LANG
         const ProjectUpdated = returnTranslation(lang, 'ProjectUpdated');
         await this.show({
           text: ProjectUpdated
@@ -213,6 +215,7 @@ export default defineComponent({
         })
     },
     confirmUpload() {
+      const lang = import.meta.env.VITE_LANG
       const AreYouReallySureYouWantToContinue = returnTranslation(lang, 'AreYouReallySureYouWantToContinue');
       const ChangesFromOtherUsersMayGetLostWhenUploadingDataFromBrowserItIsHighlyRecommendedToUseMerginMapsQGISPluginInstead = returnTranslation(lang, 'ChangesFromOtherUsersMayGetLostWhenUploadingDataFromBrowserItIsHighlyRecommendedToUseMerginMapsQGISPluginInstead');
       const Update = returnTranslation(lang, 'Update');
@@ -228,6 +231,7 @@ export default defineComponent({
         confirm: () => this.uploadChanges()
       }
       if (this.upload.diff.updated.filter((i) => isVersionedFile(i)).length) {
+        const lang = import.meta.env.VITE_LANG
         const ConfirmContinueUpload = returnTranslation(lang, 'ConfirmContinueUpload');
         this.showDialog({
           component: ConfirmDialog,

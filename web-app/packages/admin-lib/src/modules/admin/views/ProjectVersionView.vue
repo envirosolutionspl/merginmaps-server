@@ -125,6 +125,7 @@ async function fetchVersion() {
     data.value = response.data
   } catch (err) {
     console.error(err)
+    const lang = import.meta.env.VITE_LANG
     const FailedToFetchProjectVersion = returnTranslation(lang, 'FailedToFetchProjectVersion');
     notificationStore.error({
       text: errorUtils.getErrorMessage(err, FailedToFetchProjectVersion)

@@ -243,17 +243,17 @@ export default defineComponent({
         ...(this.showNamespace
           ? [
               {
-                header: returnTranslation(lang, 'Workspace'),
+                header: returnTranslation(import.meta.env.VITE_LANG, 'Workspace'),
                 field: 'workspace',
                 sortable: true
               }
             ]
           : []),
-        { header: returnTranslation(lang, 'Name'), field: 'name', sortable: true },
-        { header: returnTranslation(lang, 'LastUpdate'), field: 'updated', sortable: true },
-        { header: returnTranslation(lang, 'Size'), field: 'disk_usage', sortable: true },
-        { header: returnTranslation(lang, 'ScheduledRemovalAt'), field: 'removed_at', sortable: true },
-        { header: returnTranslation(lang, 'RemovedBy'), field: 'removed_by', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'Name'), field: 'name', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'LastUpdate'), field: 'updated', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'Size'), field: 'disk_usage', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'ScheduledRemovalAt'), field: 'removed_at', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'RemovedBy'), field: 'removed_by', sortable: true },
         { header: '', field: 'buttons', sortable: false }
       ]
     }
@@ -314,6 +314,7 @@ export default defineComponent({
     },
 
     confirmRestore(item) { // returnTranslation(lang, 'RemovedBy')
+      const lang = import.meta.env.VITE_LANG
       const props: ConfirmDialogProps = {
         text: `${returnTranslation(lang, 'AreYouSureToRestoreProject')} ${item.workspace}/${item.name}?`,
         confirmText: returnTranslation(lang, 'Restore')
@@ -326,11 +327,12 @@ export default defineComponent({
       }
       this.showDialog({
         component: ConfirmDialog,
-        params: { props, listeners, dialog: { header: returnTranslation(lang, 'RestoreProject') } }
+        params: { props, listeners, dialog: { header: returnTranslation(import.meta.env.VITE_LANG, 'RestoreProject') } }
       })
     },
 
     confirmDelete(item) {
+      const lang = import.meta.env.VITE_LANG
       const props: ConfirmDialogProps = {
         text: returnTranslation(lang, 'AreYouSureYouWantToPermanentlyDeleteThisProject'),
         description: returnTranslation(lang, 'DeletingThisProjectWillRemoveItAndAllItsDataThisActionCannotBeUndoneTypeInProjectNameToConfirm'),
@@ -350,7 +352,7 @@ export default defineComponent({
       }
       this.showDialog({
         component: ConfirmDialog,
-        params: { props, listeners, dialog: { header: returnTranslation(lang, 'DeleteProject') } }
+        params: { props, listeners, dialog: { header: returnTranslation(import.meta.env.VITE_LANG, 'DeleteProject') } }
       })
     },
 

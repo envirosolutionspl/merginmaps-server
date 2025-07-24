@@ -50,6 +50,7 @@ export default defineComponent({
     const isProjectOwner = computed(() => projectStore.isProjectOwner)
 
     function openCloneDialog() {
+      const lang = import.meta.env.VITE_LANG
       const dialogProps = {
         namespace: props.namespace,
         project: props.projectName
@@ -61,6 +62,7 @@ export default defineComponent({
       }
       const listeners = {
         error: (error, data) => {
+          const lang = import.meta.env.VITE_LANG
           formStore.handleError({
             componentId: data.merginComponentUuid,
             error,
@@ -79,6 +81,7 @@ export default defineComponent({
     }
 
     function openShareDialog() {
+      const lang = import.meta.env.VITE_LANG
       const dialog = {
         maxWidth: 600,
         header: returnTranslation(lang, 'ShareProject')

@@ -142,15 +142,15 @@ const tabs = computed(() => {
   const tabs: TabItem[] = [
     {
       route: AdminRoutes.ProjectTree,
-      header: returnTranslation(lang, 'Files')
+      header: returnTranslation(import.meta.env.VITE_LANG, 'Files')
     },
     {
       route: AdminRoutes.ProjectHistory,
-      header: returnTranslation(lang, 'History')
+      header: returnTranslation(import.meta.env.VITE_LANG, 'History')
     },
     {
       route: AdminRoutes.ProjectSettings,
-      header: returnTranslation(lang, 'Settings')
+      header: returnTranslation(import.meta.env.VITE_LANG, 'Settings')
     }
   ]
   return tabs

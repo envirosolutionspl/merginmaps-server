@@ -64,12 +64,12 @@ const options = ref<DataViewWrapperOptions>({
 const filterMenuItems = computed<MenuItem[]>(() => {
   return [
     {
-      label: returnTranslation(lang, 'NewestVersions'),
+      label: returnTranslation(import.meta.env.VITE_LANG, 'NewestVersions'),
       key: 'newest',
       sortDesc: true
     },
     {
-      label: returnTranslation(lang, 'OldestVersions'),
+      label: returnTranslation(import.meta.env.VITE_LANG, 'OldestVersions'),
       key: 'oldest',
       sortDesc: false
     }

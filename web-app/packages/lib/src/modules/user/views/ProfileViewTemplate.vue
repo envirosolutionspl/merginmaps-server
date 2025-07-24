@@ -226,6 +226,7 @@ export default defineComponent({
       this.resendConfirmationEmailToUser({ email: this.loggedUser?.email })
     },
     confirmDeleteUser() {
+      const lang = import.meta.env.VITE_LANG
       const props: DeleteAccountConfirmProps = {
         username: this.loggedUser?.username
       }
@@ -242,6 +243,7 @@ export default defineComponent({
       })
     },
     changePasswordDialog() {
+      const lang = import.meta.env.VITE_LANG
       const dialog = { persistent: true, header: returnTranslation(lang, 'ChangePassword') }
       this.show({
         component: ChangePasswordForm,
@@ -251,6 +253,7 @@ export default defineComponent({
       })
     },
     editProfileDialog() {
+      const lang = import.meta.env.VITE_LANG
       const props = { profile: this.loggedUser }
       const dialog = { header: returnTranslation(lang, 'EditAccount') }
       this.show({

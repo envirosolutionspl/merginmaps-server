@@ -77,6 +77,7 @@ export default defineComponent({
     CheckForUpdates
   },
   metaInfo() {
+    const lang = import.meta.env.VITE_LANG
     return {
       title: 'Mergin Maps',
       meta: [
@@ -129,11 +130,11 @@ export default defineComponent({
       meta: [
         {
           name: 'description',
-          content: returnTranslation(lang, 'StoreAndTrackChangesToYourGeoDataMerginMapsIsARepositoryOfGeoDataForCollaborativeWork')
+          content: returnTranslation(import.meta.env.VITE_LANG, 'StoreAndTrackChangesToYourGeoDataMerginMapsIsARepositoryOfGeoDataForCollaborativeWork')
         },
         {
           property: 'og:title',
-          content: returnTranslation(lang, 'StoreAndTrackChangesToYourGeoDataMerginMapsIsARepositoryOfGeoDataForCollaborativeWork')
+          content: returnTranslation(import.meta.env.VITE_LANG, 'StoreAndTrackChangesToYourGeoDataMerginMapsIsARepositoryOfGeoDataForCollaborativeWork')
         },
         { property: 'og:site_name', content: 'Mergin Maps' }
       ]

@@ -82,8 +82,9 @@ withDefaults(
 const projectStore = useProjectStore()
 const userStore = useUserStore()
 
-const filterMenuItems = computed<MenuItem[]>(() =>
-  [
+const filterMenuItems = computed<MenuItem[]>(() => {
+  const lang = import.meta.env.VITE_LANG
+  return [
     {
       label: returnTranslation(lang, 'SortByNameAZ'), // returnTranslation(lang, 'Share')
       key: 'username',
@@ -110,7 +111,7 @@ const filterMenuItems = computed<MenuItem[]>(() =>
         ? 'bg-primary-400'
         : ''
   }))
-)
+})
 
 // Every dashboard table have to load data on orkspace change
 watchEffect(() => {

@@ -57,6 +57,7 @@ export default defineComponent({
   },
   methods: {
     open() {
+      const lang = import.meta.env.VITE_LANG
       this.$toast.add({
         group: 'upload-progress',
         severity: 'info',

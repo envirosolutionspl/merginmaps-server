@@ -103,6 +103,7 @@ const props = defineProps<{
 }>()
 
 const initialSidebarItems = computed<SideBarItemModel[]>(() => {
+  const lang = import.meta.env.VITE_LANG
   return (
     props.sidebarItems || [
       {

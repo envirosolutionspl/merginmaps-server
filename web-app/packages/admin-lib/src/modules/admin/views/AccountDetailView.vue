@@ -164,29 +164,29 @@ const userStore = useUserStore()
 const settingsItems = computed<AppSettingsItemConfig[]>(() => [
   {
     key: 'notifications',
-    title: returnTranslation(lang, 'ReceiveNotifications'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'ReceiveNotifications'),
     description: profile?.value?.receive_notifications
-      ? returnTranslation(lang, 'UserHasEnabledReceivingNotifications')
-      : returnTranslation(lang, 'UserHasDisabledNotifications')
+      ? returnTranslation(import.meta.env.VITE_LANG, 'UserHasEnabledReceivingNotifications')
+      : returnTranslation(import.meta.env.VITE_LANG, 'UserHasDisabledNotifications')
   },
   {
     key: 'adminAccess',
-    title: returnTranslation(lang, 'AccessToAdminPanel'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'AccessToAdminPanel'),
     description: user.value?.is_admin
-      ? returnTranslation(lang, 'UserHasAccessToTheAdminPanel')
-      : returnTranslation(lang, 'UserDoesNotHaveAccessToTheAdminPanel')
+      ? returnTranslation(import.meta.env.VITE_LANG, 'UserHasAccessToTheAdminPanel')
+      : returnTranslation(import.meta.env.VITE_LANG, 'UserDoesNotHaveAccessToTheAdminPanel')
   },
   {
     key: 'accountActivation',
-    title: returnTranslation(lang, 'AccountActivation'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'AccountActivation'),
     description: user?.value?.active
-      ? returnTranslation(lang, 'TheUsersAccountIsCurrentlyActiveDeactivationWillLeadToATemporaryBanFromMerginMapsUsage')
-      : returnTranslation(lang, 'TheUsersAccountIsCurrentlyInactiveActivatingItWillAllowAccessToMerginMaps')
+      ? returnTranslation(import.meta.env.VITE_LANG, 'TheUsersAccountIsCurrentlyActiveDeactivationWillLeadToATemporaryBanFromMerginMapsUsage')
+      : returnTranslation(import.meta.env.VITE_LANG, 'TheUsersAccountIsCurrentlyInactiveActivatingItWillAllowAccessToMerginMaps')
   },
   {
     key: 'deleteAccount',
     title: 'Delete account',
-    description: returnTranslation(lang, 'DeletingThisUserWillRemoveThemAndAllTheirDataThisActionCannotBeUndone')
+    description: returnTranslation(import.meta.env.VITE_LANG, 'DeletingThisUserWillRemoveThemAndAllTheirDataThisActionCannotBeUndone')
   }
 ])
 
@@ -210,6 +210,7 @@ watch(
 )
 
 const changeStatusDialog = () => {
+  const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = user.value.active
     ? {
         confirmText: returnTranslation(lang, 'Deactivate'),
@@ -243,6 +244,7 @@ const changeStatusDialog = () => {
 }
 
 const confirmDeleteUser = () => {
+  const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = {
     text: returnTranslation(lang, 'AreYouSureYouWantToPermanentlyDeleteThisAccount'),
     description: returnTranslation(lang, 'DeletingThisUserWillRemoveThemAndAllTheirDataThisActionCannotBeUndoneTypeInUsernameToConfirm'),
@@ -265,6 +267,7 @@ const confirmDeleteUser = () => {
 }
 
 const switchAdminAccess = async () => {
+  const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = !user.value?.is_admin
     ? {
         text: returnTranslation(lang, 'AreYouSureToGrantAccessToAdminPanelToThisUser'),
@@ -299,7 +302,7 @@ const switchAdminAccess = async () => {
   }
   dialogStore.show({
     component: ConfirmDialog,
-    params: { props, listeners, dialog: { header: returnTranslation(lang, 'AdminAccess') } }
+    params: { props, listeners, dialog: { header: returnTranslation(import.meta.env.VITE_LANG, 'AdminAccess') } }
   })
 }
 </script>

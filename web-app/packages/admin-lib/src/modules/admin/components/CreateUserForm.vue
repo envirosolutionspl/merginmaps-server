@@ -128,6 +128,7 @@ export default defineComponent({
       return ['email', 'password'].some((k) => data[k] === '')
     },
     submit() {
+      const lang = import.meta.env.VITE_LANG
       const data: CreateUserData = {
         email: this.email.trim(),
         password: this.password,
@@ -140,7 +141,7 @@ export default defineComponent({
           this.close()
           this.$emit('success')
           this.show({
-            text: returnTranslation(lang, 'UserCreated')
+            text: returnTranslation(import.meta.env.VITE_LANG, 'UserCreated')
           })
         })
         .catch((err) => {
@@ -149,7 +150,7 @@ export default defineComponent({
             error: err,
             generalMessage: errorUtils.getErrorMessage(
               err,
-              returnTranslation(lang, 'FailedToCreateUser')
+              returnTranslation(import.meta.env.VITE_LANG, 'FailedToCreateUser')
             )
           })
         })

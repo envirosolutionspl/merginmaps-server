@@ -54,8 +54,8 @@ const instanceStore = useInstanceStore()
 
 const settingsItems = ref<AppSettingsItemConfig[]>([
   {
-    title: returnTranslation(lang, 'CollectStatistics'),
-    description: returnTranslation(lang, 'HelpUsImproveMerginMapsBySharingUsageInformationMerginMapsCollectsAnonymousUsageInformationToMakeTheServiceBetterOvertime'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'CollectStatistics'),
+    description: returnTranslation(import.meta.env.VITE_LANG, 'HelpUsImproveMerginMapsBySharingUsageInformationMerginMapsCollectsAnonymousUsageInformationToMakeTheServiceBetterOvertime'),
     key: 'usageInformation'
   }
 ])

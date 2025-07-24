@@ -19,25 +19,25 @@ const route = useRoute()
 
 const sidebarItems = computed<SideBarItemModel[]>(() => [
   {
-    title: returnTranslation(lang, 'Overview'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'Overview'),
     to: '/overview',
     icon: 'ti ti-layout-dashboard',
     active: route.matched.some((item) => item.name === AdminRoutes.OVERVIEW)
   },
   {
-    title: returnTranslation(lang, 'Accounts'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'Accounts'),
     to: '/accounts',
     icon: 'ti ti-user-circle',
     active: route.matched.some((item) => item.name === AdminRoutes.ACCOUNTS)
   },
   {
-    title: returnTranslation(lang, 'Projects'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'Projects'),
     to: '/projects',
     icon: 'ti ti-article',
     active: route.matched.some((item) => item.name === AdminRoutes.PROJECTS)
   },
   {
-    title: returnTranslation(lang, 'Settings'),
+    title: returnTranslation(import.meta.env.VITE_LANG, 'Settings'),
     to: '/settings',
     icon: 'ti ti-settings',
     active: route.matched.some((item) => item.name === AdminRoutes.SETTINGS)

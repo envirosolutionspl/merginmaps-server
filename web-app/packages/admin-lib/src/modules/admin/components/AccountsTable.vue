@@ -139,6 +139,7 @@ export default defineComponent({
     AppSection
   },
   data() {
+    const lang = import.meta.env.VITE_LANG
     return {
       options: {
         sortBy: ['username'],
@@ -149,10 +150,10 @@ export default defineComponent({
       },
       searchByName: '',
       headers: [
-        { field: 'username', header: returnTranslation(lang, 'Username'), sortable: true },
-        { field: 'email', header: returnTranslation(lang, 'Email'), sortable: true },
-        { field: 'profile.name', header: returnTranslation(lang, 'FullName') },
-        { field: 'active', header: returnTranslation(lang, 'Active') }
+        { field: 'username', header: returnTranslation(import.meta.env.VITE_LANG, 'Username'), sortable: true },
+        { field: 'email', header: returnTranslation(import.meta.env.VITE_LANG, 'Email'), sortable: true },
+        { field: 'profile.name', header: returnTranslation(import.meta.env.VITE_LANG, 'FullName') },
+        { field: 'active', header: returnTranslation(import.meta.env.VITE_LANG, 'Active') }
       ] as TableDataHeader[]
     }
   },
@@ -215,7 +216,7 @@ export default defineComponent({
     },
 
     createUserDialog() {
-      const dialog = { maxWidth: 500, header: returnTranslation(lang, 'CreateUser') }
+      const dialog = { maxWidth: 500, header: returnTranslation(import.meta.env.VITE_LANG, 'CreateUser') }
       const listeners = {
         success: () => {
           this.resetPaging()

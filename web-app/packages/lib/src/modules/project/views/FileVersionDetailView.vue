@@ -178,6 +178,7 @@ export default defineComponent({
       const _this = this
       for (const [key, value] of Object.entries(changeset)) {
         _this.tables[key] = {}
+        const lang = import.meta.env.VITE_LANG
         const headers = [
           { text: returnTranslation(lang, 'Change'), value: 'operationTypeHeader', width: 50 }
         ]

@@ -177,6 +177,7 @@ export default defineComponent({
   computed: {
     ...mapState(useProjectStore, ['projectsSearch', 'projectsSorting']),
     columns(): TableDataHeader[] {
+      const lang = import.meta.env.VITE_LANG
       return [
         { header: returnTranslation(lang, 'ProjectName'), field: 'name' }, //returnTranslation(lang, 'ProjectName')
         { header: returnTranslation(lang, 'Versions'), field: 'version' },

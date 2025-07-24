@@ -63,6 +63,7 @@ const PleaseCheckIfAddressIsWrittenCorrectly = returnTranslation(lang, 'PleaseCh
 </script>
 
 <script lang="ts">
+const lang = import.meta.env.VITE_LANG
 import { mapActions, mapState } from 'pinia'
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { defineComponent, ref } from 'vue'
@@ -94,12 +95,14 @@ export default defineComponent({
     ...mapState(useLayoutStore, ['drawer']),
     ...mapState(useProjectStore, ['projectsSorting', 'projectsCount']),
     header() {
+      const lang = import.meta.env.VITE_LANG
       return this.onlyPublic ? returnTranslation(lang, 'PublicProjects') : returnTranslation(lang, 'MyProjects')
     },
     onlyPublic() {
       return this.$route.name === 'explore' || !this.loggedUser?.email
     },
     filterMenuItems(): MenuItem[] {
+      const lang = import.meta.env.VITE_LANG
       return [
         {
           label: returnTranslation(lang, 'SortByNameAZ'),
@@ -141,6 +144,7 @@ export default defineComponent({
     ...mapActions(useProjectStore, ['setProjectsSorting']),
 
     newProjectDialog() {
+      const lang = import.meta.env.VITE_LANG
       const dialog = { persistent: true, header: returnTranslation(lang, 'NewProject') }
       this.show({
         component: ProjectForm,
