@@ -34,7 +34,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         toggleMask
         :feedback="false"
         aria-describedby="password-error"
-        placeholder="Enter password"
+        :placeholder="EnterPassword"
       />
       <span class="p-error paragraph-p6" id="password-error">{{
         errors.password?.[0] || '&nbsp;'
@@ -72,6 +72,7 @@ const Email = returnTranslation(lang, 'Email');
 const Password = returnTranslation(lang, 'Password');
 const Cancel = returnTranslation(lang, 'Cancel');
 const Create = returnTranslation(lang, 'Create');
+const EnterPassword = returnTranslation(lang, 'EnterPassword');
 </script>
 
 <script lang="ts">

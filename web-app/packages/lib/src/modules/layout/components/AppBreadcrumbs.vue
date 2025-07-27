@@ -36,7 +36,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               'opacity-80 paragraph-p5',
               item.active ? 'text-color-forest font-semibold' : 'text-color'
             ]"
-            >{{ item.label }}</span
+            >{{ translations[item.label] }}</span
           >
         </a>
       </router-link>
@@ -45,6 +45,19 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const translationKeys = [
+  'Dashboard',
+  'Projects'
+];
+const translations: Record<string, string> = {};
+for (const key of translationKeys) {
+  const lang = import.meta.env.VITE_LANG
+  translations[key] = returnTranslation(lang, key);
+}
+
 import { MenuItem } from 'primevue/menuitem'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'

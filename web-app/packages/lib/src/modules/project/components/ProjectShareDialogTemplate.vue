@@ -31,7 +31,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           class="underline"
           >{{ LearnMoreAboutPermissionSystem }}</span
         ></a
-      >.
+      >
 
       <PButton
         id="share-project-btn"

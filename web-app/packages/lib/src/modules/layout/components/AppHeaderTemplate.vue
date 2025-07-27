@@ -190,7 +190,7 @@ export default defineComponent({
       const lang = import.meta.env.VITE_LANG
       return [
         {
-          label: returnTranslation(lang, 'Documentation'),
+          label: returnTranslation(lang, 'Documentation2'),
           url: this.configData?.docs_url,
           target: '_blank',
         },

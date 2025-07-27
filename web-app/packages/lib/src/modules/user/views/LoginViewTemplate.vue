@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <div>
         <label for="login">{{ Email }}</label>
         <PInputText
-          placeholder="Type your email"
+          :placeholder="TypeYourEmail"
           name="email"
           color="inputColor"
           data-cy="reset-form-email"
@@ -33,7 +33,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           :class="['w-full', errors.email ? 'p-invalid' : '']"
         />
         <span class="p-error paragraph-p6" id="login-error">{{
-          errors.email?.[0] || '&nbsp;'
+          errors.email?.[0] === 'Invalid email address.' ? InvalidEmailAddress : errors.email?.[0] || '&nbsp;'
         }}</span>
       </div>
 
@@ -131,6 +131,8 @@ const PleaseEnterUsernameOrEmail = returnTranslation(lang, 'PleaseEnterUsernameO
 const Password = returnTranslation(lang, 'Password');
 const PleaseEnterYourPassword = returnTranslation(lang, 'PleaseEnterYourPassword');
 const ForgotPassword = returnTranslation(lang, 'ForgotPassword');
+const TypeYourEmail = returnTranslation(lang, 'TypeYourEmail');
+const InvalidEmailAddress = returnTranslation(lang, 'InvalidEmailAddress');
 
 </script>
 

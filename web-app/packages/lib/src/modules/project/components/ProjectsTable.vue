@@ -128,7 +128,7 @@ const lang = import.meta.env.VITE_LANG
 
 const FailedToFindAQGISProjectFile = returnTranslation(lang, 'FailedToFindAQGISProjectFile');
 const ConflictingFileInProject = returnTranslation(lang, 'ConflictingFileInProject');
-const Public = returnTranslation(lang, 'Public');
+const Public = returnTranslation(lang, 'Public2');
 const Updated = returnTranslation(lang, 'Updated');
 
 </script>
