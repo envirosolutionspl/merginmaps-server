@@ -938,7 +938,7 @@ def project_push(namespace, project_name):
             db.session.delete(current_upload)
             db.session.commit()
             # previous push attempt is definitely lost
-            PushArtefactRemovedBySubsequentPush = returnTranslation("CreatedFPushArtefactRemovedBySubsequentPushorProject")
+            PushArtefactRemovedBySubsequentPush = returnTranslation("PushArtefactRemovedBySubsequentPushorProject")
             project.sync_failed(
                 "",
                 "push_lost",

@@ -167,5 +167,5 @@ EN = {
     "FailedToCreateUploadSession": "Failed to create upload session",
     "FailedToCreateUploadSessionPleaseTryLater": "Failed to create upload session. Please try later.",
     "RejectingBlacklistedFile": "Rejecting blacklisted file",
-    "Unsupported file type detected": "Unsupported file type detected",
+    "PushArtefactRemovedBySubsequentPushorProject": "Push artefact removed by subsequent push or project",
 }
