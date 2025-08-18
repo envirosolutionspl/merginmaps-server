@@ -1,6 +1,8 @@
 PL = {
     "AccountWithGivenEmailDoesNotExist": "Konto z podanym adresem e-mail nie istnieje",
     "UnknownErrorInInputFields": "Nieznany błąd w polach formularza",
+    "EmailRegisterConfirm": "Potwierdzenie wiadomości e-mail",
+    "PasswordResetEmail":"Restart hasła",
     "InvalidUsernameOrPassword": "Nieprawidłowa nazwa użytkownika lub hasło",
     "WorkspaceNotFound": "Nie znaleziono przestrzeni roboczej",
     "YouDoNotHavePermissionsToSearchWithinWorkspace": "Nie masz uprawnień do wyszukiwania w tej przestrzeni roboczej",
@@ -12,6 +14,7 @@ PL = {
     "InvitationToMerginMaps": "Zaproszenie do Mergin Maps",
     "UnableToAssignSuperAdminRole": "Nie można przypisać roli superadministratora",
     "UserNotFound": "Nie znaleziono użytkownika",
+    "UserAccountLocked": "Konto zablokowane. Spróbuj ponownie później",
     "YouCannotEditProfileOfThisUser": "Nie możesz edytować profilu tego użytkownika",
     "UnknownPermission": "Nieznane uprawnienie",
     "AuthenticationInformationIsMissingOrInvalid": "Brak lub nieprawidłowe dane uwierzytelniające.",

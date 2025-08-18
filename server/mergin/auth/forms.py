@@ -18,7 +18,6 @@ from wtforms.validators import (
 from .models import User
 from ..app import UpdateForm, CustomStringField
 
-from ..lang.current import returnTranslation
 
 def username_validation(form, field):
     from ..sync.utils import (
@@ -58,10 +57,8 @@ class ExtendedEmail(Email):
         super().__call__(form, field)
 
         if re.search(r"[|'—]", field.data):
-            EmailAddress = returnTranslation("EmailAddress")
-            ContainsAnInvalidCharacter = returnTranslation("ContainsAnInvalidCharacter")
             raise ValidationError(
-                f"{EmailAddress} '{field.data}' {ContainsAnInvalidCharacter}"
+                f"Email address '{field.data}' contains an invalid character."
             )
 
 
@@ -71,16 +68,13 @@ class PasswordValidator:
 
     def __call__(self, form, field):
         if len(field.data) < self.min_length:
-            PasswordsMustBeAtLeast = returnTranslation("PasswordsMustBeAtLeast")
-            CharactersLong = returnTranslation("CharactersLong")
             raise ValidationError(
-                f"{PasswordsMustBeAtLeast} {self.min_length} {CharactersLong}"
+                "Passwords must be at least {} characters long.".format(self.min_length)
             )
 
         strength = safe.check(field.data, self.min_length)
         if not bool(strength):
-            PasswordIsNotStrongEnough = returnTranslation("PasswordIsNotStrongEnough")
-            raise ValidationError(PasswordIsNotStrongEnough)
+            raise ValidationError("Password is not strong enough")
 
 
 class LoginForm(FlaskForm):
@@ -110,9 +104,9 @@ class RegisterUserForm(FlaskForm):
         ).first()
         if user:
             if user.username.lower() == self.username.data.lower().strip():
-                self.username.errors.append(returnTranslation("AlreadyExists"))
+                self.username.errors.append("Already exists")
             if user.email.lower() == self.email.data.lower().strip():
-                self.email.errors.append(returnTranslation("AlreadyExists"))
+                self.email.errors.append("Already exists")
             return False
         return True
 
@@ -125,13 +119,12 @@ class ResetPasswordForm(FlaskForm):
 
 
 class UserPasswordForm(FlaskForm):
-    PasswordsMustMatch = returnTranslation("PasswordsMustMatch")
     password = PasswordField(
         "Password", [DataRequired(), PasswordValidator(min_length=8)]
     )
     confirm = PasswordField(
         "Confirm password",
-        [DataRequired(), EqualTo("password", message=PasswordsMustMatch)],
+        [DataRequired(), EqualTo("password", message="Passwords must match")],
     )
 
 
@@ -145,25 +138,18 @@ class UserChangePasswordForm(UserPasswordForm):
 
 class UserForm(UpdateForm):
     """Form to update user private props"""
-    Admin = returnTranslation("Admin")
-    Active = returnTranslation("Active")
 
-    is_admin = BooleanField(Admin, [Optional()])
-    active = BooleanField(Active, [Optional()])
+    is_admin = BooleanField("Admin", [Optional()])
+    active = BooleanField("Active", [Optional()])
 
 
 class UserProfileDataForm(UpdateForm):
     """This form is for user profile update"""
 
-    Email = returnTranslation("Email")
-    ReceiveNotifications = returnTranslation("ReceiveNotifications")
-    FirstName = returnTranslation("FirstName")
-    LastName = returnTranslation("LastName")
-
-    receive_notifications = BooleanField(ReceiveNotifications, [Optional()])
-    first_name = CustomStringField(FirstName, [Optional()])
-    last_name = CustomStringField(LastName, [Optional()])
-    email = CustomStringField(Email, [Optional(), ExtendedEmail()])
+    receive_notifications = BooleanField("Receive notifications", [Optional()])
+    first_name = CustomStringField("First Name", [Optional()])
+    last_name = CustomStringField("Last Name", [Optional()])
+    email = CustomStringField("Email", [Optional(), ExtendedEmail()])
 
 
 class ApiLoginForm(LoginForm):

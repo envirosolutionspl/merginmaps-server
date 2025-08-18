@@ -9,7 +9,6 @@ from sqlalchemy import or_, func
 from ..app import db
 from .models import User, UserProfile
 
-from ..lang.current import returnTranslation
 
 def add_commands(app: Flask):
     @app.cli.group()
@@ -31,8 +30,7 @@ def add_commands(app: Flask):
             )
         ).first()
         if user:
-            UserAlreadyExists = returnTranslation("UserAlreadyExists")
-            print(f"ERROR: {UserAlreadyExists}!\n")
+            print("ERROR: User already exists!\n")
             return
 
         user = User(username=username, passwd=password, is_admin=is_admin, email=email)

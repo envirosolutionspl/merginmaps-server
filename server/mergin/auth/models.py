@@ -33,6 +33,8 @@ class User(db.Model):
         info={"label": "Date of creation of user account"},
         default=datetime.datetime.utcnow,
     )
+    failed_logins=db.Column(db.Integer)
+    locked_until=db.Column(db.DateTime(), nullable=True, index=True)
 
     __table_args__ = (
         db.Index("ix_user_username", func.lower(username), unique=True),

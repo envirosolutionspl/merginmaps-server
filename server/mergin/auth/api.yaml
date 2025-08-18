@@ -692,6 +692,39 @@ paths:
         "422":
           $ref: "#/components/responses/UnprocessableEntity"
       x-openapi-router-controller: mergin.auth.controller
+    delete:
+      tags:
+        - user
+        - public
+      summary: Delete user specified by username
+      operationId: remove_user
+      description: User account is immediately and permanently removed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - workspace_id
+              properties:
+                username:
+                  type: string
+                  example: john
+                workspace_id:
+                  type: integer
+                  example: 1
+      responses:
+        "204":
+          description: OK
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundResp"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+      x-openapi-router-controller: mergin.auth.controller
 components:
   responses:
     UnauthorizedError:

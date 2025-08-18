@@ -220,15 +220,35 @@ def search_users():  # pylint: disable=W0613,W0612
 def login():  # pylint: disable=W0613,W0612
     form = LoginForm()
     if form.validate():
-        user = authenticate(form.login.data, form.password.data)
-        if user and user.active:
+        login_data = form.login.data
+        user = User.get_by_login(login_data)
+
+        if not user:
+            log_login_attempt(None, False)
+            abort(401, returnTranslation("InvalidUsernameOrPassword"))
+        if user.locked_until and user.locked_until > datetime.now():
+            log_login_attempt(user.id, False)
+            abort(403, returnTranslation("UserAccountLocked"))
+        password_correct = user.check_password(form.password.data)
+
+        log_login_attempt(user.id, password_correct)
+
+        if password_correct and user.active:
             login_user(user)
-            if not os.path.isfile(current_app.config["MAINTENANCE_FILE"]):
+            if not os.path.isfile(current_app.config.get("MAINTENANCE_FILE", "")):
                 LoginHistory.add_record(user.id, request)
             return "", 200
         else:
             abort(401, returnTranslation("InvalidUsernameOrPassword"))
     return jsonify(form.errors), 401
+
+def log_login_attempt(user_id, password_correct):
+    sql = """
+    INSERT INTO login_attempts (user_id, password_correct)
+    VALUES (:user_id, :password_correct)
+    """
+    db.session.execute(sql, {"user_id": user_id, "password_correct": password_correct})
+    db.session.commit()
 
 
 def admin_login():  # pylint: disable=W0613,W0612
@@ -275,7 +295,7 @@ def resend_confirm_email():  # pylint: disable=W0613,W0612
         current_user,
         "confirm-email",
         "email/email_confirmation.html",
-        "Potwierdzenie wiadomości e-mail",
+        returnTranslation("EmailRegisterConfirm"),
     )
     return "", 200
 
@@ -289,17 +309,17 @@ def password_reset():  # pylint: disable=W0613,W0612
         func.lower(User.email) == func.lower(form.email.data.strip())
     ).one_or_none()
     if not user:
-        return jsonify({"email": [returnTranslation("AccountWithGivenEmailDoesNotExist")]}), 404
+        return jsonify({"email": ["Account with given email does not exist"]}), 404
     if not user.active:
         # user should confirm email first
-        return jsonify({"email": [returnTranslation("AccountIsNotActive")]}), 400
+        return jsonify({"email": ["Account is not active"]}), 400
 
     send_confirmation_email(
         current_app,
         user,
         "change-password",
         "email/password_reset.html",
-        "Restart hasła",
+        returnTranslation("PasswordResetEmail"),
     )
     return "", 200
 
@@ -558,6 +578,21 @@ def create_user():
 
     return jsonify(UserInfoSchema().dump(user)), 201
 
+@auth_required
+def remove_user():  # pylint: disable=W0613,W0612
+    username = request.json["username"]
+
+    workspace = current_app.ws_handler.get(request.json["workspace_id"])
+    if not (workspace and workspace.can_add_users(current_user)):
+        abort(403)
+
+    user = User.query.filter_by(username=username).first_or_404(returnTranslation("UserNotFound"))
+    #user_deleted.send(user, source="admin")
+    user.inactivate()
+    user_account_closed.send(user)
+    # force 'delete' user
+    user.anonymize()
+    return "", 204
 
 @auth_required(permissions=["admin"])
 def get_server_usage():
