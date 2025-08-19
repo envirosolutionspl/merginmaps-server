@@ -185,7 +185,7 @@ const settingsItems = computed<AppSettingsItemConfig[]>(() => [
   },
   {
     key: 'deleteAccount',
-    title: 'Delete account',
+    title: returnTranslation(import.meta.env.VITE_LANG, 'DeleteAccount'),
     description: returnTranslation(import.meta.env.VITE_LANG, 'DeletingThisUserWillRemoveThemAndAllTheirDataThisActionCannotBeUndone')
   }
 ])

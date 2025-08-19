@@ -19,7 +19,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         :placeholder="MustBeAtLeastCharacters"
       />
       <span class="p-error paragraph-p6" id="old-password-error">{{
-        errors.old_password?.[0] || '&nbsp;'
+        errors.old_password?.[0] === "The old password is incorrect" ? TheOldPasswordIsIncorrect : errors.old_password?.[0] || '&nbsp;'
       }}</span>
     </span>
 
@@ -64,7 +64,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       />
 
       <span class="p-error paragraph-p6" id="confirm-password-error">{{
-        errors.confirm?.[0] || '&nbsp;'
+        errors.confirm?.[0] === "Passwords must match" ? PasswordsMustMatch : errors.confirm?.[0] || '&nbsp;'
       }}</span>
     </span>
 
@@ -103,6 +103,7 @@ const PasswordMustBeAtLeastCharactersLongAndIncludeAtLeastThreeOfTheFollowingLow
 const ConfirmPassword = returnTranslation(lang, 'ConfirmPassword');
 const Cancel = returnTranslation(lang, 'Cancel');
 const SaveChanges = returnTranslation(lang, 'SaveChanges');
+const TheOldPasswordIsIncorrect = returnTranslation(lang, 'TheOldPasswordIsIncorrect');
 
 </script>
 

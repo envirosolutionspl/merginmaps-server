@@ -389,6 +389,22 @@ const translations = {
   ago: 'ago',
   expired: 'expired',
   InvalidEmailAddress: 'Invalid email address.',
+  AccountWithGivenEmailDoesNotExist: 'Account with given email does not exist',
+  InvalidUsernameOrPassword: 'Invalid username or password',
+  UnknownErrorInInputFields: 'Unknown error in input fields',
+  WorkspaceNotFound: 'Workspace not found',
+  YouDoNotHavePermissionsToSearchWithinWorkspace: 'You do not have permissions to search within workspace',
+  YouDoNotHavePermissions: 'You do not have permissions',
+  PasswordIsNotStrongEnough: 'Password is not strong enough',
+  AlreadyExists: 'Already exists',
+  PasswordsMustBeAtLeast8CharactersLong: 'Passwords must be at least 8 characters long.',
+  PasswordsMustMatch: 'Passwords must match',
+  TheOldPasswordIsIncorrect: 'The old password is incorrect',
+  IsNotAEmailEmail: "is not a 'email' - 'email'",
+  VersionMismatch: "Version mismatch",
+  ProjectWithTheSameNameAlreadyExists: "Project with the same name already exists",
+  ThisFieldIsRequired: "This field is required.",
+  EmailAlreadyExists: "Email already exists",
 }
 
 export default translations

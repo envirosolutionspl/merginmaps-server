@@ -34,8 +34,6 @@ from .permissions import (
 )
 from ..utils import parse_order_params, split_order_param, get_order_param
 
-from ..lang.current import returnTranslation
-
 project_access_granted = signal("project_access_granted")
 
 
@@ -50,8 +48,7 @@ def create_project_access_request(namespace, project_name):  # noqa: E501
         Project.removed_at.is_(None),
     ).first_or_404()
     if project.get_role(current_user.id):
-        YouAlreadyHaveAccessToProject = returnTranslation("YouAlreadyHaveAccessToProject")
-        abort(409, YouAlreadyHaveAccessToProject)
+        abort(409, "You already have access to project")
 
     access_request = (
         AccessRequest.query.filter_by(
@@ -61,8 +58,7 @@ def create_project_access_request(namespace, project_name):  # noqa: E501
         .first()
     )
     if access_request:
-        ProjectAccessRequestAlreadyExists = returnTranslation("ProjectAccessRequestAlreadyExists")
-        abort(409, ProjectAccessRequestAlreadyExists)
+        abort(409, "Project access request already exists")
 
     access_request = AccessRequest(project, current_user.id)
     db.session.add(access_request)
@@ -79,9 +75,8 @@ def create_project_access_request(namespace, project_name):  # noqa: E501
         .all()
     )
     for owner in owners:
-        ProjectAccessRequested = returnTranslation("ProjectAccessRequested")
         email_data = {
-            "subject": ProjectAccessRequested,
+            "subject": "Project access requested",
             "html": render_template(
                 "email/project_access_request.html",
                 expire=access_request.expire,
@@ -117,8 +112,7 @@ def decline_project_access_request(request_id):  # noqa: E501
         access_request.resolve(RequestStatus.DECLINED, current_user.id)
         db.session.commit()
         return "", 200
-    YouDontHavePermissionsToRemoveProjectAccessRequest = returnTranslation("YouDontHavePermissionsToRemoveProjectAccessRequest")
-    abort(403, YouDontHavePermissionsToRemoveProjectAccessRequest)
+    abort(403, "You don't have permissions to remove project access request")
 
 
 @auth_required
@@ -145,8 +139,7 @@ def accept_project_access_request(request_id):
             access_request.project, user_id=access_request.requested_by
         )
         return "", 200
-    YouDontHavePermissionsToAcceptProjectAccessRequest = returnTranslation("YouDontHavePermissionsToAcceptProjectAccessRequest")
-    abort(403, YouDontHavePermissionsToAcceptProjectAccessRequest)
+    abort(403, "You don't have permissions to accept project access request")
 
 
 @auth_required
@@ -179,8 +172,7 @@ def list_namespace_project_access_requests(
 ):
     """Paginated list of active incoming project access requests to workspace"""
     if not check_workspace_permissions(namespace, current_user, "admin"):
-        YouDontHavePermissionsToListProjectAccessRequests = returnTranslation("YouDontHavePermissionsToListProjectAccessRequests")
-        abort(403, YouDontHavePermissionsToListProjectAccessRequests)
+        abort(403, "You don't have permissions to list project access requests")
     ws = current_app.ws_handler.get_by_name(namespace)
     access_requests = AccessRequest.query.join(AccessRequest.project).filter(
         Project.workspace_id == ws.id,
@@ -242,8 +234,7 @@ def restore_project(id):  # noqa: E501
     if not project.removed_at:
         return "", 201
     if not project.workspace.is_active:
-        FailedToRestoreProjectWorkspaceIsNotActive = returnTranslation("FailedToRestoreProjectWorkspaceIsNotActive")
-        abort(400, FailedToRestoreProjectWorkspaceIsNotActive)
+        abort(400, "Failed to restore: Project workspace is not active")
     project.removed_at = None
     project.removed_by = None
     db.session.commit()
@@ -258,8 +249,7 @@ def force_project_delete(id):  # noqa: E501
         .first_or_404()
     )
     if not project.removed_at:
-        FailedToRemoveProjectIsStillActive = returnTranslation("FailedToRemoveProjectIsStillActive")
-        abort(400, FailedToRemoveProjectIsStillActive)
+        abort(400, "Failed to remove: Project is still active")
     project.delete()
     return "", 204
 
@@ -304,8 +294,7 @@ def unsubscribe_project(id):  # pylint: disable=W0612
 
     # prevent project owner to self-remove
     if current_role == ProjectRole.OWNER:
-        OwnerCannotLeaveAProject = returnTranslation("OwnerCannotLeaveAProject")
-        abort(400, OwnerCannotLeaveAProject)
+        abort(400, "Owner cannot leave a project")
 
     project.unset_role(current_user.id)
     db.session.add(project)

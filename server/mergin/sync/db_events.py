@@ -8,12 +8,10 @@ from sqlalchemy import event
 
 from ..app import db
 
-from ..lang.current import returnTranslation
 
 def check(session):
     if os.path.isfile(current_app.config["MAINTENANCE_FILE"]):
-        ServiceUnavailableDueToMaintenancePleaseTryLater = returnTranslation("ServiceUnavailableDueToMaintenancePleaseTryLater")
-        abort(503, ServiceUnavailableDueToMaintenancePleaseTryLater)
+        abort(503, "Service unavailable due to maintenance, please try later")
 
 
 def register_events():

@@ -18,7 +18,7 @@ from .models import Project, ProjectRole, ProjectMember
 from .permissions import ProjectPermissions, require_project_by_uuid
 from .private_api_controller import project_access_granted
 
-from ..lang.current import returnTranslation
+from ..config import tz
 
 @auth_required
 def schedule_delete_project(id):
@@ -27,7 +27,7 @@ def schedule_delete_project(id):
     rest.
     """
     project = require_project_by_uuid(id, ProjectPermissions.Delete)
-    project.removed_at = datetime.utcnow()
+    project.removed_at = datetime.now(tz)
     project.removed_by = current_user.id
     db.session.commit()
 
@@ -58,8 +58,7 @@ def update_project(id):
         workspace_id=project.workspace_id, name=new_name
     ).first()
     if new_name_exists:
-        NameAlreadyExistWithinWorkspace = returnTranslation("NameAlreadyExistWithinWorkspace")
-        abort(409, NameAlreadyExistWithinWorkspace)
+        abort(409, "Name already exist within workspace")
 
     project.name = new_name.strip()
     db.session.commit()
@@ -99,8 +98,7 @@ def add_project_collaborator(id):
         abort(404)
 
     if project.get_role(user.id):
-        UserIsAlreadyAProjectMember = returnTranslation("UserIsAlreadyAProjectMember")
-        abort(409, UserIsAlreadyAProjectMember)
+        abort(409, "User is already a project member")
 
     project.set_role(user.id, ProjectRole(request.json["role"]))
     db.session.commit()

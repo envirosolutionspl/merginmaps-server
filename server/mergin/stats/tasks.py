@@ -17,6 +17,7 @@ from ..auth.models import User
 from ..sync.models import Project
 
 from ..lang.current import returnTranslation
+from ..config import tz
 
 def get_callhome_data(info: MerginInfo | None = None) -> ServerCallhomeData:
     """
@@ -83,7 +84,7 @@ def send_statistics():
         db.session.add(info)
         db.session.commit()
 
-    if info.last_reported and datetime.utcnow() < info.last_reported + timedelta(
+    if info.last_reported and datetime.now(tz) < info.last_reported + timedelta(
         hours=12
     ):
         return
@@ -96,7 +97,7 @@ def send_statistics():
             data=json.dumps(data),
         )
         if resp.ok:
-            info.last_reported = datetime.utcnow()
+            info.last_reported = datetime.now(tz)
             db.session.commit()
         else:
             StatisticsError = returnTranslation("StatisticsError")

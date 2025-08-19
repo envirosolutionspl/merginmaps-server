@@ -53,7 +53,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         />
 
         <span class="p-error paragraph-p6" id="confirm-password-error">{{
-          errors.confirm?.[0] || '&nbsp;'
+          errors.confirm?.[0] === "Passwords must match" ? PasswordsMustMatch : errors.confirm?.[0] || '&nbsp;'
         }}</span>
       </span>
 
@@ -92,6 +92,7 @@ const PleaseEnterYourNewPassword = returnTranslation(lang, 'PleaseEnterYourNewPa
 const Change = returnTranslation(lang, 'Change');
 const YourPasswordWasChangedYouCanNow = returnTranslation(lang, 'YourPasswordWasChangedYouCanNow');
 const SignIn = returnTranslation(lang, 'SignIn');
+const PasswordsMustMatch = returnTranslation(lang, 'PasswordsMustMatch');
 
 </script>
 

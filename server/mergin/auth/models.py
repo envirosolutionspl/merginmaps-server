@@ -14,6 +14,7 @@ from ..app import db
 from ..sync.models import ProjectUser
 from ..sync.utils import get_user_agent, get_ip, get_device_id, is_reserved_word
 
+from ..config import tz
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +32,7 @@ class User(db.Model):
         db.DateTime(),
         nullable=False,
         info={"label": "Date of creation of user account"},
-        default=datetime.datetime.utcnow,
+        default=datetime.datetime.now(tz),
     )
     failed_logins=db.Column(db.Integer)
     locked_until=db.Column(db.DateTime(), nullable=True, index=True)
@@ -168,12 +169,12 @@ class User(db.Model):
 
         # inactivate user account to prevent login and mark for clean up
         self.active = False
-        self.inactive_since = datetime.datetime.utcnow()
+        self.inactive_since = datetime.datetime.now(tz)
         db.session.commit()
 
     def anonymize(self):
         """Anonymize user object in database - remove personal information"""
-        ts = round(datetime.datetime.utcnow().timestamp() * 1000)
+        ts = round(datetime.datetime.now(tz).timestamp() * 1000)
         del_str = f"deleted_{ts}"
         self.username = del_str
         self.email = None
@@ -259,7 +260,7 @@ class UserProfile(db.Model):
 
 class LoginHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime(), default=datetime.datetime.utcnow, index=True)
+    timestamp = db.Column(db.DateTime(), default=datetime.datetime.now(tz), index=True)
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id", ondelete="CASCADE"),

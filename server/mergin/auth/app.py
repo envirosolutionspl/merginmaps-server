@@ -17,6 +17,8 @@ from .models import User, UserProfile
 user_account_closed = signal("user_account_closed")
 user_created = signal("user_created")
 
+from ..lang.current import returnTranslation
+
 
 def register(app):
     """Register mergin auth module in Flask app
@@ -60,11 +62,11 @@ def auth_required(f=None, permissions=None):
     @functools.wraps(f)
     def wrapped_func(*args, **kwargs):
         if not current_user or not current_user.is_authenticated:
-            return "Authentication information is missing or invalid.", 401
+            return returnTranslation("AuthenticationInformationIsMissingOrInvalid"), 401
         if permissions:
             for check_permission in permissions:
                 if not check_permission(current_user):
-                    return "Permission denied.", 403
+                    return returnTranslation("PermissionDenied"), 403
         return f(*args, **kwargs)
 
     return wrapped_func

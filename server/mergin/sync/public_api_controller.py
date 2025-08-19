@@ -95,7 +95,7 @@ from .utils import (
 from .errors import StorageLimitHit
 from ..utils import format_time_delta
 
-from ..lang.current import returnTranslation
+from ..config import tz
 
 push_finished = signal("push_finished")
 # TODO: Move to database events to handle all commits to project versions
@@ -198,32 +198,26 @@ def add_project(namespace):  # noqa: E501
         if not workspace:
             # return special message if former 'user workspace' was used
             if namespace == current_user.username:
-                WorkspaceDoesNotExistPleaseTryUpdatingToTheNewestVersion = returnTranslation("WorkspaceDoesNotExistPleaseTryUpdatingToTheNewestVersion")
                 abort(
                     404,
-                    WorkspaceDoesNotExistPleaseTryUpdatingToTheNewestVersion,
+                    "Workspace does not exist. Please try updating to the newest version",
                 )
             else:
-                WorkspaceDoesNotExist = returnTranslation("WorkspaceDoesNotExist")
-                abort(404, WorkspaceDoesNotExist)
+                abort(404, "Workspace does not exist")
         if not workspace.user_has_permissions(current_user, "admin"):
-            YouDoNotHavePermissionsForThisWorkspace = returnTranslation("YouDoNotHavePermissionsForThisWorkspace")
-            abort(403, YouDoNotHavePermissionsForThisWorkspace)
+            abort(403, "You do not have permissions for this workspace")
 
         proj = Project.query.filter_by(
             name=request.json["name"], workspace_id=workspace.id
         ).first()
         if proj:
             if proj.removed_at:
-                ProjectWithTheSameNameIsScheduledForDeletion = returnTranslation("ProjectWithTheSameNameIsScheduledForDeletion")
-                YouCanCreateAProjectWithThisNameIn = returnTranslation("YouCanCreateAProjectWithThisNameIn")
                 msg = (
-                    f"{ProjectWithTheSameNameIsScheduledForDeletion} "
-                    f"{YouCanCreateAProjectWithThisNameIn} {format_time_delta(proj.expiration)}"
+                    f"Project with the same name is scheduled for deletion, "
+                    f"you can create a project with this name in {format_time_delta(proj.expiration)}"
                 )
             else:
-                ProjectWithTheSameNameAlreadyExists = returnTranslation("ProjectWithTheSameNameAlreadyExists")
-                msg = ProjectWithTheSameNameAlreadyExists
+                msg = "Project with the same name already exists"
             abort(409, msg)
 
         request.json["storage_params"] = {
@@ -236,7 +230,7 @@ def add_project(namespace):  # noqa: E501
             creator=current_user,
             workspace=workspace,
         )
-        p.updated = datetime.utcnow()
+        p.updated = datetime.now(tz)
 
         template_name = request.json.get("template", None)
         if template_name:
@@ -259,8 +253,7 @@ def add_project(namespace):  # noqa: E501
         try:
             p.storage.initialize(template_project=template)
         except InitializationError as e:
-            FailedToInitializeProject = returnTranslation("FailedToInitializeProject")
-            abort(400, f"{FailedToInitializeProject}: {str(e)}")
+            abort(400, f"Failed to initialize project: {str(e)}")
 
         version = ProjectVersion(
             p,
@@ -293,7 +286,7 @@ def delete_project(namespace, project_name):  # noqa: E501
     :rtype: None
     """
     project = require_project(namespace, project_name, ProjectPermissions.Delete)
-    project.removed_at = datetime.utcnow()
+    project.removed_at = datetime.now(tz)
     project.removed_by = current_user.id
     db.session.commit()
     return NoContent, 200
@@ -321,18 +314,15 @@ def download_project(
     lookup_version = (
         ProjectVersion.from_v_name(version) if version else project.latest_version
     )
-    ProjectVersionDoesNotExist = returnTranslation("ProjectVersionDoesNotExist")
     project_version = ProjectVersion.query.filter_by(
         project_id=project.id, name=lookup_version
-    ).first_or_404(ProjectVersionDoesNotExist)
+    ).first_or_404("Project version does not exist")
 
     if project_version.project_size > current_app.config["MAX_DOWNLOAD_ARCHIVE_SIZE"]:
-        TheTotalSizeOfRequestedFilesIsTooLargeToDownloadAsASingleZip = returnTranslation("TheTotalSizeOfRequestedFilesIsTooLargeToDownloadAsASingleZip")
-        PleaseUseDifferentMethodClientForDownload = returnTranslation("PleaseUseDifferentMethodClientForDownload")
         abort(
             400,
-            TheTotalSizeOfRequestedFilesIsTooLargeToDownloadAsASingleZip,
-            PleaseUseDifferentMethodClientForDownload,
+            "The total size of requested files is too large to download as a single zip, "
+            "please use different method/client for download",
         )
     try:
         return project.storage.download_files(
@@ -366,8 +356,7 @@ def download_project_file(
     """
     project = require_project(namespace, project_name, ProjectPermissions.Read)
     if diff and not version:
-        ChangesetMustBeRequestedForParticularFileVersion = returnTranslation("ChangesetMustBeRequestedForParticularFileVersion")
-        abort(400, ChangesetMustBeRequestedForParticularFileVersion)
+        abort(400, f"Changeset must be requested for particular file version")
 
     lookup_version = (
         ProjectVersion.from_v_name(version) if version else project.latest_version
@@ -385,16 +374,12 @@ def download_project_file(
     )
     # in case last change was 'delete', file does not exist for such version
     if not fh or fh.change == PushChangeType.DELETE.value:
-        NotFound = returnTranslation("NotFound")
-        File = returnTranslation("File")
-        abort(404, f"{File} {file} {NotFound}")
+        abort(404, f"File {file} not found")
 
     if diff and version:
         # get specific version of geodiff file modified in requested version
         if not fh.diff:
-            NoDiffInParticularFile = returnTranslation("NoDiffInParticularFile")
-            Version = returnTranslation("Version")
-            abort(404, f"{NoDiffInParticularFile} {file} {Version}")
+            abort(404, f"No diff in particular file {file} version")
         file_path = fh.diff_file.location
     else:
         file_path = fh.location
@@ -407,8 +392,7 @@ def download_project_file(
     abs_path = os.path.join(project.storage.project_dir, file_path)
     # check file exists (e.g. there might have been issue with restore)
     if not os.path.exists(abs_path):
-        MissingFile = returnTranslation("MissingFile")
-        logging.error(f"{MissingFile} {namespace}/{project_name}/{file_path}")
+        logging.error(f"Missing file {namespace}/{project_name}/{file_path}")
         abort(404)
 
     if current_app.config["USE_X_ACCEL"]:
@@ -456,8 +440,7 @@ def get_project(project_name, namespace, since="", version=None):  # noqa: E501
     project = require_project(namespace, project_name, ProjectPermissions.Read)
 
     if since and version:
-        ParametersSinceAndVersionAreMutuallyExclusive = returnTranslation("ParametersSinceAndVersionAreMutuallyExclusive")
-        abort(400, ParametersSinceAndVersionAreMutuallyExclusive)
+        abort(400, "Parameters 'since' and 'version' are mutually exclusive")
     elif since:
         data = ProjectSchema(exclude=["storage_params"]).dump(project)
         # append history for versioned files
@@ -477,10 +460,9 @@ def get_project(project_name, namespace, since="", version=None):  # noqa: E501
         data["files"] = files
     elif version:
         # return project info at requested version
-        ProjectAtRequestedVersionDoesNotExist = returnTranslation("ProjectAtRequestedVersionDoesNotExist")
         version_obj = ProjectVersion.query.filter_by(
             project_id=project.id, name=ProjectVersion.from_v_name(version)
-        ).first_or_404(ProjectAtRequestedVersionDoesNotExist)
+        ).first_or_404("Project at requested version does not exist")
         data = ProjectSchemaForVersion().dump(version_obj)
     else:
         # return current project info
@@ -532,8 +514,7 @@ def get_projects_by_names():  # noqa: E501
     """
     list_of_projects = request.json.get("projects", [])
     if len(list_of_projects) > 50:
-        TooManyProjects = returnTranslation("TooManyProjects")
-        abort(400, TooManyProjects)
+        abort(400, "Too many projects")
     results = {}
     for project in list_of_projects:
         projects = projects_query(ProjectPermissions.Read, as_admin=False)
@@ -581,8 +562,7 @@ def get_projects_by_uuids(uuids):  # noqa: E501
     """
     proj_ids = [uuid for uuid in uuids.split(",") if is_valid_uuid(uuid)]
     if len(proj_ids) > 10:
-        TooManyProjects = returnTranslation("TooManyProjects")
-        abort(400, TooManyProjects)
+        abort(400, "Too many projects")
 
     projects = (
         projects_query(ProjectPermissions.Read, as_admin=False)
@@ -782,8 +762,7 @@ def catch_sync_failure(f):
                     user_agent, error_type, str(e.description), current_user.id
                 )
             else:
-                MissingProjectInfoInSyncFailure = returnTranslation("MissingProjectInfoInSyncFailure")
-                logging.warning(MissingProjectInfoInSyncFailure)
+                logging.warning("Missing project info in sync failure")
 
             raise
 
@@ -819,46 +798,36 @@ def project_push(namespace, project_name):
         project_id=project.id, name=project.latest_version
     ).first()
     if pv and pv.name != version:
-        VersionMismatch = returnTranslation("VersionMismatch")
-        abort(400, VersionMismatch)
+        abort(400, "Version mismatch")
     if not pv and version != 0:
-        FirstPushShouldBeWithv0 = returnTranslation("FirstPushShouldBeWithv0")
-        abort(400, FirstPushShouldBeWithv0)
+        abort(400, "First push should be with v0")
 
     if all(len(changes[key]) == 0 for key in changes.keys()):
-        NoChanges = returnTranslation("NoChanges")
-        abort(400, NoChanges)
+        abort(400, "No changes")
 
     # reject upload early if there is another one already running
     pending_upload = Upload.query.filter_by(
         project_id=project.id, version=version
     ).first()
     if pending_upload and pending_upload.is_active():
-        AnotherProcessIsRunningPleaseTryLater = returnTranslation("AnotherProcessIsRunningPleaseTryLater")
-        abort(400, AnotherProcessIsRunningPleaseTryLater)
+        abort(400, "Another process is running. Please try later.")
 
     upload_changes = ChangesSchema(context={"version": version + 1}).load(changes)
 
     for item in upload_changes.added:
         # check if same file is not already uploaded
         if not all(ele.path != item.path for ele in project.files):
-            HasBeenAlreadyUploaded = returnTranslation("HasBeenAlreadyUploaded")
-            File = returnTranslation("File")
-            abort(400, f"{File} {item.path} {HasBeenAlreadyUploaded}")
+            abort(400, f"File {item.path} has been already uploaded")
         if not is_valid_path(item.path):
-            PleaseRemoveTheInvalidCharacters = returnTranslation("PleaseRemoveTheInvalidCharacters")
-            UnsupportedFileNameDetected = returnTranslation("UnsupportedFileNameDetected")
             abort(
                 400,
-                f"{UnsupportedFileNameDetected}: {item.path}. {PleaseRemoveTheInvalidCharacters}.",
+                f"Unsupported file name detected: {item.path}. Please remove the invalid characters.",
             )
         if not is_supported_extension(item.path):
-            UnsupportedFileTypeDetected = returnTranslation("UnsupportedFileTypeDetected")
-            PleaseRemoveTheFileOrTryCompressingItIntoAZIPFileBeforeUploading = returnTranslation("PleaseRemoveTheFileOrTryCompressingItIntoAZIPFileBeforeUploading")
             abort(
                 400,
-                f"{UnsupportedFileTypeDetected}: {item.path}. "
-                f"{PleaseRemoveTheFileOrTryCompressingItIntoAZIPFileBeforeUploading}.",
+                f"Unsupported file type detected: {item.path}. "
+                f"Please remove the file or try compressing it into a ZIP file before uploading.",
             )
 
     # changes' files must be unique
@@ -867,8 +836,7 @@ def project_push(namespace, project_name):
         for f in upload_changes.added + upload_changes.updated + upload_changes.removed
     ]
     if len(set(changes_files)) != len(changes_files):
-        NotUniqueChanges = returnTranslation("NotUniqueChanges")
-        abort(400, NotUniqueChanges)
+        abort(400, "Not unique changes")
 
     sanitized_files = []
     blacklisted_files = []
@@ -876,9 +844,7 @@ def project_push(namespace, project_name):
         # check if .gpkg file is valid
         if is_versioned_file(f.path):
             if not f.is_valid_gpkg():
-                IsNotValid = returnTranslation("IsNotValid")
-                File = returnTranslation("File")
-                abort(400, f"{File} {f.path} {IsNotValid}")
+                abort(400, f"File {f.path} is not valid")
         if is_file_name_blacklisted(f.path, current_app.config["BLACKLIST"]):
             blacklisted_files.append(f.path)
         # all file need to be unique after sanitized
@@ -922,27 +888,22 @@ def project_push(namespace, project_name):
     try:
         # Creating upload transaction with different project's version is possible.
         db.session.commit()
-        UploadTransaction = returnTranslation("UploadTransaction")
-        CreatedForProject = returnTranslation("CreatedForProject")
-        Version = returnTranslation("Version")
         logging.info(
-            f"{UploadTransaction} {upload.id} {CreatedForProject}: {project.id}, {Version}: {version}"
+            f"Upload transaction {upload.id} created for project: {project.id}, version: {version}"
         )
     except IntegrityError:
         db.session.rollback()
         # check and clean dangling uploads or abort
         for current_upload in project.uploads.all():
             if current_upload.is_active():
-                AnotherProcessIsRunningPleaseTryLater = returnTranslation("AnotherProcessIsRunningPleaseTryLater")
-                abort(400, AnotherProcessIsRunningPleaseTryLater)
+                abort(400, "Another process is running. Please try later.")
             db.session.delete(current_upload)
             db.session.commit()
             # previous push attempt is definitely lost
-            PushArtefactRemovedBySubsequentPush = returnTranslation("PushArtefactRemovedBySubsequentPushorProject")
             project.sync_failed(
                 "",
                 "push_lost",
-                PushArtefactRemovedBySubsequentPush,
+                "Push artefact removed by subsequent push",
                 current_user.id,
             )
 
@@ -950,18 +911,13 @@ def project_push(namespace, project_name):
         db.session.add(upload)
         try:
             db.session.commit()
-            Version = returnTranslation("Version")
-            CreatedForProject = returnTranslation("CreatedForProject")
-            UploadTransaction = returnTranslation("UploadTransaction")
             logging.info(
-                f"{UploadTransaction} {upload.id} {CreatedForProject}: {project.id}, {Version}: {version}"
+                f"Upload transaction {upload.id} created for project: {project.id}, version: {version}"
             )
             move_to_tmp(upload.upload_dir)
         except IntegrityError as err:
-            FailedToCreateUploadSession = returnTranslation("FailedToCreateUploadSession")
-            FailedToCreateUploadSessionPleaseTryLater = returnTranslation("FailedToCreateUploadSessionPleaseTryLater")
-            logging.error(f"{FailedToCreateUploadSession}: {str(err)}")
-            abort(422, FailedToCreateUploadSessionPleaseTryLater)
+            logging.error(f"Failed to create upload session: {str(err)}")
+            abort(422, "Failed to create upload session. Please try later.")
 
     # Create transaction folder and lockfile
     os.makedirs(upload.upload_dir)
@@ -985,26 +941,19 @@ def project_push(namespace, project_name):
             db.session.add(pv)
             db.session.add(project)
             db.session.commit()
-            TransactionId = returnTranslation("TransactionId")
-            NoUpload = returnTranslation("NoUpload")
-            AProjectVersion = returnTranslation("AProjectVersion")
-            ForProject = returnTranslation("ForProject")
-            Created = returnTranslation("Created")
             logging.info(
-                f"{AProjectVersion} {ProjectVersion.to_v_name(next_version)} {ForProject}: {project.id} {Created}. "
-                f"{TransactionId}: {upload.id}. {NoUpload}."
+                f"A project version {ProjectVersion.to_v_name(next_version)} for project: {project.id} created. "
+                f"Transaction id: {upload.id}. No upload."
             )
             project_version_created.send(pv)
             push_finished.send(pv)
             return jsonify(ProjectSchema().dump(project)), 200
         except IntegrityError as err:
             db.session.rollback()
-            FailedToUploadANewProjectVersionUsingTransactionId = returnTranslation("FailedToUploadANewProjectVersionUsingTransactionId")
-            FailedToUploadANewProjectVersionPleaseTryLater = returnTranslation("FailedToUploadANewProjectVersionPleaseTryLater")
             logging.exception(
-                f"{FailedToUploadANewProjectVersionUsingTransactionId}: {upload.id}: {str(err)}"
+                f"Failed to upload a new project version using transaction id: {upload.id}: {str(err)}"
             )
-            abort(422, FailedToUploadANewProjectVersionPleaseTryLater)
+            abort(422, "Failed to upload a new project version. Please try later.")
         except gevent.timeout.Timeout:
             db.session.rollback()
             raise
@@ -1051,8 +1000,7 @@ def chunk_upload(transaction_id, chunk_id):
                     size = os.path.getsize(dest)
                     return jsonify({"checksum": checksum, "size": size}), 200
                 else:
-                    UploadWasProbablyCanceled = returnTranslation("UploadWasProbablyCanceled")
-                    abort(400, UploadWasProbablyCanceled)
+                    abort(400, "Upload was probably canceled")
     abort(404)
 
 
@@ -1106,29 +1054,24 @@ def push_finish(transaction_id):
                             dest.write(data)
                             data = src.read(8192)
             except IOError:
-                FailedToProcessChunk = returnTranslation("FailedToProcessChunk")
-                InProject = returnTranslation("InProject")
                 logging.exception(
-                    f"{FailedToProcessChunk}: {chunk_id} {InProject} {project_path}"
+                    "Failed to process chunk: %s in project %s"
+                    % (chunk_id, project_path)
                 )
                 corrupted_files.append(f.path)
                 continue
         if not is_supported_type(dest_file):
-            RejectingBlacklistedFile = returnTranslation("RejectingBlacklistedFile")
-            UnsupportedFileTypeDetected = returnTranslation("UnsupportedFileTypeDetected")
-            PleaseRemoveTheFileOrTryCompressingItIntoAZIPFileBeforeUploading = returnTranslation("PleaseRemoveTheFileOrTryCompressingItIntoAZIPFileBeforeUploading")
-            logging.info(f"{RejectingBlacklistedFile}: {dest_file}")
+            logging.info(f"Rejecting blacklisted file: {dest_file}")
             abort(
                 400,
-                f"{UnsupportedFileTypeDetected}: {f.path}. "
-                f"{PleaseRemoveTheFileOrTryCompressingItIntoAZIPFileBeforeUploading}",
+                f"Unsupported file type detected: {f.path}. "
+                f"Please remove the file or try compressing it into a ZIP file before uploading.",
             )
 
         if expected_size != os.path.getsize(dest_file):
-            DataIntegrityCheckHasFailedOnFile = returnTranslation("DataIntegrityCheckHasFailedOnFile")
-            InProject = returnTranslation("InProject")
             logging.error(
-                f"{DataIntegrityCheckHasFailedOnFile} {f.path} {InProject} {project_path}",
+                "Data integrity check has failed on file %s in project %s"
+                % (f.path, project_path),
                 exc_info=True,
             )
             # check if .gpkg file is valid
@@ -1150,14 +1093,13 @@ def push_finish(transaction_id):
             project_id=project.id, name=project.latest_version
         ).first()
         if pv and pv.name == upload.version + 1:
-            ThereIsAlreadyVersionWithThisName = returnTranslation("ThereIsAlreadyVersionWithThisName")
             abort(
                 409,
-                f"{ThereIsAlreadyVersionWithThisName} {v_next_version}",
+                f"There is already version with this name {v_next_version}",
             )
-        UploadTransactionTargetDirectoryAlreadyExistsOverwriting = returnTranslation("UploadTransactionTargetDirectoryAlreadyExistsOverwriting")
         logging.info(
-            f"{UploadTransactionTargetDirectoryAlreadyExistsOverwriting} {target_dir}"
+            "Upload transaction: Target directory already exists. Overwriting %s"
+            % target_dir
         )
         move_to_tmp(target_dir)
 
@@ -1199,8 +1141,7 @@ def push_finish(transaction_id):
                     updated_file.diff = result.value
                 else:
                     # if diff cannot be constructed it would be force update
-                    GeodiffCreateChangesetError = returnTranslation("GeodiffCreateChangesetError")
-                    logging.warning(f"{GeodiffCreateChangesetError} {result.value}")
+                    logging.warning(f"Geodiff: create changeset error {result.value}")
 
         if sync_errors:
             msg = ""
@@ -1222,26 +1163,18 @@ def push_finish(transaction_id):
         db.session.add(pv)
         db.session.add(project)
         db.session.commit()
-        PushFinishedForProject = returnTranslation("Push finished for project")
-        ProjectVersionVar = returnTranslation("ProjectVersion")
-        TransactionId = returnTranslation("TransactionId")
-
         logging.info(
-            f"{PushFinishedForProject}: {project.id}, {ProjectVersionVar}: {v_next_version}, {TransactionId}: {transaction_id}."
+            f"Push finished for project: {project.id}, project version: {v_next_version}, transaction id: {transaction_id}."
         )
         project_version_created.send(pv)
         push_finished.send(pv)
     except (psycopg2.Error, FileNotFoundError, DataSyncError, IntegrityError) as err:
         db.session.rollback()
-        FailedToFinishPushForProject = returnTranslation("FailedToFinishPushForProject")
-        ProjectVersionVar = returnTranslation("ProjectVersion")
-        TransactionId = returnTranslation("TransactionId")
         logging.exception(
-            f"{FailedToFinishPushForProject}: {project.id}, {ProjectVersionVar}: {v_next_version}, "
-            f"{TransactionId}: {transaction_id}.: {str(err)}"
+            f"Failed to finish push for project: {project.id}, project version: {v_next_version}, "
+            f"transaction id: {transaction_id}.: {str(err)}"
         )
-        FailedToCreateNewVersion = returnTranslation("FailedToCreateNewVersion")
-        abort(422, f"{FailedToCreateNewVersion}: {str(err)}")
+        abort(422, "Failed to create new version: {}".format(str(err)))
     # catch exception during pg transaction so we can rollback and prevent PendingRollbackError during upload clean up
     except gevent.timeout.Timeout:
         db.session.rollback()
@@ -1296,21 +1229,17 @@ def clone_project(namespace, project_name):  # noqa: E501
     dest_project = request.json.get("project", cloned_project.name).strip()
     ws = current_app.ws_handler.get_by_name(dest_ns)
     if not dest_project:
-        ProjectNameCannotBeEmpty = returnTranslation("ProjectNameCannotBeEmpty")
-        abort(400, ProjectNameCannotBeEmpty)
+        abort(400, "Project name cannot be empty")
     if not ws:
         if dest_ns == current_user.username:
-            WorkspaceDoesNotExistPleaseTryUpdatingToTheNewestVersion = returnTranslation("WorkspaceDoesNotExistPleaseTryUpdatingToTheNewestVersion")
             abort(
                 404,
-                WorkspaceDoesNotExistPleaseTryUpdatingToTheNewestVersion,
+                "Workspace does not exist. Please try updating to the newest version",
             )
         else:
-            WorkspaceDoesNotExist = returnTranslation("WorkspaceDoesNotExist")
-            abort(404, WorkspaceDoesNotExist)
+            abort(404, "Workspace does not exist")
     if not ws.user_has_permissions(current_user, "admin"):
-        YouDoNotHavePermissionsForThisWorkspace = returnTranslation("YouDoNotHavePermissionsForThisWorkspace")
-        abort(403, YouDoNotHavePermissionsForThisWorkspace)
+        abort(403, "You do not have permissions for this workspace")
     validation = project_name_validation(dest_project)
     if validation and dest_project != cloned_project.name:
         abort(400, validation)
@@ -1318,15 +1247,12 @@ def clone_project(namespace, project_name):  # noqa: E501
     _project = Project.query.filter_by(name=dest_project, workspace_id=ws.id).first()
     if _project:
         if _project.removed_at:
-            ProjectWithTheSameNameIsScheduledForDeletion = returnTranslation("ProjectWithTheSameNameIsScheduledForDeletion")
-            YouCanCreateAProjectWithThisNameIn = returnTranslation("YouCanCreateAProjectWithThisNameIn")
             msg = (
-                f"{ProjectWithTheSameNameIsScheduledForDeletion}"
-                f"{YouCanCreateAProjectWithThisNameIn} {format_time_delta(_project.expiration)}"
+                f"Project with the same name is scheduled for deletion, "
+                f"you can create a project with this name in {format_time_delta(_project.expiration)}"
             )
         else:
-            ProjectWithTheSameNameAlreadyExists = returnTranslation("ProjectWithTheSameNameAlreadyExists")
-            msg = ProjectWithTheSameNameAlreadyExists
+            msg = "Project with the same name already exists"
         abort(409, msg)
 
     # Check storage limit
@@ -1346,14 +1272,13 @@ def clone_project(namespace, project_name):  # noqa: E501
         creator=current_user,
         workspace=ws,
     )
-    p.updated = datetime.utcnow()
+    p.updated = datetime.now(tz)
     db.session.add(p)
 
     try:
         p.storage.initialize(template_project=cloned_project)
     except InitializationError as e:
-        FailedToCloneProject = returnTranslation("FailedToCloneProject")
-        abort(400, f"{FailedToCloneProject}: {str(e)}")
+        abort(400, f"Failed to clone project: {str(e)}")
 
     version = 1 if cloned_project.files else 0
     # TODO: add user_agent and device_id handling to class
@@ -1436,19 +1361,14 @@ def get_resource_changeset(project_name, namespace, version_id, path):  # noqa: 
     """
     project = require_project(namespace, project_name, ProjectPermissions.Read)
     if not project:
-        Project = returnTranslation("Project")
-        NotFound = returnTranslation("NotFound")
-        abort(404, f"{Project} {namespace}/{project_name} {NotFound}")
+        abort(404, f"Project {namespace}/{project_name} not found")
 
     version = ProjectVersion.query.filter_by(
         project_id=project.id, name=ProjectVersion.from_v_name(version_id)
     ).first()
     if not version:
-        VersionCapitalLetter = returnTranslation("VersionCapitalLetter")
-        InProject = returnTranslation("InProject")
-        NotFound = returnTranslation("NotFound")
         abort(
-            404, f"{VersionCapitalLetter} {version_id} {InProject} {namespace}/{project_name} {NotFound}"
+            404, f"Version {version_id} in project {namespace}/{project_name} not found"
         )
 
     # FIXME optimize, do a lookup in database
@@ -1457,13 +1377,10 @@ def get_resource_changeset(project_name, namespace, version_id, path):  # noqa: 
         None,
     )
     if not file:
-        File = returnTranslation("File")
-        NotFound = returnTranslation("NotFound")
-        abort(404, f"{File} {path} {NotFound}")
+        abort(404, f"File {path} not found")
 
     if not file.diff:
-        DiffNotFound = returnTranslation("DiffNotFound")
-        abort(404, DiffNotFound)
+        abort(404, "Diff not found")
 
     changeset = os.path.join(version.project.storage.project_dir, file.diff.location)
     json_file = os.path.join(
@@ -1485,10 +1402,9 @@ def get_resource_changeset(project_name, namespace, version_id, path):  # noqa: 
         if not os.path.exists(schema_file):
             version.project.storage.geodiff.schema("sqlite", "", basefile, schema_file)
     except GeoDiffLibError:
-        ChangeSetCouldNotBeCalculated = returnTranslation("ChangeSetCouldNotBeCalculated")
         abort(
             422,
-            f"{ChangeSetCouldNotBeCalculated}: {project.storage.gediff_log.getvalue()}",
+            f"Change set could not be calculated: {project.storage.gediff_log.getvalue()}",
         )
 
     with open(json_file, "r") as jf:
@@ -1498,8 +1414,7 @@ def get_resource_changeset(project_name, namespace, version_id, path):  # noqa: 
         schema = json.load(sf)
 
     if "geodiff" not in content or "geodiff_schema" not in schema:
-        ExpectedFormatDoesNotMatchResponseFromGeodiff = returnTranslation("ExpectedFormatDoesNotMatchResponseFromGeodiff")
-        abort(422, ExpectedFormatDoesNotMatchResponseFromGeodiff)
+        abort(422, "Expected format does not match response from Geodiff")
 
     # response from geodiff returns geometry in wkb format (with gpkg header), let's convert it to wkt
     for item in content["geodiff"]:
@@ -1508,8 +1423,7 @@ def get_resource_changeset(project_name, namespace, version_id, path):  # noqa: 
         )
         if not schema_table:
             # this should not happen if gpkg structure was not changed
-            ChangesCannotBeMappedOntoTableStructure = returnTranslation("ChangesCannotBeMappedOntoTableStructure")
-            abort(422, ChangesCannotBeMappedOntoTableStructure)
+            abort(422, "Changes cannot be mapped onto table structure")
 
         for change in item["changes"]:
             col_index = change["column"]
@@ -1565,15 +1479,13 @@ def get_workspace_by_id(id):
     """
     ws = current_app.ws_handler.get(id)
     if not (ws and ws.is_active):
-        WorkspaceNotFound = returnTranslation("WorkspaceNotFound")
-        abort(404, WorkspaceNotFound)
+        abort(404, "Workspace not found")
 
     if not (
         ws.user_has_permissions(current_user, "read")
         or ws.get_user_role(current_user) == WorkspaceRole.GUEST
     ):
-        YouDoNotHavePermissionsToWorkspace = returnTranslation("YouDoNotHavePermissionsToWorkspace")
-        abort(403, YouDoNotHavePermissionsToWorkspace)
+        abort(403, f"You do not have permissions to workspace")
 
     ctx = {"user": current_user}
     data = UserWorkspaceSchema(context=ctx).dump(ws)

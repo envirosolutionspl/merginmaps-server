@@ -33,7 +33,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           :class="['w-full', errors.email ? 'p-invalid' : '']"
         />
         <span class="p-error paragraph-p6" id="login-error">{{
-          errors.email?.[0] === 'Invalid email address.' ? InvalidEmailAddress : errors.email?.[0] || '&nbsp;'
+          errors.email?.[0] === 'Invalid email address.' ? InvalidEmailAddress :
+          errors.email?.[0] === 'Account with given email does not exist' ? AccountWithGivenEmailDoesNotExist : errors.email?.[0] || '&nbsp;'
         }}</span>
       </div>
 
@@ -133,6 +134,7 @@ const PleaseEnterYourPassword = returnTranslation(lang, 'PleaseEnterYourPassword
 const ForgotPassword = returnTranslation(lang, 'ForgotPassword');
 const TypeYourEmail = returnTranslation(lang, 'TypeYourEmail');
 const InvalidEmailAddress = returnTranslation(lang, 'InvalidEmailAddress');
+const AccountWithGivenEmailDoesNotExist = returnTranslation(lang, 'AccountWithGivenEmailDoesNotExist');
 
 </script>
 

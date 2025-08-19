@@ -58,15 +58,16 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
 import { ref, computed, defineEmits, withDefaults } from 'vue'
-
 import { ConfirmDialogProps } from '../types'
-
 import { useDialogStore } from '@/modules/dialog/store'
 
 const props = withDefaults(defineProps<ConfirmDialogProps>(), {
   confirmText: 'Ok',
-  cancelText: 'Cancel',
+  cancelText: returnTranslation(import.meta.env.VITE_LANG, "Cancel"),
   severity: 'primary'
 })
 

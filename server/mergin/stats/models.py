@@ -9,6 +9,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from datetime import datetime, timezone
 
 from ..app import db
+from ..config import tz
 
 
 @dataclass
@@ -44,7 +45,7 @@ class MerginStatistics(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     created_at = db.Column(
-        db.DateTime, index=True, nullable=False, default=datetime.utcnow
+        db.DateTime, index=True, nullable=False, default=datetime.now(tz)
     )
     # data with statistics
     data = db.Column(JSONB, nullable=False)

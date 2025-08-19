@@ -50,6 +50,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         aria-describedby="email-error"
       />
       <span class="p-error paragraph-p6" id="email-error">{{
+        errors.email?.[0] === 'Invalid email address.' ? InvalidEmailAddress :
+        errors.email?.[0] === 'Email already exists' ? EmailAlreadyExists :
         errors.email?.[0] || '&nbsp;'
       }}</span>
     </span>
@@ -86,6 +88,8 @@ const LastName = returnTranslation(lang, 'LastName');
 const Email = returnTranslation(lang, 'Email');
 const Cancel = returnTranslation(lang, 'Cancel');
 const SaveChanges = returnTranslation(lang, 'SaveChanges');
+const InvalidEmailAddress = returnTranslation(lang, 'InvalidEmailAddress');
+const EmailAlreadyExists = returnTranslation(lang, 'EmailAlreadyExists');
 
 </script>
 
