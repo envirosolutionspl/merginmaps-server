@@ -34,6 +34,7 @@ setup(
         "safe",
         "wtforms-json",
         "pytz",
+        "tzlocal",
         "pygeodiff",
         "pathvalidate",
         "celery",
