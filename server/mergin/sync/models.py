@@ -34,8 +34,6 @@ from ..app import db
 from .storages import DiskStorage
 from .utils import is_versioned_file, is_qgis
 
-from ..config import tz
-
 Storages = {"local": DiskStorage}
 project_deleted = signal("project_deleted")
 
@@ -55,11 +53,11 @@ class Project(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = db.Column(db.String, index=True)
     storage_params = db.Column(db.JSON)
-    created = db.Column(db.DateTime, default=datetime.now(tz), index=True)
+    created = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     creator_id = db.Column(
         db.Integer, db.ForeignKey("user.id"), nullable=True, index=True
     )
-    updated = db.Column(db.DateTime, onupdate=datetime.now(tz))
+    updated = db.Column(db.DateTime, onupdate=datetime.utcnow)
     tags = db.Column(ARRAY(String), server_default="{}")
     # disk_usage & latest_version are cached properties to keep even if versions are deleted
     disk_usage = db.Column(BIGINT, nullable=False, default=0)
@@ -214,7 +212,7 @@ class Project(db.Model):
         It will be possible to create a new project using the same name and will not be possible to restore the old one after this time.
         This time should be used to remove all local copies of the file."""
         initial = timedelta(days=current_app.config["DELETED_PROJECT_EXPIRATION"])
-        return initial - (datetime.now(tz) - self.removed_at)
+        return initial - (datetime.utcnow() - self.removed_at)
 
     def delete(self, removed_by: int = None):
         """Mark project as permanently deleted (but keep in db)
@@ -229,7 +227,7 @@ class Project(db.Model):
         self.name = f"{self.name}_{str(self.id)}"
         # make sure remove_at is not null as it is used as filter for APIs
         if not self.removed_at:
-            self.removed_at = datetime.now(tz)
+            self.removed_at = datetime.utcnow()
         if not self.removed_by:
             self.removed_by = removed_by
         # Null in storage params serves as permanent deletion flag
@@ -673,7 +671,7 @@ class ProjectVersion(db.Model):
     project_id = db.Column(
         UUID(as_uuid=True), db.ForeignKey("project.id", ondelete="CASCADE"), index=True
     )
-    created = db.Column(db.DateTime, default=datetime.now(tz), index=True)
+    created = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     author_id = db.Column(
         db.Integer, db.ForeignKey("user.id"), index=True, nullable=True
     )
@@ -1003,7 +1001,7 @@ class Upload(db.Model):
     user_id = db.Column(
         db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=True
     )
-    created = db.Column(db.DateTime, default=datetime.now(tz))
+    created = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship("User")
     project = db.relationship(
@@ -1066,7 +1064,7 @@ class AccessRequest(db.Model):
         db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
     requested_at = db.Column(
-        db.DateTime, default=datetime.now(tz), index=True, nullable=False
+        db.DateTime, default=datetime.utcnow, index=True, nullable=False
     )
     resolved_by = db.Column(
         db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=True
@@ -1108,7 +1106,7 @@ class AccessRequest(db.Model):
         """Resolve request"""
         self.status = status.value
         self.resolved_by = resolved_by
-        self.resolved_at = datetime.now(tz)
+        self.resolved_at = datetime.utcnow()
 
 
 class SyncFailuresHistory(db.Model):
@@ -1124,7 +1122,7 @@ class SyncFailuresHistory(db.Model):
         db.String, index=True
     )  # e.g. push_start, push_finish, push_lost
     error_details = db.Column(db.String)
-    timestamp = db.Column(db.DateTime(), default=datetime.now(tz), index=True)
+    timestamp = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
     user_id = db.Column(
         db.Integer, db.ForeignKey("user.id", ondelete="SET NULL"), nullable=True
     )

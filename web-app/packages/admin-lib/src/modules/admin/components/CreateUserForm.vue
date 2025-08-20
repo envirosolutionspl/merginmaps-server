@@ -18,11 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         aria-describedby="email-error"
       />
       <span class="p-error paragraph-p6" id="email-error">{{
-
-        errors.email?.[0] === 'Already exists' ? AlreadyExists :
-        errors.email?.[0] === 'Invalid email address.' ? InvalidEmailAddress :
-        errors.email?.[0] === 'Already exists' ? AlreadyExists : errors.email?.[0] || '&nbsp;'
-
+        errors.email?.[0] || '&nbsp;'
       }}</span>
     </span>
 
@@ -41,11 +37,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         :placeholder="EnterPassword"
       />
       <span class="p-error paragraph-p6" id="password-error">{{
-
-        errors.password?.[0] === 'Passwords must be at least 8 characters long.' ? PasswordsMustBeAtLeast8CharactersLong :
-        errors.password?.[0] === 'This field is required.' ? ThisFieldIsRequired :
-        errors.password?.[0] === 'Password is not strong enough' ? PasswordIsNotStrongEnough : errors.password?.[0] || '&nbsp;'
-
+        errors.password?.[0] || '&nbsp;'
       }}</span>
     </span>
 
@@ -81,12 +73,6 @@ const Password = returnTranslation(lang, 'Password');
 const Cancel = returnTranslation(lang, 'Cancel');
 const Create = returnTranslation(lang, 'Create');
 const EnterPassword = returnTranslation(lang, 'EnterPassword');
-const ThisFieldIsRequired = returnTranslation(lang, 'ThisFieldIsRequired');
-const InvalidEmailAddress = returnTranslation(lang, 'InvalidEmailAddress');
-
-const PasswordIsNotStrongEnough = returnTranslation(lang, 'PasswordIsNotStrongEnough');
-const AlreadyExists = returnTranslation(lang, 'AlreadyExists');
-const PasswordsMustBeAtLeast8CharactersLong = returnTranslation(lang, 'PasswordsMustBeAtLeast8CharactersLong');
 </script>
 
 <script lang="ts">

@@ -4,7 +4,7 @@ networks:
 
 services:
   db:
-    image: postgres:16.9
+    image: postgres:14
     container_name: merginmaps-db
     restart: always
     networks:
@@ -12,11 +12,8 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - TZ=Europe/Warsaw
     volumes:
       - ./mergin_db:/var/lib/postgresql/data
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
   redis:
     image: redis:6.2.17
     container_name: merginmaps-redis
@@ -31,12 +28,8 @@ services:
     volumes:
       - ./projects:/data/:z
       - ./server/entrypoint.sh:/app/entrypoint.sh
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
     env_file:
       - .prod.env
-    environment:
-      - TZ=Europe/Warsaw
     depends_on:
       - db
       - redis
@@ -52,11 +45,8 @@ services:
     environment:
       - GEVENT_WORKER=0
       - NO_MONKEY_PATCH=1
-      - TZ=Europe/Warsaw
     volumes:
       - ./server/entrypoint.sh:/app/entrypoint.sh
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - redis
       - server-gunicorn
@@ -73,12 +63,9 @@ services:
     environment:
       - GEVENT_WORKER=0
       - NO_MONKEY_PATCH=1
-      - TZ=Europe/Warsaw
     volumes:
       - ./projects:/data/:z
       - ./server/entrypoint.sh:/app/entrypoint.sh
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - redis
       - server-gunicorn
@@ -87,12 +74,9 @@ services:
     networks:
       - merginmaps
   web:
-    #image: lutraconsulting/merginmaps-frontend-es:2025.2.2
+    image: lutraconsulting/merginmaps-frontend-es:2025.2.2
     container_name: merginmaps-web
     restart: always
-    build:
-      context: ./web-app
-      dockerfile: Dockerfile
     depends_on:
       - server-gunicorn
     user: 101:999
@@ -104,8 +88,6 @@ services:
     image: nginxinc/nginx-unprivileged:1.27
     container_name: merginmaps-proxy
     restart: always
-    environment:
-      - TZ=Europe/Warsaw
     # run nginx as built-in user but with group mergin-family for files permissions
     user: 101:999
     ports:
@@ -113,7 +95,5 @@ services:
     volumes:
       - ./projects:/data/:z  # map data dir to host
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
     networks:
       - merginmaps

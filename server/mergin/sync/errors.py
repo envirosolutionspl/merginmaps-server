@@ -5,10 +5,12 @@
 from typing import List, Dict
 from ..app import ResponseError
 
+from ..lang.current import returnTranslation
 
 class UpdateProjectAccessError(ResponseError):
     code = "UpdateProjectAccessError"
-    detail = "Project access could not be updated"
+    ProjectAccessCouldNotBeUpdated = returnTranslation("ProjectAccessCouldNotBeUpdated")
+    detail = ProjectAccessCouldNotBeUpdated
 
     def __init__(self, invalid_usernames: List[str], invalid_ids: List[int]):
         self.invalid_usernames = invalid_usernames
@@ -23,7 +25,8 @@ class UpdateProjectAccessError(ResponseError):
 
 class StorageLimitHit(ResponseError):
     code = "StorageLimitHit"
-    detail = "You have reached a data limit"
+    YouHaveReachedADataLimit = returnTranslation("YouHaveReachedADataLimit")
+    detail = YouHaveReachedADataLimit
 
     def __init__(self, current_usage: int, storage_limit: int):
         self.current_usage = current_usage

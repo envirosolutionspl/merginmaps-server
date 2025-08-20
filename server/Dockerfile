@@ -33,7 +33,6 @@ COPY . /app
 WORKDIR /app
 
 RUN pip3 install pipenv==2024.0.1
-RUN pip3 install tzlocal==5.3
 # for locale check this http://click.pocoo.org/5/python3/
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8

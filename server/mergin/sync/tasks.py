@@ -15,7 +15,6 @@ from .config import Configuration
 from ..celery import celery
 from ..app import db
 
-from ..config import tz
 
 @celery.task
 def remove_temp_files():
@@ -29,7 +28,7 @@ def remove_temp_files():
         path = os.path.join(current_app.config["TEMP_DIR"], dir)
         if datetime.fromtimestamp(
             os.path.getmtime(path)
-        ) < datetime.now(tz) - timedelta(days=current_app.config["TEMP_EXPIRATION"]):
+        ) < datetime.utcnow() - timedelta(days=current_app.config["TEMP_EXPIRATION"]):
             try:
                 shutil.rmtree(path)
             except OSError as e:
@@ -50,7 +49,7 @@ def remove_projects_backups():
         projects = (
             Project.query.filter(
                 Project.removed_at
-                < datetime.now(tz)
+                < datetime.utcnow()
                 - timedelta(days=current_app.config["DELETED_PROJECT_EXPIRATION"])
             )
             .filter(Project.storage_params.isnot(None))

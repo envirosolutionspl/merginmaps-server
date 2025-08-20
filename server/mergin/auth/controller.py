@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
 import os
+import pytz
 from datetime import datetime, timedelta
 from connexion import NoContent
 from sqlalchemy import func, desc, asc
@@ -37,6 +38,7 @@ from ..app import db
 from ..sync.models import Project
 from ..sync.utils import files_size
 
+from ..lang.current import returnTranslation
 
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
@@ -136,10 +138,9 @@ def login_public():  # noqa: E501
     if form.validate():
         user = authenticate(form.login.data, form.password.data)
         if user and user.active:
-            expire = datetime.now(tz) + timedelta(
+            expire = datetime.now(pytz.utc) + timedelta(
                 seconds=current_app.config["BEARER_TOKEN_EXPIRATION"]
             )
-            
             token_data = {
                 "user_id": user.id,
                 "username": user.username,

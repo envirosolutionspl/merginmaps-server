@@ -77,7 +77,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             <i
               v-if="!loggedUser?.verified_email"
               v-tooltip.top="{
-                value: EmailVerificationStatus
+                value: 'Email verification status'
               }"
               class="ti ti-alert-circle-filled"
               data-cy="project-form-missing-project"
@@ -176,7 +176,6 @@ const Advanced = returnTranslation(lang, 'Advanced');
 const ReceiveNotifications = returnTranslation(lang, 'ReceiveNotifications');
 const WeWillSendYouInformationAboutWorkspaceActivity = returnTranslation(lang, 'WeWillSendYouInformationAboutWorkspaceActivity');
 const CloseAccount = returnTranslation(lang, 'CloseAccount');
-const EmailVerificationStatus = returnTranslation(lang, 'EmailVerificationStatus');
 const YourAccountWillBeClosedInCaseYouAreAnOwnerOfAWorkspaceYouMightNeedToTransferTheOwnershipFirstOrCloseTheWorkspace = returnTranslation(lang, 'YourAccountWillBeClosedInCaseYouAreAnOwnerOfAWorkspaceYouMightNeedToTransferTheOwnershipFirstOrCloseTheWorkspace');
 
 </script>

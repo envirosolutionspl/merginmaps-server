@@ -23,7 +23,6 @@ from ..auth.models import User
 from ..config import Configuration
 from .interfaces import AbstractWorkspace, WorkspaceHandler, WorkspaceRole
 
-from ..config import tz
 
 class GlobalWorkspace(AbstractWorkspace):
     """Implements single workspace based on global settings"""
@@ -219,7 +218,7 @@ class GlobalWorkspaceHandler(WorkspaceHandler):
 
         if last_updated_in:
             projects = projects.filter(
-                Project.updated >= datetime.now(tz) - timedelta(days=last_updated_in)
+                Project.updated >= datetime.utcnow() - timedelta(days=last_updated_in)
             )
 
         if order_params:
@@ -261,7 +260,7 @@ class GlobalWorkspaceHandler(WorkspaceHandler):
 
     @staticmethod
     def monthly_contributors_count(month_offset=0):
-        today = datetime.now(tz)
+        today = datetime.now(timezone.utc)
         year = today.year
         month = today.month
         return (

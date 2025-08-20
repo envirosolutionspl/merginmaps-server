@@ -26,7 +26,7 @@ def schedule_delete_project(id):
     rest.
     """
     project = require_project_by_uuid(id, ProjectPermissions.Delete)
-    project.removed_at = datetime.now(tz)
+    project.removed_at = datetime.utcnow()
     project.removed_by = current_user.id
     db.session.commit()
 
@@ -57,7 +57,8 @@ def update_project(id):
         workspace_id=project.workspace_id, name=new_name
     ).first()
     if new_name_exists:
-        abort(409, "Name already exist within workspace")
+        NameAlreadyExistWithinWorkspace = returnTranslation("NameAlreadyExistWithinWorkspace")
+        abort(409, NameAlreadyExistWithinWorkspace)
 
     project.name = new_name.strip()
     db.session.commit()
@@ -97,7 +98,8 @@ def add_project_collaborator(id):
         abort(404)
 
     if project.get_role(user.id):
-        abort(409, "User is already a project member")
+        UserIsAlreadyAProjectMember = returnTranslation("UserIsAlreadyAProjectMember")
+        abort(409, UserIsAlreadyAProjectMember)
 
     project.set_role(user.id, ProjectRole(request.json["role"]))
     db.session.commit()
