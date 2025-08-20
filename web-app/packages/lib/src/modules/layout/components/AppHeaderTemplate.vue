@@ -159,7 +159,6 @@ export default defineComponent({
       'currentWorkspace'
     ]),
     profileMenuItems() {
-      const lang = import.meta.env.VITE_LANG
       return [
         ...(this.$router.hasRoute(UserRouteName.UserProfile)
           ? [
@@ -184,7 +183,6 @@ export default defineComponent({
       ] as MenuItem[]
     },
     _helpMenuItems() {
-      const lang = import.meta.env.VITE_LANG
       return [
         {
           label: returnTranslation(lang, 'Documentation2'),

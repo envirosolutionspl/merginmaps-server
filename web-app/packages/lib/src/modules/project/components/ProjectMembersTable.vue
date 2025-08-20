@@ -109,23 +109,23 @@ const instanceStore = useInstanceStore()
 const itemsPerPage = ref(10)
 const columns = ref<DataViewWrapperColumnItem[]>([
   {
-    text: returnTranslation(import.meta.env.VITE_LANG, 'EmailAddress'),
+    text: returnTranslation(lang, 'EmailAddress'),
     value: 'email',
     textClass: 'font-semibold',
     cols: 5
   },
   {
-    text: returnTranslation(import.meta.env.VITE_LANG, 'Username'),
+    text: returnTranslation(lang, 'Username'),
     value: 'username',
     cols: 5
   },
   {
-    text: returnTranslation(import.meta.env.VITE_LANG, 'ProjectPermissions'),
+    text: returnTranslation(lang, 'ProjectPermissions'),
     value: 'roles',
     cols: 2
   },
   {
-    text: returnTranslation(import.meta.env.VITE_LANG, 'Remove'),
+    text: returnTranslation(lang, 'Remove'),
     value: 'remove',
     fixed: true
   }

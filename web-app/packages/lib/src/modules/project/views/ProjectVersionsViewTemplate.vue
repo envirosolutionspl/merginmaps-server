@@ -65,7 +65,6 @@ export default defineComponent({
   },
   computed: {
     filterMenuItems(): MenuItem[] {
-      const lang = import.meta.env.VITE_LANG
       return [
         {
           label: 'Newest versions',

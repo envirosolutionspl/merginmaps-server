@@ -146,7 +146,6 @@ export default defineComponent({
       )
     },
     filterMenuItems(): MenuItem[] {
-      const lang = import.meta.env.VITE_LANG
       return [
         {
           label: 'Sort by name A-Z',

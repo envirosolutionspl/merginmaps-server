@@ -172,7 +172,6 @@ export default defineComponent({
     ...mapState(useUserStore, ['currentWorkspace', 'isLoggedIn']),
 
     tabs(): TabItem[] {
-      const lang = import.meta.env.VITE_LANG
       const tabs: TabItem[] = [
         {
           route: ProjectRouteName.ProjectTree,
@@ -306,7 +305,6 @@ export default defineComponent({
       )
         .then(() => {
           waitCursor(false)
-          const lang = import.meta.env.VITE_LANG
           this.show({
             text: 'Access has been requested'
           })
@@ -315,7 +313,6 @@ export default defineComponent({
           })
         })
         .catch(() => {
-          const lang = import.meta.env.VITE_LANG
           this.error({
             text: 'Failed to request'
           })
@@ -323,7 +320,6 @@ export default defineComponent({
         })
     },
     leaveDialog() {
-      const lang = import.meta.env.VITE_LANG
 
       const AreYouSureToLeaveTheProject = returnTranslation(lang, 'AreYouSureToLeaveTheProject');
       const YouWillNotHaveAccessToItAnymore = returnTranslation(lang, 'YouWillNotHaveAccessToItAnymore');

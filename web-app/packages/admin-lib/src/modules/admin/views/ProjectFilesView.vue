@@ -70,7 +70,6 @@ const options = ref({
 const searchFilter = ref('')
 
 const filterMenuItems = computed<MenuItem[]>(() => {
-  const lang = import.meta.env.VITE_LANG
   const SortByNameAZ = returnTranslation(lang, 'SortByNameAZ');
   const SortByNameZA = returnTranslation(lang, 'SortByNameZA');
   const SortByLastModified = returnTranslation(lang, 'SortByLastModified');

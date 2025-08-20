@@ -64,7 +64,7 @@ export default defineComponent({
     changesets: Array as PropType<ChangesetSuccessSummaryItem[]>
   },
   data() {
-    const lang = import.meta.env.VITE_LANG
+
     const Layer = returnTranslation(lang, 'Layer');
     const Inserts = returnTranslation(lang, 'Inserts');
     const Updates = returnTranslation(lang, 'Updates');

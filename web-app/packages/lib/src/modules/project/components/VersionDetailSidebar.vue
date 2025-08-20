@@ -128,7 +128,6 @@ export default defineComponent({
         )
         this.version = response.data
       } catch (err) {
-        const lang = import.meta.env.VITE_LANG
         const FailedToFetchProjectVersion = returnTranslation(lang, 'FailedToFetchProjectVersion');
         this.error({
           text: getErrorMessage(err, 'Failed to fetch project version')

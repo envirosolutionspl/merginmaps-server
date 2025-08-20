@@ -47,18 +47,17 @@ const project = computed(() => projectStore.project)
 const settingsItems = computed<AppSettingsItemConfig[]>(() => [
   {
     key: 'publicProject',
-    title: returnTranslation(import.meta.env.VITE_LANG, 'PublicProject'),
-    description: returnTranslation(import.meta.env.VITE_LANG, 'TheProjectWillBeVisibleToEveryoneIfItIsMarkedAsPublic')
+    title: returnTranslation(lang, 'PublicProject'),
+    description: returnTranslation(lang, 'TheProjectWillBeVisibleToEveryoneIfItIsMarkedAsPublic')
   },
   {
     key: 'deleteProject',
-    title: returnTranslation(import.meta.env.VITE_LANG, 'DeleteProject'),
-    description: returnTranslation(import.meta.env.VITE_LANG, 'DeletingThisProjectWillRemoveItAndAllItsDataThisActionCannotBeUndone')
+    title: returnTranslation(lang, 'DeleteProject'),
+    description: returnTranslation(lang, 'DeletingThisProjectWillRemoveItAndAllItsDataThisActionCannotBeUndone')
   }
 ])
 
 const confirmDelete = () => {
-  const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = {
     text: `Are you sure you want to permanently delete this project?`,
     description: `Deleting this project will remove it
@@ -77,7 +76,7 @@ const confirmDelete = () => {
   }
   dialogStore.show({
     component: ConfirmDialog,
-    params: { props, listeners, dialog: { header: returnTranslation(import.meta.env.VITE_LANG, 'DeleteProject') } }
+    params: { props, listeners, dialog: { header: returnTranslation(lang, 'DeleteProject') } }
   })
 }
 </script>

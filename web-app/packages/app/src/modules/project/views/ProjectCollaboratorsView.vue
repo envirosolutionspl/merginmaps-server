@@ -40,7 +40,6 @@ const notificationStore = useNotificationStore()
 const isProjectOwner = computed(() => projectStore.isProjectOwner)
 
 function openShareDialog() {
-  const lang = import.meta.env.VITE_LANG
   const FailedToSaveProjectSettings = returnTranslation(lang, 'FailedToSaveProjectSettings');
   const ShareProject = returnTranslation(lang, 'ShareProject');
   const dialog = {

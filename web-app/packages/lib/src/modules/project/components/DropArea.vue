@@ -109,7 +109,6 @@ export default defineComponent({
         return
       }
       if (this.upload && this.upload.running) {
-        const lang = import.meta.env.VITE_LANG
         return this.error({
           text: 'You cannot update files during upload'
         })
@@ -119,7 +118,6 @@ export default defineComponent({
         evt.dataTransfer.items as DataTransferItem[]
       ).map((i) => i.webkitGetAsEntry())
       if (entries.some((e) => e === null)) {
-        const lang = import.meta.env.VITE_LANG
         return this.error({
           text: 'Drop only files or folders'
         })

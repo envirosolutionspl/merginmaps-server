@@ -150,24 +150,24 @@ const userStore = useUserStore()
 const settingsItems = computed<AppSettingsItemConfig[]>(() => [
   {
     key: 'notifications',
-    title: returnTranslation(import.meta.env.VITE_LANG, 'ReceiveNotifications'),
+    title: returnTranslation(lang, 'ReceiveNotifications'),
     description: profile?.value?.receive_notifications
-      ? returnTranslation(import.meta.env.VITE_LANG, 'UserHasEnabledReceivingNotifications')
-      : returnTranslation(import.meta.env.VITE_LANG, 'UserHasDisabledNotifications')
+      ? returnTranslation(lang, 'UserHasEnabledReceivingNotifications')
+      : returnTranslation(lang, 'UserHasDisabledNotifications')
   },
   {
     key: 'adminAccess',
-    title: returnTranslation(import.meta.env.VITE_LANG, 'AccessToAdminPanel'),
+    title: returnTranslation(lang, 'AccessToAdminPanel'),
     description: user.value?.is_admin
-      ? returnTranslation(import.meta.env.VITE_LANG, 'UserHasAccessToTheAdminPanel')
-      : returnTranslation(import.meta.env.VITE_LANG, 'UserDoesNotHaveAccessToTheAdminPanel')
+      ? returnTranslation(lang, 'UserHasAccessToTheAdminPanel')
+      : returnTranslation(lang, 'UserDoesNotHaveAccessToTheAdminPanel')
   },
   {
     key: 'accountActivation',
-    title: returnTranslation(import.meta.env.VITE_LANG, 'AccountActivation'),
+    title: returnTranslation(lang, 'AccountActivation'),
     description: user?.value?.active
-      ? returnTranslation(import.meta.env.VITE_LANG, 'TheUsersAccountIsCurrentlyActiveDeactivationWillLeadToATemporaryBanFromMerginMapsUsage')
-      : returnTranslation(import.meta.env.VITE_LANG, 'TheUsersAccountIsCurrentlyInactiveActivatingItWillAllowAccessToMerginMaps')
+      ? returnTranslation(lang, 'TheUsersAccountIsCurrentlyActiveDeactivationWillLeadToATemporaryBanFromMerginMapsUsage')
+      : returnTranslation(lang, 'TheUsersAccountIsCurrentlyInactiveActivatingItWillAllowAccessToMerginMaps')
   },
   {
     key: 'deleteAccount',
@@ -196,7 +196,6 @@ watch(
 )
 
 const changeStatusDialog = () => {
-  const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = user.value.active
     ? {
         confirmText: 'Deactivate',
@@ -231,7 +230,6 @@ const changeStatusDialog = () => {
 }
 
 const confirmDeleteUser = () => {
-  const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = {
     text: `Are you sure you want to permanently delete this account?`,
     description: `Deleting this user will remove them
@@ -255,7 +253,6 @@ const confirmDeleteUser = () => {
 }
 
 const switchAdminAccess = async () => {
-  const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = !user.value?.is_admin
     ? {
         text: `Are you sure to grant access to admin panel to this user?`,
@@ -290,7 +287,7 @@ const switchAdminAccess = async () => {
   }
   dialogStore.show({
     component: ConfirmDialog,
-    params: { props, listeners, dialog: { header: returnTranslation(import.meta.env.VITE_LANG, 'AdminAccess') } }
+    params: { props, listeners, dialog: { header: returnTranslation(lang, 'AdminAccess') } }
   })
 }
 </script>

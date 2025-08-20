@@ -48,7 +48,6 @@ const CreateNewProject = returnTranslation(lang, 'CreateNewProject');
 </script>
 
 <script lang="ts">
-const lang = import.meta.env.VITE_LANG
 import { mapState, mapActions } from 'pinia'
 import { defineComponent, PropType } from 'vue'
 
@@ -163,7 +162,6 @@ export default defineComponent({
       }
     },
     newProjectDialog() {
-      const lang = import.meta.env.VITE_LANG
       const NewProject = returnTranslation(lang, 'NewProject');
       const dialog = { persistent: true, header: NewProject }
       this.show({

@@ -73,7 +73,6 @@ function switchCheckForUpdates() {
 }
 
 function downloadReport() {
-  const lang = import.meta.env.VITE_LANG
   dialogStore.show({
     component: ReportDownloadDialog,
     params: {

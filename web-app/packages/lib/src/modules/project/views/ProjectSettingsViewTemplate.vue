@@ -106,7 +106,6 @@ export default defineComponent({
       })
     },
     confirmDelete() { // returnTranslation(lang, 'AllDataWillBeLost')
-      const lang = import.meta.env.VITE_LANG
       const props: ConfirmDialogProps = {
         text: `Are you sure to delete project?`,
         description: 'All files will be lost. Type in project name to confirm:',
@@ -131,7 +130,6 @@ export default defineComponent({
       })
     },
     confirmPublicPrivate() {
-      const lang = import.meta.env.VITE_LANG
       const DoYouReallyWantToMakeThisProject = returnTranslation(lang, 'DoYouReallyWantToMakeThisProject')
       const props: ConfirmDialogProps = {
         text: `Do you really want to make this project ${

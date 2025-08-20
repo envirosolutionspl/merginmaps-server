@@ -162,7 +162,6 @@ export default defineComponent({
         })
         await this.updatePaginationOrFetch()
       } catch (err) {
-        const lang = import.meta.env.VITE_LANG
         const FailedToAcceptAccessRequest = returnTranslation(lang, 'FailedToAcceptAccessRequest');
         this.error({
           text: getErrorMessage(err, 'Failed to accept access request')

@@ -154,7 +154,6 @@ export default defineComponent({
       return this.state && stateSeverity[this.state]
     },
     stateText() {
-      const lang = import.meta.env.VITE_LANG
       const stateText: Record<State, string> = {
         added: 'New file',
         removed: 'Deleted file',
