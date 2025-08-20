@@ -185,7 +185,7 @@ export default defineComponent({
     _helpMenuItems() {
       return [
         {
-          label: returnTranslation(lang, 'Documentation2'),
+          label: returnTranslation(lang, 'Documentation'),
           url: this.configData?.docs_url,
           target: '_blank',
         },

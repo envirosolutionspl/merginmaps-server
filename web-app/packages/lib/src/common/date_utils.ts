@@ -11,10 +11,6 @@ import diffInYears from 'date-fns/differenceInYears'
 import isDate from 'date-fns/isDate'
 import isValid from 'date-fns/isValid'
 
-import returnTranslation from '@/../../lang/translate';
-// @ts-ignore
-const lang = import.meta.env.VITE_LANG
-
 const DurationKeys = {
   years: ['year', 'years'],
   months: ['month', 'months'],
@@ -33,16 +29,11 @@ export function formatDate(isoString) {
 }
 
 function formatDuration(num, unit) {
-  const date_unit = DurationKeys[unit][num === 1 ? 0 : 1];
-  const translated_date_unit = returnTranslation(lang, date_unit);
-  const translated_ago = returnTranslation(lang, 'ago');
-  return `${num} ${translated_date_unit} ${translated_ago}`
+  return `${num} ${DurationKeys[unit][num === 1 ? 0 : 1]} ago`
 }
 
 function remainingFormatDuration(num, unit) {
-  const date_unit = DurationKeys[unit][num === 1 ? 0 : 1];
-  const translated_date_unit = returnTranslation(lang, date_unit);
-  return `${num} ${translated_date_unit}`
+  return `${num} ${DurationKeys[unit][num === 1 ? 0 : 1]}`
 }
 
 function parseDate(date) {
@@ -89,25 +80,25 @@ export function formatRemainingTime(t2, t1 = new Date()) {
   const hours = diffInHours(t2Parsed, t1Parsed)
   switch (true) {
     case days > 365:
-      return remainingFormatDuration(diffInYears(t2Parsed, t1Parsed), returnTranslation(lang, 'years'))
+      return remainingFormatDuration(diffInYears(t2Parsed, t1Parsed), 'years')
     case days > 31:
-      return remainingFormatDuration(diffInMonths(t2Parsed, t1Parsed), returnTranslation(lang, 'months'))
+      return remainingFormatDuration(diffInMonths(t2Parsed, t1Parsed), 'months')
     case days > 14:
-      return remainingFormatDuration(diffInWeeks(t2Parsed, t1Parsed), returnTranslation(lang, 'weeks'))
+      return remainingFormatDuration(diffInWeeks(t2Parsed, t1Parsed), 'weeks')
     case days < 1:
       if (days < 0) {
-        return returnTranslation(lang, 'expired')
+        return 'expired'
       }
       if (hours < 1) {
         const minutes = diffInMinutes(t2Parsed, t1Parsed)
         if (minutes <= 0) {
-          return returnTranslation(lang, 'expired')
+          return 'expired'
         } else {
-          return remainingFormatDuration(minutes, returnTranslation(lang, 'minutes'))
+          return remainingFormatDuration(minutes, 'minutes')
         }
       }
-      return remainingFormatDuration(hours, returnTranslation(lang, 'hours'))
+      return remainingFormatDuration(hours, 'hours')
     default:
-      return remainingFormatDuration(days, returnTranslation(lang, 'days'))
+      return remainingFormatDuration(days, 'days')
   }
 }

@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <div>
         <label for="login">Email</label>
         <PInputText
-          :placeholder="TypeYourEmail"
+          placeholder="Type your email"
           name="email"
           color="inputColor"
           data-cy="reset-form-email"

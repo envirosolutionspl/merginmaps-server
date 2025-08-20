@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         toggleMask
         :feedback="false"
         aria-describedby="password-error"
-        :placeholder="EnterPassword"
+        placeholder="Enter password"
       />
       <span class="p-error paragraph-p6" id="password-error">{{
 

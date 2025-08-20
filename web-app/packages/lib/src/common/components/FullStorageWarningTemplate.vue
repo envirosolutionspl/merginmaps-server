@@ -13,9 +13,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         </template>
         <p>
           <span class="font-semibold"
-            >{{ YourStorageIsAlmostFull }} ({{ usage }}%).</span
+            >Your storage is almost full ({{ usage }}%).</span
           >
-          {{ SoonYouWillNotBeAbleToSyncYourProjects }}
+          Soon you will not be able to sync your projects.
         </p></PMessage
       >
     </slot>
@@ -23,13 +23,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const SoonYouWillNotBeAbleToSyncYourProjects = returnTranslation(lang, 'SoonYouWillNotBeAbleToSyncYourProjects');
-const YourStorageIsAlmostFull = returnTranslation(lang, 'YourStorageIsAlmostFull');
-
-
 import { computed, ref } from 'vue'
 
 import { AppContainer } from '@/common/components'

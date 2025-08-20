@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <div class="text-center md:text-left">
       <p class="tip-message-title title-t3 mb-1">
-        <slot name="title">{{ TipFromMerginMaps }}</slot>
+        <slot name="title">Tip from Mergin Maps</slot>
       </p>
       <p class="opacity-80 paragraph-p5">
         <slot name="description"></slot>
@@ -25,15 +25,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </div>
   </div>
 </template>
-
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const TipFromMerginMaps = returnTranslation(lang, 'TipFromMerginMaps')
-</script>
-
 
 <style scoped lang="scss">
 .tip-message {

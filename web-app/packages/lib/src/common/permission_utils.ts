@@ -6,10 +6,6 @@ import { DropdownOption } from './components/types'
 
 import { ProjectAccess } from '@/modules'
 
-import returnTranslation from '@/../../lang/translate';
-// @ts-ignore
-const lang = import.meta.env.VITE_LANG
-
 export enum WorkspaceRole {
   guest,
   reader,
@@ -141,28 +137,26 @@ export function isAtLeastGlobalRole(
 }
 
 export function getProjectRoleNameValues(): DropdownOption<ProjectRoleName>[] {
-  const lang = import.meta.env.VITE_LANG
-
   return [
     {
       value: 'reader',
-      label: returnTranslation(lang, "Reader"),
-      description: returnTranslation(lang, "CanViewProjectFiles")
+      label: 'Reader',
+      description: 'Can view project files'
     },
     {
       value: 'editor',
-      label: returnTranslation(lang, "Editor"),
-      description: returnTranslation(lang, "CanCollectFeaturesInProject")
+      label: 'Editor',
+      description: 'Can collect features in project'
     },
     {
       value: 'writer',
-      label: returnTranslation(lang, "Writer"),
-      description: returnTranslation(lang, "CanEditProjectFiles")
+      label: 'Writer',
+      description: 'Can edit project files'
     },
     {
       value: 'owner',
-      label: returnTranslation(lang, "Owner"),
-      description: returnTranslation(lang, "CanShareAndRemoveProject")
+      label: 'Owner',
+      description: 'Can share and remove project'
     }
   ]
 }

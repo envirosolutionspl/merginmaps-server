@@ -28,7 +28,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <app-circle :severity="circleSeverity[key]" class="mr-2"
           ><i :class="['ti', `${diffIcon[key]}`]"></i
         ></app-circle>
-        <span class="paragraph-p5 opacity-80 capitalize">{{ translations[key.charAt(0).toUpperCase() + key.slice(1) + 'L'] }}</span>
+        <span class="paragraph-p5 opacity-80 capitalize">{{ key }}</span>
         <app-circle class="ml-auto">{{ upload.diff[key].length }}</app-circle>
       </div>
       <PButton
@@ -48,22 +48,6 @@ const lang = import.meta.env.VITE_LANG
 
 const DataSync = returnTranslation(lang, 'DataSync');
 const UpdateChanges = returnTranslation(lang, 'UpdateChanges');
-const Added = returnTranslation(lang, 'Added');
-const Updated = returnTranslation(lang, 'Updated');
-const Removed = returnTranslation(lang, 'Removed');
-
-const translationKeys = [
-  'AddedL',
-  'UpdatedL',
-  'RemovedL'
-];
-const translations: Record<string, string> = {};
-for (const key of translationKeys) {
-  const lang = import.meta.env.VITE_LANG
-  translations[key] = returnTranslation(lang, key);
-}
-
-const diffKeys = ['added', 'updated', 'removed'];
 
 </script>
 
