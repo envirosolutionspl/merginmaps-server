@@ -17,9 +17,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
 import {
   CloneDialog,
   ProjectShareDialog,
@@ -58,7 +55,7 @@ export default defineComponent({
       const dialog = {
         maxWidth: 580,
         persistent: true,
-        header: returnTranslation(lang, 'CloneProject')
+        header: 'Clone project'
       }
       const listeners = {
         error: (error, data) => {
@@ -66,7 +63,7 @@ export default defineComponent({
           formStore.handleError({
             componentId: data.merginComponentUuid,
             error,
-            generalMessage: returnTranslation(lang, 'FailedToCloneProject')
+            generalMessage: 'Failed to clone project'
           })
         }
       }
@@ -84,7 +81,7 @@ export default defineComponent({
       const lang = import.meta.env.VITE_LANG
       const dialog = {
         maxWidth: 600,
-        header: returnTranslation(lang, 'ShareProject')
+        header: 'Share project'
       }
       dialogStore.show({
         component: ProjectShareDialog,

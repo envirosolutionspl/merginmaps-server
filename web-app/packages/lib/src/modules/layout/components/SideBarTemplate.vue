@@ -69,7 +69,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               href="/admin"
               target="__blank"
               class="flex justify-content-between align-items-center title-t5 no-underline cursor-pointer"
-              >{{ AdminPanel }} <i class="title-t1 ti ti-external-link"
+              >Admin Panel <i class="title-t1 ti ti-external-link"
             /></a>
           </template>
         </slot>
@@ -79,12 +79,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const AdminPanel = returnTranslation(lang, 'AdminPanel');
-
-
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -109,8 +103,8 @@ const initialSidebarItems = computed<SideBarItemModel[]>(() => {
       {
         active: route.matched.some(
           (item) => item.name === DashboardRouteName.Dashboard
-        ), //
-        title: returnTranslation(lang, 'Dashboard'),
+        ),
+        title: 'Dashboard',
         to: '/dashboard',
         icon: 'ti ti-home'
       },
@@ -120,7 +114,7 @@ const initialSidebarItems = computed<SideBarItemModel[]>(() => {
             item.name === ProjectRouteName.Projects ||
             item.name === ProjectRouteName.Project
         ),
-        title: returnTranslation(lang, 'Projects'),
+        title: 'Projects',
         to: '/projects',
         icon: 'ti ti-article'
       }

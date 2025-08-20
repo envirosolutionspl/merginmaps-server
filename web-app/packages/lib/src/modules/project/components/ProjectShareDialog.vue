@@ -13,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     @submit="share"
   >
     <template #accountsInput
-      ><label for="accounts">{{ ShareWith }}</label
+      ><label for="accounts">Share with</label
       ><PAutoComplete
         @complete="search"
         v-model="data.selectedUsers"
@@ -21,7 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         optionLabel="label"
         :suggestions="data.users"
         :placeholder="
-          data.selectedUsers.length ? '' : SearchUsersByUsernameOrEmail
+          data.selectedUsers.length ? '' : 'Search users by username or email'
         "
         input-id="accounts"
         data-key="key"
@@ -58,13 +58,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <template #empty>
           <p class="p-2">
             <i class="text-color-forest ti ti-info-circle-filled"></i
-            >{{ ' ' }}{{ NoMatchesFoundTryUsingTheirEmailsInstead }}
+            >{{ ' ' }}No matches found - Try using their emails instead
           </p></template
         >
         <template v-if="data.users.length" #footer
           ><p class="px-2">
             <i class="text-color-forest ti ti-info-circle-filled"></i
-            >{{ ' ' }}{{ NotTheRightPersonTryTypingTheirRmailInstead }}
+            >{{ ' ' }}Not the right person? Try typing their email instead
           </p></template
         >
         <template #removetokenicon="slotProps"
@@ -77,14 +77,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const ShareWith = returnTranslation(lang, 'ShareWith');
-const SearchUsersByUsernameOrEmail = returnTranslation(lang, 'SearchUsersByUsernameOrEmail');
-const NoMatchesFoundTryUsingTheirEmailsInstead = returnTranslation(lang, 'NoMatchesFoundTryUsingTheirEmailsInstead');
-const NotTheRightPersonTryTypingTheirRmailInstead = returnTranslation(lang, 'NotTheRightPersonTryTypingTheirRmailInstead');
-
 /**
  * ProjectShareDialog component.
  *

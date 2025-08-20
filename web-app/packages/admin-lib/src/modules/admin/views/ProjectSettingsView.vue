@@ -1,7 +1,7 @@
 <template>
   <app-container>
     <app-section>
-      <template #title>{{ Advanced }}</template>
+      <template #title>Advanced</template>
       <app-settings :items="settingsItems">
         <template #publicProject>
           <div class="flex-shrink-0 paragraph-p1">
@@ -14,7 +14,7 @@
               @click="confirmDelete"
               severity="danger"
               data-cy="project-delete-btn"
-              :label="DeleteProject"
+              label="Delete project"
             />
           </div>
         </template>
@@ -24,12 +24,6 @@
 </template>
 
 <script lang="ts" setup>
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Advanced = returnTranslation(lang, 'Advanced');
-const DeleteProject = returnTranslation(lang, 'DeleteProject');
-
 import {
   AppContainer,
   AppSection,
@@ -66,12 +60,13 @@ const settingsItems = computed<AppSettingsItemConfig[]>(() => [
 const confirmDelete = () => {
   const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = {
-    text: returnTranslation(lang, 'AreYouSureYouWantToPermanentlyDeleteThisProject'),
-    description: returnTranslation(lang, 'DeletingThisProjectWillRemoveItAndAllItsDataThisActionCannotBeUndoneTypeInProjectNameToConfirm'),
+    text: `Are you sure you want to permanently delete this project?`,
+    description: `Deleting this project will remove it
+      and all its data. This action cannot be undone. Type in project name to confirm:`,
     hint: project.value.name,
-    confirmText: returnTranslation(lang, 'DeletePermanently'),
+    confirmText: 'Delete permanently',
     confirmField: {
-      label: returnTranslation(lang, 'ProjectName'),
+      label: 'Project name',
       expected: project.value.name
     },
     severity: 'danger'

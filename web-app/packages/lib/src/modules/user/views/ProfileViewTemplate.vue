@@ -11,12 +11,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="flex flex-column lg:flex-row lg:align-items-center row-gap-3"
       >
         <!-- Title with buttons -->
-        <h1 class="headline-h3 text-color font-semibold">{{ AccountDetails }}</h1>
+        <h1 class="headline-h3 text-color font-semibold">Account details</h1>
         <div class="flex flex-grow-1 align-items-center lg:justify-content-end">
           <PButton
             @click="editProfileDialog"
             icon="ti ti-pencil"
-            :label="EditAccount"
+            label="Edit account"
             class="w-auto mr-1"
             data-cy="profile-edit-btn"
           />
@@ -26,7 +26,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             data-cy="profile-change-password-btn"
             class="w-auto"
             icon="ti ti-lock"
-            :label="ChangePassword"
+            label="Change password"
           />
         </div></section
     ></app-container>
@@ -38,16 +38,17 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <template #header-image
           ><img width="50" height="50" src="@/assets/warning.svg"
         /></template>
-        <template #title>{{ PleaseVerifyYourEmail }}</template>
+        <template #title>Please verify your email</template>
         <template #description
-          >{{ WeSentYouAVerificationEmailToTheAccountYouProvidedDuringSignup }}</template
+          >We sent you a verification email to the account you provided during
+          signup.</template
         >
         <template #header-actions
           ><PButton
             @click="resendConfirmationEmail"
             severity="secondary"
             data-cy="profile-send-email-btn"
-            :label="SendConfirmationEmail"
+            label="Send confirmation email"
         /></template>
       </app-section-banner>
     </app-container>
@@ -89,13 +90,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             <div
               class="col-6 flex flex-column align-items-start text-left flex-wrap"
             >
-              <dt class="paragraph-p6 opacity-80 mb-2">{{ FullName }}</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">Full name</dt>
               <dd class="font-semibold" data-cy="profile-name">
                 {{ loggedUser?.name || '-' }}
               </dd>
             </div>
             <div class="col-6 flex flex-column align-items-end">
-              <dt class="paragraph-p6 opacity-80 mb-2">{{ Registered }}</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">Registered</dt>
               <dd class="font-semibold" data-cy="profile-registered">
                 {{ $filters.date(loggedUser?.registration_date) }}
               </dd>
@@ -106,7 +107,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </app-container>
     <app-container>
       <app-section>
-        <template #title>{{ Advanced }}</template>
+        <template #title>Advanced</template>
         <div class="flex flex-column row-gap-3 paragraph-p5 px-4 pb-4">
           <div
             :class="[
@@ -116,9 +117,9 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             ]"
           >
             <div class="flex-grow-1">
-              <p class="title-t3">{{ ReceiveNotifications }}</p>
+              <p class="title-t3">Receive notifications</p>
               <span class="paragraph-p6 opacity-80"
-                >{{ WeWillSendYouInformationAboutWorkspaceActivity }}</span
+                >We will send you information about workspace activity</span
               >
             </div>
             <div
@@ -139,9 +140,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             ]"
           >
             <div class="flex-grow-1">
-              <p class="title-t3">{{ CloseAccount }}</p>
+              <p class="title-t3">Close account</p>
               <span class="paragraph-p6 opacity-80"
-                >{{ YourAccountWillBeClosedInCaseYouAreAnOwnerOfAWorkspaceYouMightNeedToTransferTheOwnershipFirstOrCloseTheWorkspace }}</span
+                >Your account will be closed. In case you are an owner of a
+                workspace, you might need to transfer the ownership first or
+                close the workspace.</span
               >
             </div>
             <div class="flex-shrink-0">
@@ -149,7 +152,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 @click="confirmDeleteUser"
                 severity="danger"
                 data-cy="profile-close-account-btn"
-                :label="CloseAccount"
+                label="Close account"
               />
             </div>
           </div>
@@ -239,7 +242,7 @@ export default defineComponent({
         params: {
           props,
           listeners,
-          dialog: { header: returnTranslation(lang, 'CloseAccount') }
+          dialog: { header: 'Close account' }
         }
       })
     },
@@ -256,7 +259,7 @@ export default defineComponent({
     editProfileDialog() {
       const lang = import.meta.env.VITE_LANG
       const props = { profile: this.loggedUser }
-      const dialog = { header: returnTranslation(lang, 'EditAccount') }
+      const dialog = { header: 'Edit account' }
       this.show({
         component: EditProfileForm,
         params: {

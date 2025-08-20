@@ -3,13 +3,13 @@
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">{{ ProjectVersion }}</h1>
+          <h1 class="headline-h3">Project version</h1>
         </template>
         <template #headerActions>
           <PButton
             severity="secondary"
             @click="download"
-            :label="Download"
+            label="Download"
             icon="ti ti-download"
           />
         </template>
@@ -34,25 +34,25 @@
           </h2>
           <dl class="paragraph-p5 flex flex-column gap-3">
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Author }}</dt>
+              <dt class="paragraph-p6 opacity-80">Author</dt>
               <dd class="font-semibold">
                 {{ data?.author }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ ProjectSize }}</dt>
+              <dt class="paragraph-p6 opacity-80">Project size</dt>
               <dd class="font-semibold">
                 {{ $filters.filesize(data?.project_size) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Created }}</dt>
+              <dt class="paragraph-p6 opacity-80">Created</dt>
               <dd class="font-semibold">
                 {{ $filters.datetime(data?.created) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ UserAgent }}</dt>
+              <dt class="paragraph-p6 opacity-80">User agent</dt>
               <dd class="font-semibold">
                 {{ data?.user_agent }}
               </dd>
@@ -66,16 +66,6 @@
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const ProjectVersion = returnTranslation(lang, 'ProjectVersion');
-const Download = returnTranslation(lang, 'Download');
-const Author = returnTranslation(lang, 'Author');
-const ProjectSize = returnTranslation(lang, 'ProjectSize');
-const Created = returnTranslation(lang, 'Created');
-const UserAgent = returnTranslation(lang, 'UserAgent');
-
 import {
   AppContainer,
   AppSection,
@@ -128,7 +118,7 @@ async function fetchVersion() {
     const lang = import.meta.env.VITE_LANG
     const FailedToFetchProjectVersion = returnTranslation(lang, 'FailedToFetchProjectVersion');
     notificationStore.error({
-      text: errorUtils.getErrorMessage(err, FailedToFetchProjectVersion)
+      text: errorUtils.getErrorMessage(err, 'Failed to fetch project version')
     })
   }
 }

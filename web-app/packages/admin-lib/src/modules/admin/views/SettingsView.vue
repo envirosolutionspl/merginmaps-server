@@ -11,14 +11,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <template #description
         >{{ item.description
         }}<template v-if="item.key === 'usageInformation'">
-          {{ Click }}
+          Click
           <a
             class="font-semibold text-color-forest"
             :href="instanceStore.configData?.docs_url"
             target="_blank"
-            >{{ Here }}</a
+            >here</a
           >
-          {{ ForMoreInformation }}</template
+          for more information.</template
         ></template
       >
       <template #action>
@@ -34,13 +34,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Click = returnTranslation(lang, 'Click');
-const Here = returnTranslation(lang, 'Here');
-const ForMoreInformation = returnTranslation(lang, 'ForMoreInformation');
-
 import {
   AppSettingsItemConfig,
   useInstanceStore,

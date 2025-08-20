@@ -3,7 +3,7 @@
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">{{ ProjectDetails }}</h1>
+          <h1 class="headline-h3">Project details</h1>
         </template>
         <template #headerActions>
           <PButton
@@ -12,14 +12,14 @@
             data-cy="project-download-btn"
             icon="ti ti-download"
             class="mr-2"
-            :label="Download"
+            label="Download"
           />
           <PButton
             severity="secondary"
             @click="openDashboard"
             data-cy="project-dashboard"
             icon="ti ti-external-link"
-            :label="OpenInDashboard"
+            label="Open in dashboard"
           />
         </template>
       </app-section>
@@ -45,19 +45,19 @@
             class="project-view-detail-list paragraph-p5 flex flex-column gap-3"
           >
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Created }}</dt>
+              <dt class="paragraph-p6 opacity-80">Created</dt>
               <dd class="font-semibold" data-cy="project-owner">
                 {{ $filters.datetime(project?.created) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ Updated }}</dt>
+              <dt class="paragraph-p6 opacity-80">Updated</dt>
               <dd class="font-semibold" data-cy="project-created">
                 {{ $filters.datetime(project?.updated) }}
               </dd>
             </div>
             <div>
-              <dt class="paragraph-p6 opacity-80">{{ DiskUsage }}</dt>
+              <dt class="paragraph-p6 opacity-80">Disk usage</dt>
               <dd class="font-semibold" data-cy="project-created">
                 {{ $filters.filesize(project?.disk_usage, 'MB') }}
               </dd>
@@ -103,15 +103,6 @@
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Download = returnTranslation(lang, 'Download');
-const OpenInDashboard = returnTranslation(lang, 'OpenInDashboard');
-const Created = returnTranslation(lang, 'Created');
-const Updated = returnTranslation(lang, 'Updated');
-const DiskUsage = returnTranslation(lang, 'DiskUsage');
-
 import {
   AppSection,
   AppContainer,

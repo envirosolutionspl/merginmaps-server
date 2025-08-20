@@ -27,9 +27,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
 import debounce from 'lodash/debounce'
 import { mapState } from 'pinia'
 import { defineComponent } from 'vue'
@@ -61,7 +58,7 @@ export default defineComponent({
       this.$toast.add({
         group: 'upload-progress',
         severity: 'info',
-        summary: returnTranslation(lang, 'UploadingDataToProjects')
+        summary: 'Uploading data to projects'
       })
     },
     close() {

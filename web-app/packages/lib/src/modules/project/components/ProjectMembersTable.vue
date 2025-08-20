@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         :columns="columns"
         :paginator="searchedItems.length > itemsPerPage"
         :loading="projectStore.accessLoading"
-        :empty-message="NoMembersFound"
+        :empty-message="'No members found.'"
         :row-cursor-pointer="false"
         :options="{
           itemsPerPage,
@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           sortDesc: projectStore.accessSorting?.sortDesc
         }"
       >
-        <template #header-title>{{ Members }}</template>
+        <template #header-title>Members</template>
         <template #actions="{ item }">
           <PButton
             icon="ti ti-trash"
@@ -62,7 +62,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               >{{ item[column.value] }}
               <template
                 v-if="column.value === 'email' && item.id === loggedUser.id"
-                >{{ Me }}</template
+                >(me)</template
               ></span
             >
           </div>
@@ -83,13 +83,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const NoMembersFound = returnTranslation(lang, 'NoMembersFound');
-const Members = returnTranslation(lang, 'Members');
-const Me = returnTranslation(lang, 'Me');
-
 import { computed, ref, onUnmounted } from 'vue'
 
 import { useProjectStore } from '../store'

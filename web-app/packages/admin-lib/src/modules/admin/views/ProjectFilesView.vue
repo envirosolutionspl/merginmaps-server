@@ -9,7 +9,7 @@
           <span class="p-input-icon-left flex-grow-1">
             <i class="ti ti-search paragraph-p3"></i>
             <PInputText
-              :placeholder="SearchFiles"
+              placeholder="Search files"
               data-cy="search-files-field"
               v-model="searchFilter"
               class="w-full"
@@ -36,11 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const SearchFiles = returnTranslation(lang, 'SearchFiles');
-
 import {
   AppSection,
   AppContainer,
@@ -81,10 +76,10 @@ const filterMenuItems = computed<MenuItem[]>(() => {
   const SortByLastModified = returnTranslation(lang, 'SortByLastModified');
   const SortByFileSize = returnTranslation(lang, 'SortByFileSize');
   const items = [
-    { label: SortByNameAZ, key: 'name', sortDesc: 1 },
-    { label: SortByNameZA, key: 'name', sortDesc: -1 },
-    { label: SortByLastModified, key: 'mtime', sortDesc: -1 },
-    { label: SortByFileSize, key: 'size', sortDesc: -1 }
+    { label: 'Sort by name A-Z', key: 'name', sortDesc: 1 },
+    { label: 'Sort by name Z-A', key: 'name', sortDesc: -1 },
+    { label: 'Sort by last modified', key: 'mtime', sortDesc: -1 },
+    { label: 'Sort by file size', key: 'size', sortDesc: -1 }
   ]
 
   return items.map((item) => ({

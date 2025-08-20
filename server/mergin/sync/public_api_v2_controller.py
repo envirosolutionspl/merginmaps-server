@@ -18,7 +18,6 @@ from .models import Project, ProjectRole, ProjectMember
 from .permissions import ProjectPermissions, require_project_by_uuid
 from .private_api_controller import project_access_granted
 
-from ..config import tz
 
 @auth_required
 def schedule_delete_project(id):

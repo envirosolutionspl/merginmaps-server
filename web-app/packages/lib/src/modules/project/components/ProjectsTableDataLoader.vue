@@ -19,15 +19,16 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <img src="@/assets/map-circle.svg" alt="No projects" />
           <p class="title-t2 m-0 p-4">
             <template v-if="projectsSearch"
-              >{{ WeCouldntFindAnyProjectsMatchingYourSearchCriteria }}</template
+              >We couldn't find any projects matching your search
+              criteria.</template
             >
-            <template v-else>{{ YouDontHaveAnyProjectsYet }}</template>
+            <template v-else>You don't have any projects yet.</template>
           </p>
           <template v-if="canCreateProject">
             <p class="paragraph-p6 opacity-80 pb-4">
-              {{ LetsStartByCreatingAFirstOne }}
+              Let’s start by creating a first one!
             </p>
-            <PButton @click="newProjectDialog">{{ CreateNewProject }}</PButton>
+            <PButton @click="newProjectDialog">Create new project</PButton>
           </template>
         </div>
       </template>
@@ -158,8 +159,7 @@ export default defineComponent({
         if (onFinish) {
           onFinish()
         }
-        const FailedToFetchListOfProjects = returnTranslation(lang, 'FailedToFetchListOfProjects');
-        await this.error({ text: FailedToFetchListOfProjects })
+        await this.error({ text: 'Failed to fetch list of projects' })
       }
     },
     newProjectDialog() {

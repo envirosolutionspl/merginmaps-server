@@ -29,11 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const ProjectVersion = returnTranslation(lang, 'ProjectVersion');
-
 import {
   AppSection,
   AppContainer,

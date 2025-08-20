@@ -13,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   >
     <template #header>
       <p class="font-semibold">
-        {{ DataSync }}
+        Data Sync
         <span v-if="upload.diff" class="text-color-secondary"
           >({{ $filters.filesize(uploadSize) }})</span
         >
@@ -36,7 +36,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="confirmUpload"
         :disabled="upload.running || remainingAnalyzingFiles > 0"
         class="mt-2 w-full my-4"
-        :label="UpdateChanges"
+        label="Update Changes"
       />
     </div>
   </PDialog>
@@ -187,7 +187,7 @@ export default defineComponent({
         const lang = import.meta.env.VITE_LANG
         const ProjectUpdated = returnTranslation(lang, 'ProjectUpdated');
         await this.show({
-          text: ProjectUpdated
+          text: 'Project updated'
         })
         this.setProject({ project: resp.data })
         return
@@ -237,11 +237,11 @@ export default defineComponent({
       const Update = returnTranslation(lang, 'Update');
       const Cancel = returnTranslation(lang, 'Cancel');
       const props: ConfirmDialogProps = {
-        text: AreYouReallySureYouWantToContinue,
+        text: `Are you really sure you want to continue?`,
         description:
-        ChangesFromOtherUsersMayGetLostWhenUploadingDataFromBrowserItIsHighlyRecommendedToUseMerginMapsQGISPluginInstead,
-        confirmText: Update,
-        cancelText: Cancel
+          'Changes from other users may get lost when uploading data from browser. It is highly recommended to use Mergin Maps QGIS plugin instead.',
+        confirmText: 'Update',
+        cancelText: 'Cancel'
       }
       const listeners = {
         confirm: () => this.uploadChanges()
@@ -254,7 +254,7 @@ export default defineComponent({
           params: {
             props,
             listeners,
-            dialog: { maxWidth: 500, header: ConfirmContinueUpload }
+            dialog: { maxWidth: 500, header: 'Confirm continue upload' }
           }
         })
       } else {

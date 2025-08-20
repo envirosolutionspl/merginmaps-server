@@ -95,8 +95,6 @@ from .utils import (
 from .errors import StorageLimitHit
 from ..utils import format_time_delta
 
-from ..config import tz
-
 push_finished = signal("push_finished")
 # TODO: Move to database events to handle all commits to project versions
 project_version_created = signal("project_version_created")

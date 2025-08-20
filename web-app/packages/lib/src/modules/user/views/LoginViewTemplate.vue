@@ -8,8 +8,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   <app-onboarding-page>
     <template #header>
       <h1 class="headline-h1">
-        <template v-if="forgotPassword">{{ ResetPassword }}</template
-        ><template v-else>{{ SignIn }}</template>
+        <template v-if="forgotPassword">Reset password</template
+        ><template v-else>Sign in</template>
       </h1>
     </template>
 
@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       class="flex flex-column"
     >
       <div>
-        <label for="login">{{ Email }}</label>
+        <label for="login">Email</label>
         <PInputText
           :placeholder="TypeYourEmail"
           name="email"
@@ -41,7 +41,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <router-link
         class="text-color-forest align-self-center font-semibold"
         :to="{ name: 'login' }"
-        >{{ BackToLogin }}</router-link
+        >Back to login</router-link
       >
 
       <PButton
@@ -49,12 +49,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         data-cy="reset-form-btn"
         :disabled="!email"
         @click="reset"
-        :label="ResetPassword"
+        label="Reset password"
       />
     </form>
     <form v-else @submit.prevent="loginUser" class="flex flex-column">
       <div>
-        <label for="login">{{ UsernameOrEmail }}</label>
+        <label for="login">Username or email</label>
         <PInputText
           id="login"
           name="login"
@@ -62,7 +62,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           data-cy="login-form-login"
           :class="['w-full', errors.login ? 'p-invalid' : '']"
           aria-describedby="login-error"
-          :placeholder="PleaseEnterUsernameOrEmail"
+          placeholder="Please enter username or email"
           :inputProps="{ autocomplete: 'on' }"
           autofocus
         />
@@ -72,7 +72,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       </div>
 
       <div>
-        <label for="password">{{ Password }}</label>
+        <label for="password">Password</label>
         <PPassword
           id="password"
           name="password"
@@ -82,7 +82,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           aria-describedby="password-error"
           toggleMask
           :feedback="false"
-          :placeholder="PleaseEnterYourPassword"
+          placeholder="Please enter your password"
           :pt="{
             input: {
               root: {
@@ -100,7 +100,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <router-link
         class="text-color-forest title-t3 align-self-center"
         :to="{ name: 'login', params: { reset: 'reset' } }"
-        >{{ ForgotPassword }}</router-link
+        >Forgot password?</router-link
       >
 
       <PButton
@@ -110,7 +110,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         id="login-btn"
         class="mt-6 w-full"
         size="large"
-        :label="SignIn"
+        label="Sign in"
       />
     </form>
     <div class="flex flex-column align-items-center">

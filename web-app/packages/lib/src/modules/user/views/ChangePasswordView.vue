@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
 <template>
   <app-onboarding-page>
-    <template #header><h1 class="headline-h1">{{ ChangePassword }}</h1></template>
+    <template #header><h1 class="headline-h1">Change password</h1></template>
 
     <form
       v-if="!success"
@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     >
       <span>
         <app-password-tooltip for="newPassword"
-          ><template #label>{{ NewPassword }}</template>
+          ><template #label>New Password</template>
         </app-password-tooltip>
         <PPassword
           id="newPassword"
@@ -25,12 +25,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           toggleMask
           :feedback="false"
           aria-describedby="password-error"
-          :placeholder="PleaseEnterYourPassword"
+          placeholder="Please enter your password"
         />
         <span class="p-error paragraph-p6" id="password-error">{{
           errors.password?.[0]
             ? errors.password?.[0].startsWith('Password')
-              ? PasswordMustBeAtLeastCharactersLongAndIncludeAtLeastThreeOfTheFollowingLowercaseLettersUppercaseLettersNumbersOrSpecialCharacters
+              ? 'Password must be at least 8 characters long and include at least three of the following: lowercase letters, uppercase letters, numbers or special characters.'
               : errors.password[0]
             : '&nbsp;'
         }}</span>
@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
       <span>
         <app-password-tooltip for="confirm">
-          <template #label>{{ ConfirmPassword }}</template>
+          <template #label>Confirm password</template>
         </app-password-tooltip>
 
         <PPassword
@@ -49,7 +49,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           aria-describedby="confirm-password-error"
           toggleMask
           :feedback="false"
-          :placeholder="PleaseEnterYourNewPassword"
+          placeholder="Please enter your new password"
         />
 
         <span class="p-error paragraph-p6" id="confirm-password-error">{{
@@ -62,17 +62,17 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="mt-6"
         data-cy="change-password-btn"
         :disabled="!password || !confirm"
-        :label="Change"
+        label="Change"
       />
     </form>
 
     <div v-else class="flex flex-column align-items-center">
       <span
-        >{{ YourPasswordWasChangedYouCanNow }}
+        >Your password was changed. You can now
         <router-link
           class="text-color-forest title-t3 align-self-center"
           :to="{ name: 'login' }"
-          >{{ SignIn }}</router-link
+          >Sign in</router-link
         ></span
       >
     </div>

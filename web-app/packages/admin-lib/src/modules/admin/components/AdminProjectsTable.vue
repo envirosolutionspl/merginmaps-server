@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">{{ Projects }}</h1>
+          <h1 class="headline-h3">Projects</h1>
         </template>
       </app-section>
     </app-container>
@@ -20,8 +20,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <PInputText
             :placeholder="
               showNamespace
-                ? SearchByWorkspaceNameOrProjectName
-                : SearchProjects
+                ? 'Search by workspace name or project name'
+                : 'Search projects'
             "
             v-model="search"
             class="w-full"
@@ -121,7 +121,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             >
               <template #body="slotProps">
                 <span
-                  :title="`${ScheduledForRemovalAt} ${$filters.datetime(
+                  :title="`Scheduled for removal at ${$filters.datetime(
                     slotProps.data.removed_at
                   )}`"
                 >
@@ -138,13 +138,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 >
                   <div class="flex align-items-center gap-1">
                     <PButton
-                      :label="Restore"
+                      label="Restore"
                       severity="secondary"
                       size="small"
                       @click="confirmRestore(slotProps.data)"
                     />
                     <PButton
-                      :label="Delete"
+                      label="Delete"
                       severity="danger"
                       size="small"
                       @click="confirmDelete(slotProps.data)"
@@ -177,18 +177,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </app-container>
   </div>
 </template>
-
-<script lang="ts" setup>
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Projects = returnTranslation(lang, 'Projects');
-const SearchByWorkspaceNameOrProjectName = returnTranslation(lang, 'SearchByWorkspaceNameOrProjectName');
-const SearchProjects = returnTranslation(lang, 'SearchProjects');
-const ScheduledForRemovalAt = returnTranslation(lang, 'ScheduledForRemovalAt');
-const Restore = returnTranslation(lang, 'Restore');
-const Delete = returnTranslation(lang, 'Delete');
-</script>
 
 <script lang="ts">
 import {
@@ -316,8 +304,8 @@ export default defineComponent({
     confirmRestore(item) { // returnTranslation(lang, 'RemovedBy')
       const lang = import.meta.env.VITE_LANG
       const props: ConfirmDialogProps = {
-        text: `${returnTranslation(lang, 'AreYouSureToRestoreProject')} ${item.workspace}/${item.name}?`,
-        confirmText: returnTranslation(lang, 'Restore')
+        text: `Are you sure to restore project ${item.workspace}/${item.name}?`,
+        confirmText: 'Restore'
       }
       const listeners = {
         confirm: async () => {
@@ -334,12 +322,13 @@ export default defineComponent({
     confirmDelete(item) {
       const lang = import.meta.env.VITE_LANG
       const props: ConfirmDialogProps = {
-        text: returnTranslation(lang, 'AreYouSureYouWantToPermanentlyDeleteThisProject'),
-        description: returnTranslation(lang, 'DeletingThisProjectWillRemoveItAndAllItsDataThisActionCannotBeUndoneTypeInProjectNameToConfirm'),
+        text: `Are you sure you want to permanently delete this project?`,
+        description: `Deleting this project will remove it
+      and all its data. This action cannot be undone. Type in project name to confirm:`,
         hint: item.name,
-        confirmText: returnTranslation(lang, 'DeletePermanently'),
+        confirmText: 'Delete permanently',
         confirmField: {
-          label: returnTranslation(lang, 'ProjectName'),
+          label: 'Project name',
           expected: item.name
         },
         severity: 'danger'

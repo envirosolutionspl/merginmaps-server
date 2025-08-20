@@ -47,7 +47,7 @@
                 path: change?.path
               }
             }"
-            >{{ ShowAdvanced }}</router-link
+            >Show advanced</router-link
           >
           <file-changeset-summary-table
             :changesets="changesets?.[change.path]['summary']"
@@ -59,7 +59,7 @@
           "
           class="text-center"
         >
-          {{ DetailsNotAvailable }}
+          Details not available:
           {{ changesets?.[change.path].error }}
         </div>
       </div>
@@ -68,12 +68,6 @@
 </template>
 
 <script lang="ts" setup>
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const ShowAdvanced = returnTranslation(lang, 'ShowAdvanced');
-const DetailsNotAvailable = returnTranslation(lang, 'DetailsNotAvailable');
-
 import { ProjectVersion } from '@mergin/lib'
 import { computed, ref, defineProps } from 'vue'
 
@@ -83,10 +77,6 @@ import FileChangesetSummaryTable from '@/modules/project/components/FileChangese
 const props = defineProps<{
   version: ProjectVersion
 }>()
-
-const FilesAdded = returnTranslation(lang, 'FilesAdded');
-const FilesEdited = returnTranslation(lang, 'FilesEdited');
-const FilesRemoved = returnTranslation(lang, 'FilesRemoved');
 
 const changeTabs = ref<
   {
@@ -99,19 +89,19 @@ const changeTabs = ref<
   {
     key: 'added',
     severity: 'success',
-    text: FilesAdded,
+    text: 'Files added',
     icon: 'ti-plus'
   },
   {
     key: 'updated',
     severity: 'warn',
-    text: FilesEdited,
+    text: 'Files edited',
     icon: 'ti-pencil'
   },
   {
     key: 'removed',
     severity: 'danger',
-    text: FilesRemoved,
+    text: 'Files removed',
     icon: 'ti-trash'
   }
 ])

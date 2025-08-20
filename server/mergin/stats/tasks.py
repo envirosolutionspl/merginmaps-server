@@ -16,8 +16,6 @@ from ..app import db
 from ..auth.models import User
 from ..sync.models import Project
 
-from ..lang.current import returnTranslation
-from ..config import tz
 
 def get_callhome_data(info: MerginInfo | None = None) -> ServerCallhomeData:
     """
@@ -73,7 +71,7 @@ def send_statistics():
         return
 
     if not db.engine.has_table("mergin_info"):
-        logging.warning(returnTranslation("DatabaseNotInitialized"))
+        logging.warning("Database not initialized")
         return
 
     info = MerginInfo.query.first()
@@ -100,8 +98,6 @@ def send_statistics():
             info.last_reported = datetime.now(tz)
             db.session.commit()
         else:
-            StatisticsError = returnTranslation("StatisticsError")
-            logging.warning(f"{StatisticsError}: " + str(resp.text))
+            logging.warning("Statistics error: " + str(resp.text))
     except requests.exceptions.RequestException as e:
-        StatisticsError = returnTranslation("StatisticsError")
-        logging.warning(f"{StatisticsError}: " + str(e))
+        logging.warning("Statistics error: " + str(e))

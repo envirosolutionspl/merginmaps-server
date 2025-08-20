@@ -8,14 +8,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   <admin-layout>
     <app-container>
       <app-section ground>
-        <template #header><h1 class="headline-h3">{{ Overview }}</h1></template>
+        <template #header><h1 class="headline-h3">Overview</h1></template>
       </app-section>
     </app-container>
 
     <app-container>
       <div class="grid" v-if="usage">
         <usage-card class="col-12 sm:col-6 lg:col-3">
-          <template #heading>{{ Contributors }}</template>
+          <template #heading>Contributors</template>
           <div
             class="w-full"
             :style="{
@@ -29,7 +29,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           >
         </usage-card>
         <usage-card class="col-12 sm:col-6 lg:col-3">
-          <template #heading>{{ UsedStorage }}</template>
+          <template #heading>Used storage</template>
           <div
             class="w-full"
             :style="{
@@ -45,7 +45,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           >
         </usage-card>
         <usage-card class="col-12 sm:col-6 lg:col-3">
-          <template #heading>{{ RegisteredAccounts }}</template>
+          <template #heading>Registered accounts</template>
           <div
             class="w-full"
             :style="{
@@ -62,12 +62,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               severity="secondary"
               @click="$router.push({ name: AdminRoutes.ACCOUNTS })"
               class="w-full"
-              :label="ManageUsers"
+              label="Manage users"
             />
           </template>
         </usage-card>
         <usage-card class="col-12 sm:col-6 lg:col-3">
-          <template #heading>{{ Projects }}</template>
+          <template #heading>Projects</template>
           <div
             class="w-full"
             :style="{
@@ -84,12 +84,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               severity="secondary"
               @click="$router.push({ name: AdminRoutes.PROJECTS })"
               class="w-full"
-              :label="ManageProjects"
+              label="Manage projects"
             />
           </template>
         </usage-card>
         <usage-card v-if="showWorkspaces" class="col-12 sm:col-6 lg:col-3">
-          <template #heading>{{ Workspaces }}</template>
+          <template #heading>Workspaces</template>
           <div
             class="w-full"
             :style="{
@@ -106,7 +106,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               severity="secondary"
               @click="$router.push({ name: 'adminWorkspaces' })"
               class="w-full"
-              :label="ManageWorkspaces"
+              label="Manage workspaces"
             />
           </template>
         </usage-card>
@@ -114,22 +114,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </app-container>
   </admin-layout>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Overview = returnTranslation(lang, 'Overview');
-const Contributors = returnTranslation(lang, 'Contributors');
-const UsedStorage = returnTranslation(lang, 'UsedStorage');
-const RegisteredAccounts = returnTranslation(lang, 'RegisteredAccounts');
-const Projects = returnTranslation(lang, 'Projects');
-const ManageUsers = returnTranslation(lang, 'ManageUsers');
-const ManageProjects = returnTranslation(lang, 'ManageProjects');
-const Workspaces = returnTranslation(lang, 'Workspaces');
-const ManageWorkspaces = returnTranslation(lang, 'ManageWorkspaces');
-
-</script>
 
 <script lang="ts">
 import { AppContainer, AppSection, UsageCard } from '@mergin/lib'

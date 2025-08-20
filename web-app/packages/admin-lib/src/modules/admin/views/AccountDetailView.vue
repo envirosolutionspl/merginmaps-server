@@ -3,7 +3,7 @@
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">{{ AccountDetails }}</h1>
+          <h1 class="headline-h3">Account details</h1>
         </template>
       </app-section>
     </app-container>
@@ -35,7 +35,7 @@
             <i
               v-if="!user?.verified_email"
               v-tooltip.top="{
-                value: EmailVerificationStatus
+                value: 'Email verification status'
               }"
               class="ti ti-alert-circle-filled"
               style="color: var(--grape-color)"
@@ -46,13 +46,13 @@
             <div
               class="col-6 flex flex-column align-items-start text-left flex-wrap"
             >
-              <dt class="paragraph-p6 opacity-80 mb-2">{{ FullName }}</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">Full name</dt>
               <dd class="font-semibold" data-cy="profile-name">
                 {{ profile?.name || '-' }}
               </dd>
             </div>
             <div class="col-6 flex flex-column align-items-end">
-              <dt class="paragraph-p6 opacity-80 mb-2">{{ Registered }}</dt>
+              <dt class="paragraph-p6 opacity-80 mb-2">Registered</dt>
               <dd class="font-semibold" data-cy="profile-registered">
                 {{ $filters.date(user?.registration_date) }}
               </dd>
@@ -63,7 +63,7 @@
     </app-container>
     <app-container v-if="userStore.loggedUser?.id !== user?.id">
       <app-section>
-        <template #title>{{ Advanced }}</template>
+        <template #title>Advanced</template>
 
         <app-settings :items="settingsItems">
           <template #notifications>
@@ -88,8 +88,8 @@
                   @click="switchAdminAccess"
                   :label="
                     !user?.is_admin
-                      ? GrantAdminAccess
-                      : RevokeAdminAccess
+                      ? 'Grant admin access'
+                      : 'Revoke admin access'
                   "
                 />
               </div>
@@ -101,7 +101,7 @@
                 @click="changeStatusDialog"
                 :severity="user?.active ? 'warning' : 'secondary'"
                 :label="
-                  user?.active ? DeactivateAccount : ActivateAccount
+                  user?.active ? 'Deactivate account' : 'Activate account'
                 "
                 class="w-auto mr-1"
               />
@@ -113,7 +113,7 @@
                 @click="confirmDeleteUser"
                 severity="danger"
                 data-cy="profile-close-account-btn"
-                :label="DeleteAccount"
+                label="Delete account"
               />
             </div>
           </template>
@@ -124,20 +124,6 @@
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const AccountDetails = returnTranslation(lang, 'AccountDetails');
-const EmailVerificationStatus = returnTranslation(lang, 'EmailVerificationStatus');
-const FullName = returnTranslation(lang, 'FullName');
-const Registered = returnTranslation(lang, 'Registered');
-const Advanced = returnTranslation(lang, 'Advanced');
-const GrantAdminAccess = returnTranslation(lang, 'GrantAdminAccess');
-const RevokeAdminAccess = returnTranslation(lang, 'RevokeAdminAccess');
-const DeactivateAccount = returnTranslation(lang, 'DeactivateAccount');
-const ActivateAccount = returnTranslation(lang, 'ActivateAccount');
-const DeleteAccount = returnTranslation(lang, 'DeleteAccount');
-
 import {
   ConfirmDialog,
   useDialogStore,
@@ -213,16 +199,17 @@ const changeStatusDialog = () => {
   const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = user.value.active
     ? {
-        confirmText: returnTranslation(lang, 'Deactivate'),
+        confirmText: 'Deactivate',
         severity: 'warning',
-        text: returnTranslation(lang, 'DoYouReallyWantDeactivateThisAccount'),
-        description: returnTranslation(lang, 'DeactivatingThisAccountWillLeadToATemporaryBanFromMerginMapsUsage')
+        text: 'Do you really want deactivate this account?',
+        description:
+          'Deactivating this account will lead to a temporary ban from Mergin Maps usage.'
       }
     : {
-        text: returnTranslation(lang, 'DoYouReallyWantActivateThisAccount'),
-        confirmText: returnTranslation(lang, 'Activate')
+        text: 'Do you really want activate this account?',
+        confirmText: 'Activate'
       }
-  const dialog = { header: returnTranslation(lang, 'UserActivation') }
+  const dialog = { header: 'User activation' }
   const listeners = {
     confirm: async () => {
       await adminStore.updateUser({
@@ -246,12 +233,13 @@ const changeStatusDialog = () => {
 const confirmDeleteUser = () => {
   const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = {
-    text: returnTranslation(lang, 'AreYouSureYouWantToPermanentlyDeleteThisAccount'),
-    description: returnTranslation(lang, 'DeletingThisUserWillRemoveThemAndAllTheirDataThisActionCannotBeUndoneTypeInUsernameToConfirm'),
+    text: `Are you sure you want to permanently delete this account?`,
+    description: `Deleting this user will remove them
+      and all their data. This action cannot be undone. Type in username to confirm:`,
     hint: user.value.username,
-    confirmText: returnTranslation(lang, 'DeletePermanently'),
+    confirmText: 'Delete permanently',
     confirmField: {
-      label: returnTranslation(lang, 'Username'),
+      label: 'Username',
       expected: user.value.username
     },
     severity: 'danger'
@@ -262,7 +250,7 @@ const confirmDeleteUser = () => {
   }
   dialogStore.show({
     component: ConfirmDialog,
-    params: { props, listeners, dialog: { header: returnTranslation(lang, 'DeleteUser') } }
+    params: { props, listeners, dialog: { header: 'Delete user' } }
   })
 }
 
@@ -270,23 +258,23 @@ const switchAdminAccess = async () => {
   const lang = import.meta.env.VITE_LANG
   const props: ConfirmDialogProps = !user.value?.is_admin
     ? {
-        text: returnTranslation(lang, 'AreYouSureToGrantAccessToAdminPanelToThisUser'),
-        description: returnTranslation(lang, 'ThisPersonWillHaveFullManagementAccessToAllDataOnTheServerTheyWillSeeAllUsersAndProjectsAndCanUpdateOrRemoveThem'),
+        text: `Are you sure to grant access to admin panel to this user?`,
+        description: `This person will have full management access to all data on the server. They will see all users and projects and can update or remove them.`,
         hint: user.value.username,
-        confirmText: returnTranslation(lang, 'GrantAccess'),
+        confirmText: 'Grant access',
         confirmField: {
-          label: returnTranslation(lang, 'Username'),
+          label: 'Username',
           expected: user.value.username
         },
         severity: 'warning'
       }
     : {
-        text: returnTranslation(lang, 'AreYouSureYouWantToRevokeAccessToAdminPanelToThisUser'),
-        description: returnTranslation(lang, 'ThisPersonWillNoLongerHaveAccessToTheAdminPanel'),
+        text: `Are you sure you want to revoke access to admin panel to this user?`,
+        description: `This person will no longer have access to the admin panel.`,
         hint: user.value.username,
-        confirmText: returnTranslation(lang, 'RevokeAccess'),
+        confirmText: 'Revoke access',
         confirmField: {
-          label: returnTranslation(lang, 'Username'),
+          label: 'Username',
           expected: user.value.username
         },
         severity: 'danger'

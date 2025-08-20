@@ -4,7 +4,7 @@
       <app-section ground>
         <template #header>
           <h1 class="headline-h3">
-            {{ Accounts }}
+            Accounts
             <span class="text-color-medium-green">({{ users.count }})</span>
           </h1>
         </template>
@@ -12,7 +12,7 @@
           <PButton
             icon="ti ti-users-plus"
             @click="createUserDialog"
-            :label="AddUser"
+            label="Add user"
           />
         </template>
       </app-section>
@@ -22,7 +22,7 @@
         <span class="p-input-icon-left w-full">
           <i class="ti ti-search paragraph-p3"></i>
           <PInputText
-            :placeholder="SearchAccounts"
+            placeholder="Search accounts"
             data-cy="search-members-field"
             v-model="searchByName"
             class="w-full"
@@ -102,14 +102,6 @@
     </app-container>
   </div>
 </template>
-
-<script lang="ts" setup>
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-const Accounts = returnTranslation(lang, 'Accounts');
-const AddUser = returnTranslation(lang, 'AddUser');
-const SearchAccounts = returnTranslation(lang, 'SearchAccounts');
-</script>
 
 <script lang="ts">
 import {

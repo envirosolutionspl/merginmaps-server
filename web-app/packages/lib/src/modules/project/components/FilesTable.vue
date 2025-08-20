@@ -18,7 +18,7 @@
         >
           {{ col.text }}
         </div>
-        <div class="col-12 flex lg:hidden">{{ Files }}</div>
+        <div class="col-12 flex lg:hidden">Files</div>
       </div>
     </template>
     <template #list="slotProps">
@@ -54,19 +54,13 @@
     </template>
     <template #empty>
       <div class="w-full text-center p-4">
-        <span>{{ NoFilesFound }}</span>
+        <span>No files found.</span>
       </div>
     </template>
   </PDataView>
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Files = returnTranslation(lang, 'Files');
-const NoFilesFound = returnTranslation(lang, 'NoFilesFound');
-
 import escapeRegExp from 'lodash/escapeRegExp'
 import max from 'lodash/max'
 import orderBy from 'lodash/orderBy'
@@ -116,14 +110,10 @@ const projectStore = useProjectStore()
 
 const itemPerPage = 50
 
-const Name = returnTranslation(lang, 'Name');
-const Modified = returnTranslation(lang, 'Modified');
-const Size = returnTranslation(lang, 'Size');
-
 const columns: Column[] = [
-  { text: Name, key: 'name', cols: 6 },
-  { text: Modified, key: 'mtime' },
-  { text: Size, key: 'size' }
+  { text: 'Name', key: 'name', cols: 6 },
+  { text: 'Modified', key: 'mtime' },
+  { text: 'Size', key: 'size' }
 ]
 
 const projectFiles = computed(() => {

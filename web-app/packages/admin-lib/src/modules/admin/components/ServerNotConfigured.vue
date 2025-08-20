@@ -7,32 +7,25 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <app-container v-if="displayBanner">
     <app-section-banner>
-      <template #title>{{ ServerIsNotProperlyConfigured }}</template>
+      <template #title> Server is not properly configured</template>
       <template #description
-        >{{ YourServerIsNotConfiguredProperlyForUseInTheProductionEnvironmentReadMoreInThe }}
-        <a :href="docsLinkDocumentation" target="_blank">{{ Documentation }}</a> {{ HowToProperlySetUpTheDeployment }}</template
+        >Your server is not configured properly for use in the production
+        environment. Read more in the
+        <a :href="docsLinkDocumentation" target="_blank">documentation</a> how
+        to properly set up the deployment.</template
       >
       <template #header-actions
         ><PButton
           @click="dismiss"
           severity="secondary"
           data-cy="dismiss-server-configured-btn"
-          :label="Dismiss"
+          label="Dismiss"
       /></template>
     </app-section-banner>
   </app-container>
 </template>
 
 <script lang="ts" setup>
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const ServerIsNotProperlyConfigured = returnTranslation(lang, 'ServerIsNotProperlyConfigured');
-const YourServerIsNotConfiguredProperlyForUseInTheProductionEnvironmentReadMoreInThe = returnTranslation(lang, 'YourServerIsNotConfiguredProperlyForUseInTheProductionEnvironmentReadMoreInThe');
-const Documentation = returnTranslation(lang, 'Documentation');
-const HowToProperlySetUpTheDeployment = returnTranslation(lang, 'HowToProperlySetUpTheDeployment');
-const Dismiss = returnTranslation(lang, 'Dismiss');
-
 import { useInstanceStore, AppSectionBanner, AppContainer } from '@mergin/lib'
 import { computed } from 'vue'
 

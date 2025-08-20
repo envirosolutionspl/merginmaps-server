@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       :data-key="'table'"
       :paginator="displayedChangeset.length > itemsPerPage"
       :rows="itemsPerPage"
-      :paginator-template="FirstPageLinkPrevPageLinkPageLinksNextPageLinkLastPageLink"
+      :paginator-template="'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'"
       :pt="{
         root: {
           class: 'border-round-xl'
@@ -53,13 +53,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </div>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const FirstPageLinkPrevPageLinkPageLinksNextPageLinkLastPageLink = returnTranslation(lang, 'FirstPageLinkPrevPageLinkPageLinksNextPageLinkLastPageLink');
-</script>
-
 <script lang="ts">
 import { PropType, defineComponent } from 'vue'
 
@@ -79,14 +72,14 @@ export default defineComponent({
 
     return {
       columns: [
-        { text: Layer, value: 'table' },
+        { text: 'Layer', value: 'table' },
         {
-          text: Inserts,
+          text: 'Inserts',
           icon: 'ti-plus',
           value: 'insert'
         },
-        { text: Updates, icon: 'ti-pencil', value: 'update' },
-        { text: Deletes, icon: 'ti-trash', value: 'delete' }
+        { text: 'Updates', icon: 'ti-pencil', value: 'update' },
+        { text: 'Deletes', icon: 'ti-trash', value: 'delete' }
       ],
       itemsPerPage: 10
     }

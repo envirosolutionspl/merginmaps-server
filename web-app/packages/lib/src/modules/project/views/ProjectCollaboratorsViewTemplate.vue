@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     >
       <app-section
         ><template #title
-          >{{ Requests }}
+          >Requests
           <span class="opacity-80"
             >({{ projectStore.accessRequestsCount }})</span
           ></template
@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <span class="p-input-icon-left flex-grow-1">
             <i class="ti ti-search paragraph-p3"></i>
             <PInputText
-              :placeholder="SearchMembers"
+              placeholder="Search members"
               data-cy="search-members-field"
               v-model="projectStore.accessSearch"
               class="w-full"
@@ -35,7 +35,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             v-if="allowShare"
             @click="$emit('share')"
             icon="ti ti-send"
-            :label="Share"
+            label="Share"
             data-cy="project-share-btn"
           />
           <AppMenu :items="filterMenuItems" />
@@ -51,13 +51,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Requests = returnTranslation(lang, 'Requests');
-const SearchMembers = returnTranslation(lang, 'SearchMembers');
-const Share = returnTranslation(lang, 'Share');
-
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { computed, watchEffect } from 'vue'
 
@@ -86,13 +79,13 @@ const filterMenuItems = computed<MenuItem[]>(() => {
   const lang = import.meta.env.VITE_LANG
   return [
     {
-      label: returnTranslation(lang, 'SortByNameAZ'), // returnTranslation(lang, 'Share')
+      label: 'Sort by name A-Z',
       key: 'username',
       value: 'username',
       sortDesc: false
     },
     {
-      label: returnTranslation(lang, 'SortByNameZA'),
+      label: 'Sort by name Z-A',
       key: 'name-desc',
       value: 'username',
       sortDesc: true

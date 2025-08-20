@@ -15,7 +15,6 @@ from .models import Project, ProjectVersion
 from .utils import split_project_path
 from ..auth.models import User
 
-from ..config import tz
 
 def add_commands(app: Flask):
     @app.cli.group()

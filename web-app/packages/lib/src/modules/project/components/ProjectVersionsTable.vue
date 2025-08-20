@@ -15,9 +15,9 @@
       showPagination && options && versionsCount > options.itemsPerPage
     "
     data-cy="project-version-table"
-    :empty-message="NoVersionsFound"
+    :empty-message="'No versions found.'"
   >
-    <template #header-title>{{ Versions }}</template>
+    <template #header-title>Versions</template>
 
     <template #actions="{ item }">
       <PButton
@@ -72,12 +72,6 @@
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Versions = returnTranslation(lang, 'Versions');
-const NoVersionsFound = returnTranslation(lang, 'NoVersionsFound');
-
 import { storeToRefs } from 'pinia'
 import { ref, computed, StyleValue, watch } from 'vue'
 
@@ -108,27 +102,19 @@ const emit = defineEmits<{
 const projectStore = useProjectStore()
 const { versions, versionsLoading, versionsCount } = storeToRefs(projectStore)
 
-const Version = returnTranslation(lang, 'Version')
-const Created = returnTranslation(lang, 'Created')
-const Author = returnTranslation(lang, 'Author')
-const FilesAdded = returnTranslation(lang, 'FilesAdded')
-const FilesEdited = returnTranslation(lang, 'FilesEdited')
-const FilesRemoved = returnTranslation(lang, 'FilesRemoved')
-const Size = returnTranslation(lang, 'Size')
-
 const columns = ref<DataViewWrapperColumnItem[]>([
   {
-    text: Version,
+    text: 'Version',
     value: 'name',
     textClass: 'white-space-normal',
     cols: 1
   },
-  { text: Created, value: 'created' },
-  { text: Author, value: 'author' },
-  { text: FilesAdded, value: 'changes.added' },
-  { text: FilesEdited, value: 'changes.updated' },
-  { text: FilesRemoved, value: 'changes.removed' },
-  { text: Size, value: 'project_size', cols: 1 },
+  { text: 'Created', value: 'created' },
+  { text: 'Author', value: 'author' },
+  { text: 'Files added', value: 'changes.added' },
+  { text: 'Files edited', value: 'changes.updated' },
+  { text: 'Files removed', value: 'changes.removed' },
+  { text: 'Size', value: 'project_size', cols: 1 },
   { text: '', value: 'archived', fixed: true }
 ])
 

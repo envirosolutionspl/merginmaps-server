@@ -5,11 +5,6 @@ SPDX-License-Identifier: LicenseRef-MerginMaps-Commercial
 -->
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const admin = returnTranslation(lang, 'AdminPanel')
-
 import { AdminRoutes, SidebarFooter } from '@mergin/admin-lib'
 import { SideBarItemModel, SideBarTemplate } from '@mergin/lib'
 import { computed } from 'vue'
@@ -47,7 +42,7 @@ const sidebarItems = computed<SideBarItemModel[]>(() => [
 
 <template>
   <side-bar-template :sidebarItems="sidebarItems">
-    <template #subtitle>{{ admin }}</template>
+    <template #subtitle>Admin panel</template>
     <template #footer>
       <sidebar-footer />
     </template>

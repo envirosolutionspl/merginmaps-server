@@ -14,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   >
     <app-section>
       <template #title
-        >{{ Requests }}
+        >Requests
         <span class="text-color-medium-green"
           >({{ projectStore.accessRequestsCount }})</span
         ></template
@@ -26,12 +26,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   </app-container>
 </template>
 
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Requests = returnTranslation(lang, 'Requests');
-
+<script lang="ts" setup>
 import { computed, watch } from 'vue'
 
 import { AppContainer, AppSection } from '@/common/components'

@@ -18,7 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             data-cy="project-download-btn"
             icon="ti ti-download"
             class="mr-2"
-            :label="Download"
+            label="Download"
           />
           <PButton
             severity="secondary"
@@ -26,7 +26,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             v-if="canCloneProject"
             data-cy="project-clone-btn"
             icon="ti ti-copy"
-            :label="Clone"
+            label="Clone"
             class="mr-2"
           />
           <PButton
@@ -34,7 +34,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             @click="leaveDialog"
             data-cy="project-leave-btn"
             icon="ti ti-logout"
-            :label="LeaveProject"
+            label="Leave project"
             v-if="canLeaveProject"
           />
         </div>
@@ -78,21 +78,21 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <app-section v-if="fetchProjectsResponseStatus === 403">
         <div class="flex flex-column align-items-center p-4 text-center gap-4">
           <img src="@/assets/map-circle.svg" alt="No project" />
-          <p class="font-semibold">{{ ThisIsAPrivateProject }}</p>
+          <p class="font-semibold">This is a private project</p>
           <p class="paragraph-p5 opacity-80 mt-2 mb-4">
-            {{ YouDontHavePermissionsToAccessThisProject }}
+            You don't have permissions to access this project.
           </p>
           <PButton id="request-access-btn" @click="createAccessRequest"
-            >{{ RequestAccess }}</PButton
+            >Request access</PButton
           >
         </div>
       </app-section>
       <app-section v-else-if="fetchProjectsResponseStatus === 404">
         <div class="flex flex-column align-items-center p-4 text-center gap-4">
           <img src="@/assets/map-circle.svg" alt="No project" />
-          <p class="font-semibold">{{ ProjectNotFound }}</p>
+          <p class="font-semibold">Project not found</p>
           <p class="paragraph-p5 opacity-80 mt-2 mb-4">
-            {{ PleaseCheckFfAddressIsWrittenCorrectly }}
+            Please check if address is written correctly
           </p>
         </div>
       </app-section>
@@ -100,10 +100,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <div class="flex flex-column align-items-center p-4 text-center gap-4">
           <img src="@/assets/map-circle.svg" alt="No project" />
           <p class="font-semibold">
-            {{ YouDontHavePermissionsToAccessThisProject }}
+            You don't have permission to access this project
           </p>
           <p class="paragraph-p5 opacity-80 mt-2 mb-4">
-            {{ YouAlreadyRequestedAccess }}
+            You already requested access
           </p>
         </div>
       </app-section>
@@ -113,22 +113,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </slot>
   </div>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const Download = returnTranslation(lang, 'Download');
-const Clone = returnTranslation(lang, 'Clone');
-const LeaveProject = returnTranslation(lang, 'LeaveProject');
-const ThisIsAPrivateProject = returnTranslation(lang, 'ThisIsAPrivateProject');
-const YouDontHavePermissionsToAccessThisProject = returnTranslation(lang, 'YouDontHavePermissionsToAccessThisProject');
-const RequestAccess = returnTranslation(lang, 'RequestAccess');
-const ProjectNotFound = returnTranslation(lang, 'ProjectNotFound');
-const PleaseCheckFfAddressIsWrittenCorrectly = returnTranslation(lang, 'PleaseCheckFfAddressIsWrittenCorrectly');
-const YouAlreadyRequestedAccess = returnTranslation(lang, 'YouAlreadyRequestedAccess');
-
-</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'
@@ -192,7 +176,7 @@ export default defineComponent({
       const tabs: TabItem[] = [
         {
           route: ProjectRouteName.ProjectTree,
-          header: returnTranslation(lang, 'Files')
+          header: 'Files'
         }
       ]
 
@@ -206,17 +190,17 @@ export default defineComponent({
         if (this.showHistory) {
           tabs.push({
             route: ProjectRouteName.ProjectHistory,
-            header: returnTranslation(lang, 'History')
+            header: 'History'
           })
         }
         if (this.showSettings) {
           tabs.push({
             route: ProjectRouteName.ProjectCollaborators,
-            header: returnTranslation(lang, 'Collaborators')
+            header: 'Collaborators'
           })
           tabs.push({
             route: ProjectRouteName.ProjectSettings,
-            header: returnTranslation(lang, 'Settings')
+            header: 'Settings'
           })
         }
       }
@@ -324,7 +308,7 @@ export default defineComponent({
           waitCursor(false)
           const lang = import.meta.env.VITE_LANG
           this.show({
-            text: returnTranslation(lang, 'AccessHasBeenRequested')
+            text: 'Access has been requested'
           })
           this.$router.push({
             name: 'projects'
@@ -333,7 +317,7 @@ export default defineComponent({
         .catch(() => {
           const lang = import.meta.env.VITE_LANG
           this.error({
-            text: returnTranslation(lang, 'FailedToRequest')
+            text: 'Failed to request'
           })
           waitCursor(false)
         })
@@ -347,11 +331,11 @@ export default defineComponent({
       const No = returnTranslation(lang, 'No');
 
       const props: ConfirmDialogProps = {
-        text: `${AreYouSureToLeaveTheProject} ${this.projectName}?`,
-        description: YouWillNotHaveAccessToItAnymore,
+        text: `Are you sure to leave the project ${this.projectName}?`,
+        description: 'You will not have access to it anymore.',
         severity: 'danger',
-        confirmText: Yes,
-        cancelText: No
+        confirmText: 'Yes',
+        cancelText: 'No'
       }
       const listeners = {
         confirm: async () => {
@@ -361,13 +345,12 @@ export default defineComponent({
           }
         }
       }
-      const LeaveProject = returnTranslation(lang, 'LeaveProject');
       this.showDialog({
         component: ConfirmDialog,
         params: {
           props,
           listeners,
-          dialog: { header: LeaveProject }
+          dialog: { header: 'Leave project' }
         }
       })
     },

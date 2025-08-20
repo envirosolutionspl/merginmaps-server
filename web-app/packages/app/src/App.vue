@@ -42,8 +42,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
 import {
   DialogWindows,
   initRequestInterceptors,
@@ -108,11 +106,13 @@ export default defineComponent({
       meta: [
         {
           name: 'description',
-          content: returnTranslation(lang, 'StoreAndTrackChangesToYourGeoDataMerginMapsIsARepositoryOfGeoDataForCollaborativeWork')
+          content:
+            'Store and track changes to your geo-data. Mergin Maps is a repository of geo-data for collaborative work.'
         },
         {
           property: 'og:title',
-          content: returnTranslation(lang, 'StoreAndTrackChangesToYourGeoDataMerginMapsIsARepositoryOfGeoDataForCollaborativeWork')
+          content:
+            'Store and track changes to your geo-data. Mergin Maps is a repository of geo-data for collaborative work.'
         },
         { property: 'og:site_name', content: 'Mergin Maps' }
       ]

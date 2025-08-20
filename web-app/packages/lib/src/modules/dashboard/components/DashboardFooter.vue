@@ -30,10 +30,11 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
         <div class="col-12 xl:col-5 mb-2 xl:mb-0 text-center xl:text-left">
           <h2 class="text-color paragraph-p5">
-            {{ DownloadMerginMapsToYourPhone }}
+            Download Mergin Maps to your phone
           </h2>
           <p class="opacity-60 paragraph-p6">
-            {{ CaptureGeoInfoEasilyThroughYourMobileTabletWithOurMobileApp }}
+            Capture geo-info easily through your mobile/tablet with our mobile
+            app.
           </p>
         </div>
 
@@ -59,7 +60,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             text
             rounded
             plain
-            :aria-label="CloseSection"
+            aria-label="Close section"
             @click="closeElement"
             class="text-2xl"
           />
@@ -69,13 +70,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const DownloadMerginMapsToYourPhone = returnTranslation(lang, 'DownloadMerginMapsToYourPhone');
-const CaptureGeoInfoEasilyThroughYourMobileTabletWithOurMobileApp = returnTranslation(lang, 'CaptureGeoInfoEasilyThroughYourMobileTabletWithOurMobileApp');
-const CloseSection = returnTranslation(lang, 'CloseSection');
-
 import { ref } from 'vue'
 
 import { AppContainer, AppSection } from '@/common'
