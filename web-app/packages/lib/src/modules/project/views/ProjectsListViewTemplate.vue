@@ -20,14 +20,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               v-if="canCreateProject && loggedUser && loggedUser.email"
               @click="newProjectDialog"
               data-cy="action-button-create"
-              label="Create project"
+              :label="CreateProject"
             />
           </template>
           <div class="flex align-items-center justify-content-between mt-3">
             <span class="p-input-icon-left flex-grow-1">
               <i class="ti ti-search paragraph-p3"></i>
               <PInputText
-                placeholder="Search projects by name"
+                :placeholder="SearchProjectsByName"
                 v-model="projectsStore.projectsSearch"
                 class="w-full"
               />
@@ -42,8 +42,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <!-- TODO: Do not understand logic here :() -->
       <AppSection v-else>
         <span>
-          <b>Namespace not found</b><br />
-          Please check if address is written correctly
+          <b>{{ NamespaceNotFound }}</b><br />
+          {{ PleaseCheckIfAddressIsWrittenCorrectly }}
         </span>
       </AppSection>
     </app-container>
@@ -63,6 +63,7 @@ const PleaseCheckIfAddressIsWrittenCorrectly = returnTranslation(lang, 'PleaseCh
 </script>
 
 <script lang="ts">
+const lang = import.meta.env.VITE_LANG
 import { mapActions, mapState } from 'pinia'
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { defineComponent, ref } from 'vue'
@@ -94,33 +95,35 @@ export default defineComponent({
     ...mapState(useLayoutStore, ['drawer']),
     ...mapState(useProjectStore, ['projectsSorting', 'projectsCount']),
     header() {
+      const lang = import.meta.env.VITE_LANG
       return this.onlyPublic ? returnTranslation(lang, 'PublicProjects') : returnTranslation(lang, 'MyProjects')
     },
     onlyPublic() {
       return this.$route.name === 'explore' || !this.loggedUser?.email
     },
     filterMenuItems(): MenuItem[] {
+      const lang = import.meta.env.VITE_LANG
       return [
         {
-          label: 'Sort by name A-Z',
+          label: returnTranslation(lang, 'SortByNameAZ'),
           key: 'name-asc',
           value: 'name',
           sortDesc: false
         },
         {
-          label: 'Sort by name Z-A',
+          label: returnTranslation(lang, 'SortByNameZA'),
           key: 'name-desc',
           value: 'name',
           sortDesc: true
         },
         {
-          label: 'Sort by last updated',
+          label: returnTranslation(lang, 'SortByLastUpdated'),
           key: 'updated',
           value: 'updated',
           sortDesc: true
         },
         {
-          label: 'Sort by files size',
+          label: returnTranslation(lang, 'SortByFilesSize'),
           key: 'meta.size',
           value: 'meta.size',
           sortDesc: true
@@ -141,6 +144,7 @@ export default defineComponent({
     ...mapActions(useProjectStore, ['setProjectsSorting']),
 
     newProjectDialog() {
+      const lang = import.meta.env.VITE_LANG
       const dialog = { persistent: true, header: returnTranslation(lang, 'NewProject') }
       this.show({
         component: ProjectForm,

@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <form @submit.prevent="submit" class="flex flex-column pb-4">
     <span class="p-input-filled">
-      <label for="email">Email</label>
+      <label for="email">{{ Email }}</label>
       <PInputText
         id="email"
         v-model="email"
@@ -28,7 +28,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <span class="p-input-filled">
       <app-password-tooltip for="newPassword"
-        ><template #label>Password</template>
+        ><template #label>{{ Password }}</template>
       </app-password-tooltip>
       <PPassword
         id="newPassword"
@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         toggleMask
         :feedback="false"
         aria-describedby="password-error"
-        placeholder="Enter password"
+        :placeholder="EnterPassword"
       />
       <span class="p-error paragraph-p6" id="password-error">{{
 
@@ -58,7 +58,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
         data-cy="profile-edit-close-btn"
-        >Cancel</PButton
+        >{{ Cancel }}</PButton
       >
 
       <PButton
@@ -66,7 +66,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="flex w-12 lg:w-6 justify-content-center"
         data-cy="profile-edit-save-btn"
       >
-        Create
+        {{ Create }}
       </PButton>
     </div>
   </form>
@@ -143,6 +143,7 @@ export default defineComponent({
       return ['email', 'password'].some((k) => data[k] === '')
     },
     submit() {
+      const lang = import.meta.env.VITE_LANG
       const data: CreateUserData = {
         email: this.email.trim(),
         password: this.password,
@@ -155,7 +156,7 @@ export default defineComponent({
           this.close()
           this.$emit('success')
           this.show({
-            text: returnTranslation(lang, 'UserCreated')
+            text: returnTranslation(import.meta.env.VITE_LANG, 'UserCreated')
           })
         })
         .catch((err) => {
@@ -164,7 +165,7 @@ export default defineComponent({
             error: err,
             generalMessage: errorUtils.getErrorMessage(
               err,
-              returnTranslation(lang, 'FailedToCreateUser')
+              returnTranslation(import.meta.env.VITE_LANG, 'FailedToCreateUser')
             )
           })
         })

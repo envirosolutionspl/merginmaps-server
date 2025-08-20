@@ -13,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
   >
     <template #header>
       <p class="font-semibold">
-        Data Sync
+        {{ DataSync }}
         <span v-if="upload.diff" class="text-color-secondary"
           >({{ $filters.filesize(uploadSize) }})</span
         >
@@ -28,7 +28,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <app-circle :severity="circleSeverity[key]" class="mr-2"
           ><i :class="['ti', `${diffIcon[key]}`]"></i
         ></app-circle>
-        <span class="paragraph-p5 opacity-80 capitalize">{{ key }}</span>
+        <span class="paragraph-p5 opacity-80 capitalize">{{ translations[key.charAt(0).toUpperCase() + key.slice(1) + 'L'] }}</span>
         <app-circle class="ml-auto">{{ upload.diff[key].length }}</app-circle>
       </div>
       <PButton
@@ -36,7 +36,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="confirmUpload"
         :disabled="upload.running || remainingAnalyzingFiles > 0"
         class="mt-2 w-full my-4"
-        label="Update Changes"
+        :label="UpdateChanges"
       />
     </div>
   </PDialog>
@@ -48,6 +48,22 @@ const lang = import.meta.env.VITE_LANG
 
 const DataSync = returnTranslation(lang, 'DataSync');
 const UpdateChanges = returnTranslation(lang, 'UpdateChanges');
+const Added = returnTranslation(lang, 'Added');
+const Updated = returnTranslation(lang, 'Updated');
+const Removed = returnTranslation(lang, 'Removed');
+
+const translationKeys = [
+  'AddedL',
+  'UpdatedL',
+  'RemovedL'
+];
+const translations: Record<string, string> = {};
+for (const key of translationKeys) {
+  const lang = import.meta.env.VITE_LANG
+  translations[key] = returnTranslation(lang, key);
+}
+
+const diffKeys = ['added', 'updated', 'removed'];
 
 </script>
 
@@ -139,6 +155,7 @@ export default defineComponent({
     resetUpload() {
       this.discardUpload({ projectPath: this.project.path })
       if (this.source) {
+        const lang = import.meta.env.VITE_LANG
         const OperationCanceledByTheUser = returnTranslation(lang, 'OperationCanceledByTheUser');
         this.source.cancel(OperationCanceledByTheUser)
         delete this.source
@@ -167,9 +184,10 @@ export default defineComponent({
       const { transaction } = resp.data
       if (!transaction) {
         this.discardUpload({ projectPath })
+        const lang = import.meta.env.VITE_LANG
         const ProjectUpdated = returnTranslation(lang, 'ProjectUpdated');
         await this.show({
-          text: 'Project updated'
+          text: ProjectUpdated
         })
         this.setProject({ project: resp.data })
         return
@@ -213,28 +231,30 @@ export default defineComponent({
         })
     },
     confirmUpload() {
+      const lang = import.meta.env.VITE_LANG
       const AreYouReallySureYouWantToContinue = returnTranslation(lang, 'AreYouReallySureYouWantToContinue');
       const ChangesFromOtherUsersMayGetLostWhenUploadingDataFromBrowserItIsHighlyRecommendedToUseMerginMapsQGISPluginInstead = returnTranslation(lang, 'ChangesFromOtherUsersMayGetLostWhenUploadingDataFromBrowserItIsHighlyRecommendedToUseMerginMapsQGISPluginInstead');
       const Update = returnTranslation(lang, 'Update');
       const Cancel = returnTranslation(lang, 'Cancel');
       const props: ConfirmDialogProps = {
-        text: `Are you really sure you want to continue?`,
+        text: AreYouReallySureYouWantToContinue,
         description:
-          'Changes from other users may get lost when uploading data from browser. It is highly recommended to use Mergin Maps QGIS plugin instead.',
-        confirmText: 'Update',
-        cancelText: 'Cancel'
+        ChangesFromOtherUsersMayGetLostWhenUploadingDataFromBrowserItIsHighlyRecommendedToUseMerginMapsQGISPluginInstead,
+        confirmText: Update,
+        cancelText: Cancel
       }
       const listeners = {
         confirm: () => this.uploadChanges()
       }
       if (this.upload.diff.updated.filter((i) => isVersionedFile(i)).length) {
+        const lang = import.meta.env.VITE_LANG
         const ConfirmContinueUpload = returnTranslation(lang, 'ConfirmContinueUpload');
         this.showDialog({
           component: ConfirmDialog,
           params: {
             props,
             listeners,
-            dialog: { maxWidth: 500, header: 'Confirm continue upload' }
+            dialog: { maxWidth: 500, header: ConfirmContinueUpload }
           }
         })
       } else {

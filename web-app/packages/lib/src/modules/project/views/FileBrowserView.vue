@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <span class="p-input-icon-left flex-grow-1">
             <i class="ti ti-search paragraph-p3"></i>
             <PInputText
-              placeholder="Search files"
+              :placeholder="SearchFiles"
               data-cy="search-files-field"
               v-model="searchFilter"
               class="w-full"
@@ -30,13 +30,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       v-if="project && $route.name === 'project-tree' && isProjectWriter"
     >
       <app-panel-toggleable :collapsed="dataTableOpen">
-        <template #title>Upload files</template>
+        <template #title>{{ UploadFiles }}</template>
         <div class="flex flex-column lg:flex-row">
           <div
             class="flex flex-column text-center align-items-center w-12 lg:w-6 mb-4 lg:mb-0 lg:mr-4 border-round-xl surface-ground p-4 row-gap-3"
           >
             <div class="w-full flex justify-content-end mb-0">
-              <PTag>Recommended</PTag>
+              <PTag>{{ Recommended }}</PTag>
             </div>
 
             <div
@@ -46,15 +46,15 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             </div>
 
             <h4 class="title-t1 text-color-forest">
-              Mergin Maps plugin for QGIS
+              {{ MerginMapsPluginForQGIS }}
             </h4>
             <p class="paragraph-p6 opacity-80 m-0">
-              This is the easiest and recommended way.
+              {{ ThisIsTheEasiestAndRecommendedWay }}
               <a
                 target="_blank"
                 class="text-color-forest font-semibold no-underline"
                 :href="docsLinkManageCreateProject"
-                >Learn how to use it.</a
+                >{{ LearnHowToUseIt }}</a
               >
             </p>
           </div>
@@ -84,6 +84,19 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <upload-progress />
   </div>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const SearchFiles = returnTranslation(lang, 'SearchFiles');
+const UploadFiles = returnTranslation(lang, 'UploadFiles');
+const Recommended = returnTranslation(lang, 'Recommended');
+const MerginMapsPluginForQGIS = returnTranslation(lang, 'MerginMapsPluginForQGIS');
+const ThisIsTheEasiestAndRecommendedWay = returnTranslation(lang, 'ThisIsTheEasiestAndRecommendedWay');
+const LearnHowToUseIt = returnTranslation(lang, 'LearnHowToUseIt');
+
+</script>
 
 <script lang="ts">
 import { mapState } from 'pinia'
@@ -146,24 +159,25 @@ export default defineComponent({
       )
     },
     filterMenuItems(): MenuItem[] {
+      const lang = import.meta.env.VITE_LANG
       return [
         {
-          label: 'Sort by name A-Z',
+          label: returnTranslation(lang, 'SortByNameAZ'),
           key: 'name',
           sortDesc: 1
         },
         {
-          label: 'Sort by name Z-A',
+          label: returnTranslation(lang, 'SortByNameZA'),
           key: 'name',
           sortDesc: -1
         },
         {
-          label: 'Sort by last modified',
+          label: returnTranslation(lang, 'SortByLastModified'),
           key: 'mtime',
           sortDesc: -1
         },
         {
-          label: 'Sort by file size',
+          label: returnTranslation(lang, 'SortByFileSize'),
           key: 'size',
           sortDesc: -1
         }

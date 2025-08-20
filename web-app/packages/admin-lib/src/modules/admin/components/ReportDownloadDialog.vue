@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="download" class="flex flex-column pb-4 gap-2">
     <span class="p-input-filled">
-      <label id="period-label">Period</label>
+      <label id="period-label">{{ Period }}</label>
       <app-dropdown
         aria-labelledby="period-label"
         v-model="period"
@@ -10,7 +10,7 @@
     </span>
 
     <span class="p-input-filled w-full">
-      <label for="range">Custom range</label>
+      <label for="range">{{ CustomRange }}</label>
       <PCalendar
         inputId="range"
         v-model="range"
@@ -18,7 +18,7 @@
         :disabled="Number(period) > -1"
         :max-date="maxDate"
         class="w-full"
-        placeholder="Select date range"
+        :placeholder="SelectDateRange"
       />
     </span>
 
@@ -31,12 +31,12 @@
         @click="close"
         class="w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6"
         data-cy="clone-dialog-close-btn"
-        label="Cancel"
+        :label="Cancel"
       />
       <PButton
         type="submit"
         class="w-12 lg:w-6"
-        label="Download"
+        :label="Download"
         :disabled="range.filter(Boolean).length < 2"
       />
     </div>
@@ -44,6 +44,15 @@
 </template>
 
 <script lang="ts" setup>
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Period = returnTranslation(lang, 'Period');
+const CustomRange = returnTranslation(lang, 'CustomRange');
+const SelectDateRange = returnTranslation(lang, 'SelectDateRange');
+const Cancel = returnTranslation(lang, 'Cancel');
+const Download = returnTranslation(lang, 'Download');
+
 import { AppDropdown, DropdownOption, useDialogStore } from '@mergin/lib'
 import subMonths from 'date-fns/subMonths'
 import { ref, watchEffect } from 'vue'
@@ -56,10 +65,10 @@ const adminStore = useAdminStore()
 const maxDate = ref<Date>(new Date())
 const period = ref<string>('3')
 const periodOptions = ref<DropdownOption[]>([
-  { label: 'Last 3 months', value: '3' },
-  { label: 'Last 6 months', value: '6' },
-  { label: 'Last 12 months', value: '12' },
-  { label: 'Custom range', value: '-1' }
+  { label: returnTranslation(lang, 'Last3months'), value: '3' },
+  { label: returnTranslation(lang, 'Last6months'), value: '6' },
+  { label: returnTranslation(lang, 'Last12months'), value: '12' },
+  { label: returnTranslation(lang, 'CustomRange'), value: '-1' }
 ])
 const range = ref<Array<Date>>([
   subMonths(new Date(), Number(period.value)),

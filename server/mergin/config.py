@@ -110,3 +110,5 @@ class Configuration(object):
     GEVENT_WORKER = config("GEVENT_WORKER", default=False, cast=bool)
     GEVENT_REQUEST_TIMEOUT = config("GEVENT_REQUEST_TIMEOUT", default=30, cast=int)
     tz = get_localzone()
+
+tz = get_localzone()

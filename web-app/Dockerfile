@@ -4,7 +4,7 @@ MAINTAINER Martin Varga "martin.varga@lutraconsulting.co.uk"
 # build frontend apps
 COPY . /mergin/web-app
 WORKDIR /mergin/web-app
-RUN yarn install --frozen-lockfile
+RUN yarn install --no-lockfile --network-timeout 600000
 RUN yarn link:dependencies
 RUN yarn build:all
 RUN PUBLIC_PATH=/admin/ yarn build:all:admin

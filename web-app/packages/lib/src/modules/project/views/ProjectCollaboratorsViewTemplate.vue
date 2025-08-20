@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     >
       <app-section
         ><template #title
-          >Requests
+          >{{ Requests }}
           <span class="opacity-80"
             >({{ projectStore.accessRequestsCount }})</span
           ></template
@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <span class="p-input-icon-left flex-grow-1">
             <i class="ti ti-search paragraph-p3"></i>
             <PInputText
-              placeholder="Search members"
+              :placeholder="SearchMembers"
               data-cy="search-members-field"
               v-model="projectStore.accessSearch"
               class="w-full"
@@ -35,7 +35,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             v-if="allowShare"
             @click="$emit('share')"
             icon="ti ti-send"
-            label="Share"
+            :label="Share"
             data-cy="project-share-btn"
           />
           <AppMenu :items="filterMenuItems" />
@@ -51,6 +51,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Requests = returnTranslation(lang, 'Requests');
+const SearchMembers = returnTranslation(lang, 'SearchMembers');
+const Share = returnTranslation(lang, 'Share');
+
 import { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 import { computed, watchEffect } from 'vue'
 
@@ -75,16 +82,17 @@ withDefaults(
 const projectStore = useProjectStore()
 const userStore = useUserStore()
 
-const filterMenuItems = computed<MenuItem[]>(() =>
-  [
+const filterMenuItems = computed<MenuItem[]>(() => {
+  const lang = import.meta.env.VITE_LANG
+  return [
     {
-      label: 'Sort by name A-Z',
+      label: returnTranslation(lang, 'SortByNameAZ'), // returnTranslation(lang, 'Share')
       key: 'username',
       value: 'username',
       sortDesc: false
     },
     {
-      label: 'Sort by name Z-A',
+      label: returnTranslation(lang, 'SortByNameZA'),
       key: 'name-desc',
       value: 'username',
       sortDesc: true
@@ -103,7 +111,7 @@ const filterMenuItems = computed<MenuItem[]>(() =>
         ? 'bg-primary-400'
         : ''
   }))
-)
+})
 
 // Every dashboard table have to load data on orkspace change
 watchEffect(() => {

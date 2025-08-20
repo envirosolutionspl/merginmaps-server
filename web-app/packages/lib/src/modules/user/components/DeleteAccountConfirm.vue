@@ -6,13 +6,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
 <template>
   <ConfirmDialog
-    text="Do you really wish to close your account?"
-    description="This action will delete your Mergin Maps account. If you are a workspace owner, you need to transfer the ownership to somebody else or close the workspace."
-    cancelText="No"
-    confirmText="Yes"
+    :text="DoYouReallyWishToCloseYourAccount"
+    :description="ThisActionWillDeleteYourMerginMapsAccountIfYouAreAWorkspaceOwnerYouNeedToTransferTheOwnershipToSomebodyElseOrCloseTheWorkspace"
+    :cancelText="No"
+    :confirmText="Yes"
     :hint="username"
     :confirmField="{
-      label: 'Username',
+      label: Username,
       expected: username
     }"
     severity="danger"
@@ -22,16 +22,26 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <template #image
         ><img wdth="50" height="50" src="@/assets/exclamation.svg"
       /></template>
-      <template #title>Please note</template>
+      <template #title>{{ PleaseNote }}</template>
       <template #description
-        >In order to delete your account, enter your username in the field above
-        and click Yes.</template
+        >{{ InOrderToDeleteYourAccountEnterYourUsernameInTheFieldAboveAndClickYes }}</template
       >
     </TipMessage>
   </ConfirmDialog>
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const DoYouReallyWishToCloseYourAccount = returnTranslation(lang, 'DoYouReallyWishToCloseYourAccount');
+const ThisActionWillDeleteYourMerginMapsAccountIfYouAreAWorkspaceOwnerYouNeedToTransferTheOwnershipToSomebodyElseOrCloseTheWorkspace = returnTranslation(lang, 'ThisActionWillDeleteYourMerginMapsAccountIfYouAreAWorkspaceOwnerYouNeedToTransferTheOwnershipToSomebodyElseOrCloseTheWorkspace');
+const No = returnTranslation(lang, 'No');
+const Yes = returnTranslation(lang, 'Yes');
+const Username = returnTranslation(lang, 'Username');
+const PleaseNote = returnTranslation(lang, 'PleaseNote');
+const InOrderToDeleteYourAccountEnterYourUsernameInTheFieldAboveAndClickYes = returnTranslation(lang, 'InOrderToDeleteYourAccountEnterYourUsernameInTheFieldAboveAndClickYes');
+
 import TipMessage from '@/common/components/TipMessage.vue'
 import { DeleteAccountConfirmProps } from '@/modules'
 import ConfirmDialog from '@/modules/dialog/components/ConfirmDialog.vue'

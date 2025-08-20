@@ -13,12 +13,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     :rows="options.itemsPerPage"
     :totalRecords="accessRequestsCount"
     :data-key="'id'"
-    :paginator-template="'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'"
+    :paginator-template="FirstPageLinkPrevPageLinkPageLinksNextPageLinkLastPageLink"
     size="small"
     @page="onPage"
   >
     <template #header>
-      <h3 class="font-semibold paragraph-p6 text-color">Access requests</h3>
+      <h3 class="font-semibold paragraph-p6 text-color">{{ AccessRequests }}</h3>
     </template>
     <template #list="slotProps">
       <template v-for="item in slotProps.items" :key="item.id">
@@ -30,15 +30,14 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             v-if="loggedUser.username === item.requested_by"
             class="w-12 lg:w-6 paragraph-p6"
           >
-            You requested an access to project
-            <span class="font-semibold">{{ item.project_name }}</span> in
-            workspace <span class="font-semibold">{{ item.namespace }}</span
+            {{ YouRequestedAnAccessToProject }}
+            <span class="font-semibold">{{ item.project_name }}</span> {{ InWorkspace }}<span class="font-semibold">{{ item.namespace }}</span
             >.
           </p>
           <p v-else class="w-12 lg:w-6 paragraph-p6">
-            User
+            {{ User }}
             <span class="font-semibold">{{ item.requested_by }}</span>
-            requested an access to your project
+            {{ RequestedAnAccessToYourProject }}
             <span class="font-semibold">{{ item.project_name }}.</span>
           </p>
           <div
@@ -48,10 +47,10 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               <span v-tooltip.right="{ value: $filters.datetime(item.expire) }">
                 <template
                   v-if="$filters.remainingtime(item.expire) === 'expired'"
-                  >Expired</template
+                  >{{ Expired }}</template
                 >
                 <template v-else
-                  >Expiring in
+                  >{{ ExpiringIn }}
                   {{ $filters.remainingtime(item.expire) }}</template
                 >
               </span>
@@ -68,7 +67,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               <PButton
                 icon="ti ti-x"
                 rounded
-                aria-label="Disallow"
+                :aria-label="Disallow"
                 severity="danger"
                 class="mr-2"
                 @click="cancelRequest(item)"
@@ -77,7 +76,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 v-if="showAccept"
                 icon="ti ti-check"
                 rounded
-                aria-label="Accept"
+                :aria-label="Accept"
                 severity="success"
                 :disabled="expired(item.expire)"
                 @click="acceptRequest(item)"
@@ -88,10 +87,27 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       </template>
     </template>
     <template #empty>
-      <p>No access requests found</p>
+      <p>{{ NoAccessRequestsFound }}</p>
     </template>
   </PDataView>
 </template>
+
+<script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const FirstPageLinkPrevPageLinkPageLinksNextPageLinkLastPageLink = returnTranslation(lang, 'FirstPageLinkPrevPageLinkPageLinksNextPageLinkLastPageLink');
+const AccessRequests = returnTranslation(lang, 'AccessRequests');
+const InWorkspace = returnTranslation(lang, 'InWorkspace');
+const User = returnTranslation(lang, 'User');
+const RequestedAnAccessToYourProject = returnTranslation(lang, 'RequestedAnAccessToYourProject');
+const YouRequestedAnAccessToProject = returnTranslation(lang, 'YouRequestedAnAccessToProject');
+const Expired = returnTranslation(lang, 'Expired');
+const ExpiringIn = returnTranslation(lang, 'ExpiringIn');
+const Disallow = returnTranslation(lang, 'Disallow');
+const Accept = returnTranslation(lang, 'Accept');
+const NoAccessRequestsFound = returnTranslation(lang, 'NoAccessRequestsFound');
+</script>
 
 <script lang="ts">
 import { mapActions, mapState } from 'pinia'

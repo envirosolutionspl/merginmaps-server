@@ -47,12 +47,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 v-if="slotProps.data.access.public && !onlyPublic"
                 severity="success"
                 :pt="{ root: { class: 'ml-1' } }"
-                >Public</PTag
+                >{{ Public }}</PTag
               >
               <i
                 v-if="!slotProps.data.tags.includes('valid_qgis')"
                 v-tooltip.right="{
-                  value: 'Failed to find a QGIS project file'
+                  value: FailedToFindAQGISProjectFile
                 }"
                 class="ti ti-alert-circle-filled ml-1"
                 data-cy="project-form-missing-project"
@@ -61,7 +61,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               <i
                 v-if="slotProps.data.has_conflict"
                 v-tooltip.right="{
-                  value: 'Conflicting file in project'
+                  value: ConflictingFileInProject
                 }"
                 class="ti ti-alert-triangle-filled ml-1"
                 style="margin-right: 20px"
@@ -75,7 +75,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
               }"
               class="opacity-80 m-0 paragraph-p7"
             >
-              Updated {{ $filters.timediff(slotProps.data.updated) }}
+              {{ Updated }} {{ $filters.timediff(slotProps.data.updated) }}
             </span>
           </template>
         </PColumn>
@@ -128,7 +128,7 @@ const lang = import.meta.env.VITE_LANG
 
 const FailedToFindAQGISProjectFile = returnTranslation(lang, 'FailedToFindAQGISProjectFile');
 const ConflictingFileInProject = returnTranslation(lang, 'ConflictingFileInProject');
-const Public = returnTranslation(lang, 'Public');
+const Public = returnTranslation(lang, 'Public2');
 const Updated = returnTranslation(lang, 'Updated');
 
 </script>
@@ -177,10 +177,11 @@ export default defineComponent({
   computed: {
     ...mapState(useProjectStore, ['projectsSearch', 'projectsSorting']),
     columns(): TableDataHeader[] {
+      const lang = import.meta.env.VITE_LANG
       return [
-        { header: 'Project name', field: 'name' },
-        { header: 'Versions', field: 'version' },
-        { header: 'Size', field: 'meta.size' }
+        { header: returnTranslation(lang, 'ProjectName'), field: 'name' }, //returnTranslation(lang, 'ProjectName')
+        { header: returnTranslation(lang, 'Versions'), field: 'version' },
+        { header: returnTranslation(lang, 'Size'), field: 'meta.size' }
         // {
         //   header: 'Collaborators',
         //   field: 'access.readers'

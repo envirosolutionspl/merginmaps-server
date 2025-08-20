@@ -11,14 +11,17 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         <i :class="[slotProps.class, 'ti ti-alert-triangle-filled']" />
       </template>
       <p>
-        The service is currently in read-only mode for maintenance. Upload and
-        update functions are not available at this time. Please try again later.
+        {{ TheServiceIsCurrentlyInReadOnlyModeForMaintenanceUploadAndUpdateFunctionsAreNotAvailableAtThisTimePleaseTryAgainLater }}
       </p></PMessage
     >
   </app-container>
 </template>
 
 <script setup lang="ts">
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const TheServiceIsCurrentlyInReadOnlyModeForMaintenanceUploadAndUpdateFunctionsAreNotAvailableAtThisTimePleaseTryAgainLater = returnTranslation(lang, 'TheServiceIsCurrentlyInReadOnlyModeForMaintenanceUploadAndUpdateFunctionsAreNotAvailableAtThisTimePleaseTryAgainLater');
 import { AppContainer } from '@/common/components'
 </script>
 

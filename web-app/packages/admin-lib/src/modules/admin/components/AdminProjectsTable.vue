@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <app-container>
       <app-section ground>
         <template #header>
-          <h1 class="headline-h3">Projects</h1>
+          <h1 class="headline-h3">{{ Projects }}</h1>
         </template>
       </app-section>
     </app-container>
@@ -20,8 +20,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
           <PInputText
             :placeholder="
               showNamespace
-                ? 'Search by workspace name or project name'
-                : 'Search projects'
+                ? SearchByWorkspaceNameOrProjectName
+                : SearchProjects
             "
             v-model="search"
             class="w-full"
@@ -121,7 +121,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
             >
               <template #body="slotProps">
                 <span
-                  :title="`Scheduled for removal at ${$filters.datetime(
+                  :title="`${ScheduledForRemovalAt} ${$filters.datetime(
                     slotProps.data.removed_at
                   )}`"
                 >
@@ -138,13 +138,13 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
                 >
                   <div class="flex align-items-center gap-1">
                     <PButton
-                      label="Restore"
+                      :label="Restore"
                       severity="secondary"
                       size="small"
                       @click="confirmRestore(slotProps.data)"
                     />
                     <PButton
-                      label="Delete"
+                      :label="Delete"
                       severity="danger"
                       size="small"
                       @click="confirmDelete(slotProps.data)"
@@ -177,6 +177,18 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     </app-container>
   </div>
 </template>
+
+<script lang="ts" setup>
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+
+const Projects = returnTranslation(lang, 'Projects');
+const SearchByWorkspaceNameOrProjectName = returnTranslation(lang, 'SearchByWorkspaceNameOrProjectName');
+const SearchProjects = returnTranslation(lang, 'SearchProjects');
+const ScheduledForRemovalAt = returnTranslation(lang, 'ScheduledForRemovalAt');
+const Restore = returnTranslation(lang, 'Restore');
+const Delete = returnTranslation(lang, 'Delete');
+</script>
 
 <script lang="ts">
 import {
@@ -231,17 +243,17 @@ export default defineComponent({
         ...(this.showNamespace
           ? [
               {
-                header: returnTranslation(lang, 'Workspace'),
+                header: returnTranslation(import.meta.env.VITE_LANG, 'Workspace'),
                 field: 'workspace',
                 sortable: true
               }
             ]
           : []),
-        { header: returnTranslation(lang, 'Name'), field: 'name', sortable: true },
-        { header: returnTranslation(lang, 'LastUpdate'), field: 'updated', sortable: true },
-        { header: returnTranslation(lang, 'Size'), field: 'disk_usage', sortable: true },
-        { header: returnTranslation(lang, 'ScheduledRemovalAt'), field: 'removed_at', sortable: true },
-        { header: returnTranslation(lang, 'RemovedBy'), field: 'removed_by', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'Name'), field: 'name', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'LastUpdate'), field: 'updated', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'Size'), field: 'disk_usage', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'ScheduledRemovalAt'), field: 'removed_at', sortable: true },
+        { header: returnTranslation(import.meta.env.VITE_LANG, 'RemovedBy'), field: 'removed_by', sortable: true },
         { header: '', field: 'buttons', sortable: false }
       ]
     }
@@ -302,9 +314,10 @@ export default defineComponent({
     },
 
     confirmRestore(item) { // returnTranslation(lang, 'RemovedBy')
+      const lang = import.meta.env.VITE_LANG
       const props: ConfirmDialogProps = {
-        text: `Are you sure to restore project ${item.workspace}/${item.name}?`,
-        confirmText: 'Restore'
+        text: `${returnTranslation(lang, 'AreYouSureToRestoreProject')} ${item.workspace}/${item.name}?`,
+        confirmText: returnTranslation(lang, 'Restore')
       }
       const listeners = {
         confirm: async () => {
@@ -314,19 +327,19 @@ export default defineComponent({
       }
       this.showDialog({
         component: ConfirmDialog,
-        params: { props, listeners, dialog: { header: returnTranslation(lang, 'RestoreProject') } }
+        params: { props, listeners, dialog: { header: returnTranslation(import.meta.env.VITE_LANG, 'RestoreProject') } }
       })
     },
 
     confirmDelete(item) {
+      const lang = import.meta.env.VITE_LANG
       const props: ConfirmDialogProps = {
-        text: `Are you sure you want to permanently delete this project?`,
-        description: `Deleting this project will remove it
-      and all its data. This action cannot be undone. Type in project name to confirm:`,
+        text: returnTranslation(lang, 'AreYouSureYouWantToPermanentlyDeleteThisProject'),
+        description: returnTranslation(lang, 'DeletingThisProjectWillRemoveItAndAllItsDataThisActionCannotBeUndoneTypeInProjectNameToConfirm'),
         hint: item.name,
-        confirmText: 'Delete permanently',
+        confirmText: returnTranslation(lang, 'DeletePermanently'),
         confirmField: {
-          label: 'Project name',
+          label: returnTranslation(lang, 'ProjectName'),
           expected: item.name
         },
         severity: 'danger'
@@ -339,7 +352,7 @@ export default defineComponent({
       }
       this.showDialog({
         component: ConfirmDialog,
-        params: { props, listeners, dialog: { header: returnTranslation(lang, 'DeleteProject') } }
+        params: { props, listeners, dialog: { header: returnTranslation(import.meta.env.VITE_LANG, 'DeleteProject') } }
       })
     },
 

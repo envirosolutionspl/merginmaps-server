@@ -4,7 +4,7 @@
       <app-section ground>
         <template #header>
           <h1 class="headline-h3">
-            Accounts
+            {{ Accounts }}
             <span class="text-color-medium-green">({{ users.count }})</span>
           </h1>
         </template>
@@ -12,7 +12,7 @@
           <PButton
             icon="ti ti-users-plus"
             @click="createUserDialog"
-            label="Add user"
+            :label="AddUser"
           />
         </template>
       </app-section>
@@ -22,7 +22,7 @@
         <span class="p-input-icon-left w-full">
           <i class="ti ti-search paragraph-p3"></i>
           <PInputText
-            placeholder="Search accounts"
+            :placeholder="SearchAccounts"
             data-cy="search-members-field"
             v-model="searchByName"
             class="w-full"
@@ -103,6 +103,14 @@
   </div>
 </template>
 
+<script lang="ts" setup>
+import returnTranslation from '@/../../lang/translate';
+const lang = import.meta.env.VITE_LANG
+const Accounts = returnTranslation(lang, 'Accounts');
+const AddUser = returnTranslation(lang, 'AddUser');
+const SearchAccounts = returnTranslation(lang, 'SearchAccounts');
+</script>
+
 <script lang="ts">
 import {
   PaginatedUsersParams,
@@ -131,6 +139,7 @@ export default defineComponent({
     AppSection
   },
   data() {
+    const lang = import.meta.env.VITE_LANG
     return {
       options: {
         sortBy: ['username'],
@@ -141,10 +150,10 @@ export default defineComponent({
       },
       searchByName: '',
       headers: [
-        { field: 'username', header: returnTranslation(lang, 'Username'), sortable: true },
-        { field: 'email', header: returnTranslation(lang, 'Email'), sortable: true },
-        { field: 'profile.name', header: returnTranslation(lang, 'FullName') },
-        { field: 'active', header: returnTranslation(lang, 'Active') }
+        { field: 'username', header: returnTranslation(import.meta.env.VITE_LANG, 'Username'), sortable: true },
+        { field: 'email', header: returnTranslation(import.meta.env.VITE_LANG, 'Email'), sortable: true },
+        { field: 'profile.name', header: returnTranslation(import.meta.env.VITE_LANG, 'FullName') },
+        { field: 'active', header: returnTranslation(import.meta.env.VITE_LANG, 'Active') }
       ] as TableDataHeader[]
     }
   },
@@ -207,7 +216,7 @@ export default defineComponent({
     },
 
     createUserDialog() {
-      const dialog = { maxWidth: 500, header: returnTranslation(lang, 'CreateUser') }
+      const dialog = { maxWidth: 500, header: returnTranslation(import.meta.env.VITE_LANG, 'CreateUser') }
       const listeners = {
         success: () => {
           this.resetPaging()

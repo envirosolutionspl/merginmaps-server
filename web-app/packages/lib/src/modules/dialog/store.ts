@@ -13,13 +13,18 @@ export interface DialogState {
   component: Component
 }
 
+import returnTranslation from '@/../../lang/translate';
+// @ts-ignore
+const lang = import.meta.env.VITE_LANG
+
+const Action = returnTranslation(lang, "Action");
 export const useDialogStore = defineStore('dialogModule', {
   state: (): DialogState => ({
     isDialogOpen: false,
     params: {
       dialog: {
         maxWidth: 500,
-        header: 'Action'
+        header: Action
       }
     },
     component: null
@@ -29,7 +34,7 @@ export const useDialogStore = defineStore('dialogModule', {
     dialogProps(state): DialogParams['dialog'] {
       return state.params
         ? state.params.dialog
-        : { header: 'Action', maxWidth: 500 }
+        : { header: Action, maxWidth: 500 }
     }
   },
 

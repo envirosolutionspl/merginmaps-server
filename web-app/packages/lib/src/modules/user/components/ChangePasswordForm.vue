@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 <template>
   <div class="flex flex-column pb-4">
     <span class="p-input-filled">
-      <label for="oldPassowrd">Old password</label>
+      <label for="oldPassowrd">{{ OldPassword }}</label>
       <PPassword
         id="oldPassowrd"
         v-model="oldPassword"
@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         toggleMask
         :feedback="false"
         aria-describedby="old-password-error"
-        placeholder="Must be at least 8 characters"
+        :placeholder="MustBeAtLeastCharacters"
       />
       <span class="p-error paragraph-p6" id="old-password-error">{{
         errors.old_password?.[0] === "The old password is incorrect" ? TheOldPasswordIsIncorrect : errors.old_password?.[0] || '&nbsp;'
@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <span class="p-input-filled">
       <app-password-tooltip for="newPassword"
-        ><template #label>New password</template>
+        ><template #label>{{ NewPassword }}</template>
       </app-password-tooltip>
 
       <PPassword
@@ -36,12 +36,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         aria-describedby="password-error"
         toggleMask
         :feedback="false"
-        placeholder="Must be at least 8 characters"
+        :placeholder="MustBeAtLeastCharacters"
       />
       <span class="p-error paragraph-p6" id="password-error">{{
         errors.password?.[0]
           ? errors.password?.[0].startsWith('Password')
-            ? 'Password must be at least 8 characters long and include at least three of the following: lowercase letters, uppercase letters, numbers or special characters.'
+            ? PasswordMustBeAtLeastCharactersLongAndIncludeAtLeastThreeOfTheFollowingLowercaseLettersUppercaseLettersNumbersOrSpecialCharacters
             : errors.password[0]
           : '&nbsp;'
       }}</span>
@@ -49,7 +49,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
     <span class="p-input-filled">
       <app-password-tooltip for="confirm">
-        <template #label>Confirm password</template>
+        <template #label>{{ ConfirmPassword }}</template>
       </app-password-tooltip>
 
       <PPassword
@@ -60,7 +60,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         aria-describedby="confirm-password-error"
         toggleMask
         :feedback="false"
-        placeholder="Must be at least 8 characters"
+        :placeholder="MustBeAtLeastCharacters"
       />
 
       <span class="p-error paragraph-p6" id="confirm-password-error">{{
@@ -77,7 +77,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         @click="close"
         class="flex w-12 mb-2 lg:mb-0 lg:mr-2 lg:w-6 justify-content-center"
         data-cy="user-change-password-close-btn"
-        >Cancel</PButton
+        >{{ Cancel }}</PButton
       >
 
       <PButton
@@ -86,7 +86,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
         class="flex w-12 lg:w-6 justify-content-center"
         data-cy="user-change-password-change-btn"
       >
-        Save changes
+        {{ SaveChanges }}
       </PButton>
     </div>
   </div>
