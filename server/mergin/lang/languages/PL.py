@@ -163,5 +163,5 @@ PL = {
     "FailedToCreateUploadSession": "Nie udało się utworzyć sesji przesyłania",
     "FailedToCreateUploadSessionPleaseTryLater": "Nie udało się utworzyć sesji przesyłania. Spróbuj ponownie później.",
     "RejectingBlacklistedFile": "Odrzucanie pliku z czarnej listy",
-    "PushArtefactRemovedBySubsequentPushorProject": "Artefakt usunięty przez kolejne przesunięcie lub projekt",
+    "Unsupported file type detected": "Wykryto nieobsługiwany typ pliku"
 }
