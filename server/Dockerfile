@@ -38,7 +38,7 @@ RUN pip3 install tzlocal==5.3
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-RUN pipenv install --system --deploy --verbose
+RUN pipenv install --system --verbose
 
 USER mergin
 
