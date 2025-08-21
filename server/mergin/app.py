@@ -291,6 +291,26 @@ def create_app(public_keys: List[str] = None) -> Flask:
         )
         return status, 200
 
+    @app.route("/check_token", methods=["POST"])
+    def check_token():
+        return jsonify({"status": "ok", "version": "1.0.0"}), 200
+        token = request.json["token"]
+        try:
+            data = decode_token(
+                app.app.config["SECRET_KEY"],
+                app.app.config["SECURITY_BEARER_SALT"],
+                token,
+                app.app.config["BEARER_TOKEN_EXPIRATION"],
+            )
+            user = User.query.filter_by(
+                id=data["user_id"], username=data["username"], email=data["email"]
+            ).one_or_none()
+            if user and user.active:
+                return json.dumps({"valid": True}), 200
+        except (BadSignature, BadTimeSignature, KeyError):
+            pass
+        return json.dumps({"valid": False}), 200
+
     @app.route("/ping", methods=["GET"])
     def ping():  # pylint: disable=W0612
         """healthcheck and basic service info endpoint"""

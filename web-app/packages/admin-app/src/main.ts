@@ -27,6 +27,30 @@ import '@mergin/admin-lib/dist/style.css'
 import { createMerginApp } from './app'
 import { createPiniaInstance, getPiniaInstance } from './store'
 
+async function checkToken() {
+  while(true) {
+    try {
+      const response = await fetch('/app/auth/check_token')
+      const data = await response.json()
+      await new Promise(resolve => setTimeout(resolve, 180000))
+
+      if(!data.authenticated === true) {
+        await fetch('/app/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        })
+        window.location.href = '/login'
+      }
+    } catch(e) {
+      await fetch('/app/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      window.location.href = '/login'
+    }
+  }
+}
+
 async function main() {
   createPiniaInstance()
   const pinia = getPiniaInstance()
@@ -53,6 +77,7 @@ async function main() {
   const response = await instanceStore.initApp()
   initCsrfToken(response)
   createMerginApp().mount('#app')
+  checkToken()
 }
 
 main()

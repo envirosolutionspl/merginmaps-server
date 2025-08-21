@@ -13,6 +13,18 @@ tags:
   - name: public
     description: Public API
 paths:
+  /app/auth/check_token:
+    get:
+      tags:
+        - user
+      summary: Check token
+      description: Check token
+      operationId: mergin.auth.controller.check_token
+      responses:
+        "200":
+          description: OK
+        "400":
+          $ref: "#/components/responses/BadStatusResp"
   /app/auth/user/search:
     get:
       tags:

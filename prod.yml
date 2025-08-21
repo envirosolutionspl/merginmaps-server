@@ -34,6 +34,8 @@ services:
       - ./server/entrypoint.sh:/app/entrypoint.sh
     env_file:
       - .prod.env
+    environment:
+      - VITE_LANG=PL
     depends_on:
       - db
       - redis
@@ -84,6 +86,8 @@ services:
     build:
       context: ./web-app
       dockerfile: Dockerfile
+    environment:
+      - VITE_LANG=PL
     depends_on:
       - server-gunicorn
     user: 101:999

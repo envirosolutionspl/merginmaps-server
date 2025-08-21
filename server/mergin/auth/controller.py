@@ -40,6 +40,15 @@ from ..sync.utils import files_size
 
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
+# Jeśli używasz innych claimów niż 'sub', ustaw tu nazwę klucza:
+USER_ID_CLAIM = "sub"
+
+def check_token():
+    if current_user.is_authenticated:
+        # opcjonalnie możesz zwrócić podstawowe info o userze
+        return jsonify({"authenticated": True}), 200
+    return jsonify({"authenticated": False}), 401
+
 
 # public endpoints
 def user_profile(user, return_all=True):
