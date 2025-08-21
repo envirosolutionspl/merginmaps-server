@@ -38,8 +38,6 @@ from ..app import db
 from ..sync.models import Project
 from ..sync.utils import files_size
 
-from ..lang.current import returnTranslation
-
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
 
@@ -225,10 +223,10 @@ def login():  # pylint: disable=W0613,W0612
 
         if not user:
             log_login_attempt(None, False)
-            abort(401, returnTranslation("InvalidUsernameOrPassword"))
+            abort(401, "Invalid username or password")
         if user.locked_until and user.locked_until > datetime.now():
             log_login_attempt(user.id, False)
-            abort(403, returnTranslation("UserAccountLocked"))
+            abort(403, "User account locked")
         password_correct = user.check_password(form.password.data)
 
         log_login_attempt(user.id, password_correct)
@@ -295,7 +293,7 @@ def resend_confirm_email():  # pylint: disable=W0613,W0612
         current_user,
         "confirm-email",
         "email/email_confirmation.html",
-        returnTranslation("EmailRegisterConfirm"),
+        "Email register confirm",
     )
     return "", 200
 
@@ -319,7 +317,7 @@ def password_reset():  # pylint: disable=W0613,W0612
         user,
         "change-password",
         "email/password_reset.html",
-        returnTranslation("PasswordResetEmail"),
+        "Password reset email",
     )
     return "", 200
 
@@ -586,7 +584,7 @@ def remove_user():  # pylint: disable=W0613,W0612
     if not (workspace and workspace.can_add_users(current_user)):
         abort(403)
 
-    user = User.query.filter_by(username=username).first_or_404(returnTranslation("UserNotFound"))
+    user = User.query.filter_by(username=username).first_or_404("User not found")
     #user_deleted.send(user, source="admin")
     user.inactivate()
     user_account_closed.send(user)

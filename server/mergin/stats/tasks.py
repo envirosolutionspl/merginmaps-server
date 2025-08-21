@@ -16,8 +16,6 @@ from ..app import db
 from ..auth.models import User
 from ..sync.models import Project
 
-from ..lang.current import returnTranslation
-
 def get_callhome_data(info: MerginInfo | None = None) -> ServerCallhomeData:
     """
     Get data about server to send to callhome service

@@ -57,8 +57,7 @@ def update_project(id):
         workspace_id=project.workspace_id, name=new_name
     ).first()
     if new_name_exists:
-        NameAlreadyExistWithinWorkspace = returnTranslation("NameAlreadyExistWithinWorkspace")
-        abort(409, NameAlreadyExistWithinWorkspace)
+        abort(409, "Name already exist within workspace")
 
     project.name = new_name.strip()
     db.session.commit()
@@ -98,8 +97,7 @@ def add_project_collaborator(id):
         abort(404)
 
     if project.get_role(user.id):
-        UserIsAlreadyAProjectMember = returnTranslation("UserIsAlreadyAProjectMember")
-        abort(409, UserIsAlreadyAProjectMember)
+        abort(409, "User is already a project member")
 
     project.set_role(user.id, ProjectRole(request.json["role"]))
     db.session.commit()
