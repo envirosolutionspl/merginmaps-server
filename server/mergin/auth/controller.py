@@ -41,48 +41,9 @@ from ..sync.utils import files_size
 
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
-# Jeśli używasz innych claimów niż 'sub', ustaw tu nazwę klucza:
 USER_ID_CLAIM = "sub"
 
-# Upewnij się, że ta wartość jest spójna z before_request
-IDLE_TIMEOUT = timedelta(minutes=2)
-
-current_sessions = []
-
-
-
-# def check_session():
-#     """
-#     Check if user session is valid and active.
-#     Returns authentication status and reason if not authenticated.
-#     # """
-#     time = request.json.get("time")
-
-#     # # 1) czy użytkownik w ogóle jest zalogowany
-#     # if not current_user.is_authenticated:
-#     #     return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
-
-#     # # 2) czy nie minął idle timeout (ostatnia aktywność zapisywana w before_request)
-#     # last_seen = session.get("last_seen")
-#     # if last_seen is None:
-#     #     # brak znacznika — traktuj jak nieaktywną/niepewną sesję
-#     #     return jsonify({"authenticated": False, "reason": "expired"}), 401
-
-#     # current_time = datetime.now(timezone.utc).timestamp()
-#     # session_age = current_time - last_seen
-
-#     # if session_age > IDLE_TIMEOUT.total_seconds():
-#     #     # Sesja wygasła — spójne z logiką w before_request
-#     #     return jsonify({"authenticated": False, "reason": "expired"}), 401
-
-#     # 3) sesja ważna
-#     return jsonify({
-#         "authenticated": True,
-#         "time": time
-#         # "session_age": session_age
-#     }), 200
-
-
+IDLE_TIMEOUT = timedelta(minutes=30)
 
 current_sessions = []
 
@@ -96,7 +57,6 @@ def check_session():
     time = request.json.get("time")
     current_time = datetime.now(timezone.utc).timestamp()
 
-    # Pobierz ID użytkownika (możesz dostosować do swojego systemu)
     user_id = getattr(current_user, 'id', None) if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated else session.get('user_id', 'anonymous')
 
     is_user_in_arr = None
@@ -120,21 +80,16 @@ def check_session():
 
     current_user_time = is_user_in_arr['time']
 
-    time_excepted = current_user_time + 120
+    time_excepted = current_user_time + 1800
 
-
-    # 1) czy użytkownik w ogóle jest zalogowany
     if not current_user.is_authenticated:
         return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
 
-    # 1) czy użytkownik w ogóle jest zalogowany
     if current_time > time_excepted:
         logout_user()
         session.clear()
         return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
 
-
-    # 3) sesja ważna
     return jsonify({
         "authenticated": True,
     }), 200
