@@ -13,16 +13,28 @@ tags:
   - name: public
     description: Public API
 paths:
-  /app/auth/check_token:
-    get:
+  /app/auth/check_session:
+    post:
       tags:
         - user
-      summary: Check token
-      description: Check token
-      operationId: mergin.auth.controller.check_token
+      summary: Verify if user session token is valid
+      description: Validates the current user session token and checks if it has not expired
+      operationId: mergin.auth.controller.check_session
+      requestBody:
+        description: Current timestamp for token validation
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                time:
+                  type: number
+                  description: Current timestamp in seconds since epoch
+                  example: 1634567890
       responses:
         "200":
-          description: OK
+          description: Token is valid
         "400":
           $ref: "#/components/responses/BadStatusResp"
   /app/auth/user/search:

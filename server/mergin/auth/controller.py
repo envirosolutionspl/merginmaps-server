@@ -4,11 +4,11 @@
 
 import os
 import pytz
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from connexion import NoContent
 from sqlalchemy import func, desc, asc
 from sqlalchemy.sql.operators import is_
-from flask import request, current_app, jsonify, abort, render_template
+from flask import request, current_app, jsonify, abort, render_template, session
 from flask_login import login_user, logout_user, current_user
 from flask_wtf.csrf import generate_csrf
 
@@ -38,16 +38,199 @@ from ..app import db
 from ..sync.models import Project
 from ..sync.utils import files_size
 
+
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
 # Jeśli używasz innych claimów niż 'sub', ustaw tu nazwę klucza:
 USER_ID_CLAIM = "sub"
 
-def check_token():
-    if current_user.is_authenticated:
-        # opcjonalnie możesz zwrócić podstawowe info o userze
-        return jsonify({"authenticated": True}), 200
-    return jsonify({"authenticated": False}), 401
+# Upewnij się, że ta wartość jest spójna z before_request
+IDLE_TIMEOUT = timedelta(minutes=2)
+
+current_sessions = []
+
+
+
+# def check_session():
+#     """
+#     Check if user session is valid and active.
+#     Returns authentication status and reason if not authenticated.
+#     # """
+#     time = request.json.get("time")
+
+#     # # 1) czy użytkownik w ogóle jest zalogowany
+#     # if not current_user.is_authenticated:
+#     #     return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
+
+#     # # 2) czy nie minął idle timeout (ostatnia aktywność zapisywana w before_request)
+#     # last_seen = session.get("last_seen")
+#     # if last_seen is None:
+#     #     # brak znacznika — traktuj jak nieaktywną/niepewną sesję
+#     #     return jsonify({"authenticated": False, "reason": "expired"}), 401
+
+#     # current_time = datetime.now(timezone.utc).timestamp()
+#     # session_age = current_time - last_seen
+
+#     # if session_age > IDLE_TIMEOUT.total_seconds():
+#     #     # Sesja wygasła — spójne z logiką w before_request
+#     #     return jsonify({"authenticated": False, "reason": "expired"}), 401
+
+#     # 3) sesja ważna
+#     return jsonify({
+#         "authenticated": True,
+#         "time": time
+#         # "session_age": session_age
+#     }), 200
+
+
+
+current_sessions = []
+
+def check_session():
+    """
+    Check if user session is valid and active.
+    Returns authentication status and reason if not authenticated.
+    Also tracks user activity time in current_sessions list.
+    Automatically ends session after 2 minutes of inactivity.
+    """
+    time = request.json.get("time")
+    current_time = datetime.now(timezone.utc).timestamp()
+
+    # Pobierz ID użytkownika (możesz dostosować do swojego systemu)
+    user_id = getattr(current_user, 'id', None) if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated else session.get('user_id', 'anonymous')
+
+    is_user_in_arr = None
+
+    for user in current_sessions:
+        if user['user_id'] == user_id:
+            is_user_in_arr = user
+            if time > user['time']:
+                user['time'] = time
+            break
+
+    if is_user_in_arr == None:
+        current_sessions.append({
+            'user_id': user_id,
+            'time': time,
+        })
+        is_user_in_arr = {
+            'user_id': user_id,
+            'time': time,
+        }
+
+    current_user_time = is_user_in_arr['time']
+
+    time_excepted = current_user_time + 120
+
+
+    # 1) czy użytkownik w ogóle jest zalogowany
+    if not current_user.is_authenticated:
+        return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
+
+    # 1) czy użytkownik w ogóle jest zalogowany
+    if current_time > time_excepted:
+        logout_user()
+        session.clear()
+        return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
+
+
+    # 3) sesja ważna
+    return jsonify({
+        "authenticated": True,
+    }), 200
+
+
+def cleanup_old_sessions(max_age_hours=24):
+    """
+    Usuwa stare sesje z current_sessions (starsze niż max_age_hours)
+    i sesje nieaktywne dłużej niż 2 minuty
+    """
+    global current_sessions
+    current_time = datetime.now(timezone.utc).timestamp()
+    max_age_seconds = max_age_hours * 3600
+    INACTIVITY_TIMEOUT = 120  # 2 minuty
+
+    current_sessions = [
+        sess for sess in current_sessions
+        if (current_time - sess.get('last_activity', sess.get('session_start', 0)) < max_age_seconds and
+            current_time - sess.get('last_activity', sess.get('session_start', 0)) < INACTIVITY_TIMEOUT)
+    ]
+
+
+def force_cleanup_inactive_sessions():
+    """
+    Wymusza usunięcie wszystkich nieaktywnych sesji (starszych niż 2 minuty)
+    Można wywołać okresowo jako zadanie w tle
+    """
+    global current_sessions
+    current_time = datetime.now(timezone.utc).timestamp()
+    INACTIVITY_TIMEOUT = 120  # 2 minuty
+
+    before_count = len(current_sessions)
+
+    current_sessions = [
+        sess for sess in current_sessions
+        if current_time - sess.get('last_activity', sess.get('session_start', 0)) < INACTIVITY_TIMEOUT
+    ]
+
+    after_count = len(current_sessions)
+    removed_count = before_count - after_count
+
+    return {
+        'removed_sessions': removed_count,
+        'active_sessions': after_count,
+        'cleanup_time': datetime.now(timezone.utc).isoformat()
+    }
+
+
+def get_session_status(user_id):
+    """
+    Sprawdza status sesji użytkownika bez aktualizowania aktywności
+    """
+    current_time = datetime.now(timezone.utc).timestamp()
+    INACTIVITY_TIMEOUT = 120
+
+    for sess in current_sessions:
+        if sess.get('user_id') == user_id:
+            last_activity = sess.get('last_activity', sess.get('session_start', 0))
+            time_since_last_activity = current_time - last_activity
+
+            return {
+                'user_id': user_id,
+                'active': time_since_last_activity < INACTIVITY_TIMEOUT,
+                'time_since_last_activity': time_since_last_activity,
+                'session_duration': current_time - sess['session_start'],
+                'total_activities': len(sess['activity_times'])
+            }
+
+    return {'user_id': user_id, 'active': False, 'reason': 'session_not_found'}
+
+
+def cleanup_old_sessions(max_age_hours=24):
+    """
+    Usuwa stare sesje z current_sessions (starsze niż max_age_hours)
+    """
+    global current_sessions
+    current_time = datetime.now(timezone.utc).timestamp()
+    max_age_seconds = max_age_hours * 3600
+
+    current_sessions = [
+        sess for sess in current_sessions
+        if current_time - sess.get('last_activity', sess.get('session_start', 0)) < max_age_seconds
+    ]
+
+
+def get_user_activity(user_id):
+    """
+    Pomocnicza funkcja do pobrania aktywności konkretnego użytkownika
+    """
+    for sess in current_sessions:
+        if sess.get('user_id') == user_id:
+            return sess
+    return None
+
+
+
 
 
 # public endpoints

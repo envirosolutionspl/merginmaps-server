@@ -12,11 +12,14 @@ from sqlalchemy import func
 from .commands import add_commands
 from .config import Configuration
 from .models import User, UserProfile
+from datetime import datetime, timedelta, timezone
+from flask import request, redirect, url_for, jsonify, session
+from flask_login import current_user, logout_user
 
 # signal for other versions to listen to
 user_account_closed = signal("user_account_closed")
 user_created = signal("user_created")
-
+IDLE_TIMEOUT = timedelta(minutes=2)
 
 def register(app):
     """Register mergin auth module in Flask app
@@ -24,6 +27,7 @@ def register(app):
     Register db events/hooks.
     """
     app.config.from_object(Configuration)
+    app.config.setdefault("PERMANENT_SESSION_LIFETIME", timedelta(minutes=2))
     app.connexion_app.add_api(
         "auth/api.yaml",
         base_path="/",
@@ -35,7 +39,73 @@ def register(app):
     app.blueprints["/"].name = "auth"
     app.blueprints["auth"] = app.blueprints.pop("/")
     add_commands(app)
+    init_idle_timeout(app)
 
+
+def init_idle_timeout(app):
+    @app.before_request
+    def enforce_idle_timeout():
+        # Sliding expiration oparte o aktywność HTTP
+        session.permanent = True
+        if not current_user.is_authenticated:
+            return
+
+        now = datetime.now(timezone.utc).timestamp()
+        last = session.get("last_seen")
+
+        if last is not None and (now - last) > IDLE_TIMEOUT.total_seconds():
+            # Sesja bezczynna zbyt długo — wyloguj i wyczyść
+            logout_user()
+            session.clear()
+            # return redirect("/login")
+            # Dla API: zwróć od razu 401 JSON, zamiast czekać na kolejny request
+            return jsonify({"authenticated": False, "message": "Session expired"}), 401
+
+        # Odśwież znacznik aktywności przy każdym żądaniu
+        session["last_seen"] = now
+
+# def init_idle_timeout(app):
+#     @app.before_request
+#     def enforce_idle_timeout():
+#         # Nie wchodź w tę logikę dla statyków i samej strony logowania
+#         path = request.path or "/"
+#         if path.startswith(("/static/", "/assets/")):
+#             return
+
+#         # Sliding expiration bazujące na żądaniach HTTP
+#         session.permanent = True
+
+#         if not current_user.is_authenticated:
+#             return  # pozwól działać dalej — LoginManager ogarnie unauthorized/redirect
+
+#         now = datetime.now(timezone.utc).timestamp()
+#         last = session.get("last_seen")
+
+#         if last is not None and (now - last) > IDLE_TIMEOUT.total_seconds():
+#             # Sesja wygasła — wyloguj i wyczyść
+#             logout_user()
+#             session.clear()
+
+#             # Nie przekierowuj, jeśli już jesteś na loginie, żeby nie zrobić pętli
+#             LOGIN_PATHS = ("/login", "/auth/login")
+#             if any(path == lp or path.startswith(lp + "/") for lp in LOGIN_PATHS):
+#                 return
+
+#             # Rozróżnij API vs HTML
+#             is_api = path.startswith("/api/")
+#             accepts_html = "text/html" in (request.headers.get("Accept") or "")
+
+#             if is_api and not accepts_html:
+#                 # API: odpowiedź JSON 401
+#                 return jsonify({"authenticated": False, "message": "Session expired"}), 401
+#             else:
+#                 # HTML: przekierowanie do logowania (z opcjonalnym next)
+#                 next_url = request.url  # albo request.full_path, jeśli chcesz zachować query
+#                 login_url = url_for("auth.login", next=next_url) if app.blueprints.get("auth") else "/login"
+#                 return redirect("/login")
+
+#         # Odśwież znacznik aktywności przy każdym żądaniu
+#         session["last_seen"] = now
 
 _permissions = {}
 
