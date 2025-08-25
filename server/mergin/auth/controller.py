@@ -38,7 +38,6 @@ from ..app import db
 from ..sync.models import Project
 from ..sync.utils import files_size
 
-
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
 USER_ID_CLAIM = "sub"
@@ -183,10 +182,6 @@ def get_user_activity(user_id):
         if sess.get('user_id') == user_id:
             return sess
     return None
-
-
-
-
 
 # public endpoints
 def user_profile(user, return_all=True):
@@ -432,6 +427,19 @@ def change_password():  # pylint: disable=W0613,W0612
         return "", 200
     return jsonify(form.errors), 400
 
+@auth_required(permissions=["admin"])
+def set_user_password_as_admin(username):
+    form = UserPasswordForm.from_json(request.json, meta={"csrf": False})
+    if not form.validate():
+        return jsonify(form.errors), 400
+
+    user = User.query.filter_by(username=username).first_or_404("User not found")
+    user.assign_password(form.password.data)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({"detail": f"Password has been changed for user '{username}'."}), 200
 
 @auth_required
 def resend_confirm_email():  # pylint: disable=W0613,W0612

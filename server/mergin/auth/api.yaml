@@ -598,6 +598,61 @@ paths:
         "404":
           $ref: "#/components/responses/NotFoundResp"
       x-openapi-router-controller: mergin.auth.controller
+  /v1/user/{username}/set-password:
+    post:
+      tags:
+        - admin
+        - user
+      summary: Set user password as admin
+      description: Allows an administrator to set a new password for a specified user.
+      operationId: set_user_password_as_admin
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Username of the user whose password will be set
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - confirm
+              properties:
+                password:
+                  type: string
+                  format: password
+                  description: The new password for the user
+                  example: VeryStrongPassword123!
+                confirm:
+                  type: string
+                  format: password
+                  description: Confirmation of the new password
+                  example: VeryStrongPassword123!
+      responses:
+        "200":
+          description: Password successfully set
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: Hasło zostało zresetowane pomyślnie.
+        "400":
+          $ref: "#/components/responses/BadStatusResp"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFoundResp"
+      x-openapi-router-controller: mergin.auth.controller
   /v1/auth/login:
     post:
       summary: Login user.
