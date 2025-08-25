@@ -158,7 +158,7 @@ class DiskStorage(ProjectStorage):
             copy_file(file, file_copy)
             yield file_copy
         except OSError as e:
-            logging.warning(f"Copy to geodiff dir failed: {str(e)}")
+            logging.warning(f"Kopiowanie do katalogu geodiff nie powiodło się: {str(e)}")
             # fallback to live directory
             file_copy = file + "_tmp"
             copy_file(file, file_copy)
@@ -181,7 +181,7 @@ class DiskStorage(ProjectStorage):
     def initialize(self, template_project=None):
         if os.path.exists(self.project_dir):
             raise InitializationError(
-                "Project directory already exists: {}".format(self.project_dir)
+                "Katalog projektu już istnieje: {}".format(self.project_dir)
             )
 
         os.makedirs(self.project_dir)
@@ -189,10 +189,10 @@ class DiskStorage(ProjectStorage):
         if template_project:
             ws = self.project.workspace
             if not ws:
-                raise InitializationError("Namespace does not exist")
+                raise InitializationError("Przestrzeń nazw nie istnieje")
             if ws.disk_usage() + template_project.disk_usage > ws.storage:
                 self.delete()
-                raise InitializationError("Disk quota reached")
+                raise InitializationError("Przekroczono limit dyskowy")
 
             for file in template_project.files:
                 src = os.path.join(template_project.storage.project_dir, file.location)
@@ -207,7 +207,7 @@ class DiskStorage(ProjectStorage):
                 except (FileNotFoundError, IOError):
                     self.delete()
                     raise InitializationError(
-                        "IOError: failed to copy '{}' to '{}'", src, dest
+                        "Błąd IO: nie udało się skopiować '{}' do '{}'", src, dest
                     )
                 except Exception as e:
                     self.delete()
@@ -216,13 +216,13 @@ class DiskStorage(ProjectStorage):
     def file_size(self, file):
         file_path = os.path.join(self.project_dir, file)
         if not os.path.exists(file_path):
-            raise FileNotFound("File {} not found.".format(file))
+            raise FileNotFound("Plik {} nie został znaleziony.".format(file))
         return os.path.getsize(file_path)
 
     def file_path(self, file):
         path = os.path.join(self.project_dir, file)
         if not os.path.exists(path):
-            raise FileNotFound("File {} not found.".format(file))
+            raise FileNotFound("Plik {} nie został znaleziony.".format(file))
         return path
 
     def read_file(self, path, block_size=4096):
@@ -230,7 +230,7 @@ class DiskStorage(ProjectStorage):
 
         # do input validation outside generator to execute immediately
         if not os.path.exists(file_path):
-            raise FileNotFound("File {} not found.".format(path))
+            raise FileNotFound("Plik {} nie został znaleziony.".format(path))
 
         def _generator():
             with open(file_path, "rb") as f:
@@ -264,12 +264,12 @@ class DiskStorage(ProjectStorage):
             basefile
         ) as patchedfile_tmp:
             copy_time = time.time() - start
-            logging.info(f"Copying finished in {copy_time} s")
+            logging.info(f"Kopiowanie zakończone w {copy_time} s")
             try:
                 # clean geodiff logger
                 self.flush_geodiff_logger()
                 logging.info(
-                    f"Geodiff: apply changeset {changeset} of size {os.path.getsize(changeset)} with changes to {patchedfile}"
+                    f"Geodiff: zastosowanie zmian w {changeset} o rozmiarze {os.path.getsize(changeset)} do {patchedfile}"
                 )
                 start = time.time()
                 self.geodiff.apply_changeset(patchedfile_tmp, changeset_tmp)
@@ -287,20 +287,20 @@ class DiskStorage(ProjectStorage):
                 )
                 gh.copy_time = copy_time
                 gh.geodiff_time = geodiff_apply_time
-                logging.info(f"Changeset applied in {geodiff_apply_time} s")
+                logging.info(f"Zastosowanie zmian w {geodiff_apply_time} s")
                 # move constructed file where is belongs
-                logging.info(f"Apply changes: moving patchfile {patchedfile_tmp}")
+                logging.info(f"Zastosowanie zmian: przeniesienie pliku {patchedfile_tmp}")
                 start = time.time()
                 copy_file(patchedfile_tmp, patchedfile)
                 gh.copy_time = copy_time + (time.time() - start)
 
                 # TODO this can potentially fail for large files
-                logging.info(f"Apply changes: calculating checksum of {patchedfile}")
+                logging.info(f"Zastosowanie zmian: obliczenie sumy kontrolnej {patchedfile}")
                 start = time.time()
                 checksum = generate_checksum(patchedfile_tmp)
                 checksumming_time = time.time() - start
                 gh.checksum_time = checksumming_time
-                logging.info(f"Checksum calculated in {checksumming_time} s")
+                logging.info(f"Zastosowanie zmian: obliczenie sumy kontrolnej w {checksumming_time} s")
                 db.session.add(gh)
                 return Ok(
                     (
@@ -339,7 +339,7 @@ class DiskStorage(ProjectStorage):
                 )
                 self.flush_geodiff_logger()
                 logging.info(
-                    f"Geodiff: create changeset {changeset} from {uploaded_file}"
+                    f"Geodiff: utworzenie zmian w {changeset} z {uploaded_file}"
                 )
                 self.geodiff.create_changeset(
                     basefile_tmp, uploaded_file_tmp, changeset_tmp
@@ -400,9 +400,9 @@ class DiskStorage(ProjectStorage):
         with self.geodiff_copy(base_meta.abs_path) as restored_file:
             copy_time = time.time() - start
             logging.info(
-                f"Restore file: {base_meta.abs_path} copied to {restored_file} in {copy_time} s"
+                f"Przywrócenie pliku: {base_meta.abs_path} skopiowane do {restored_file} w {copy_time} s"
             )
-            logging.info(f"Restoring gpkg file with {len(diffs)} diffs")
+            logging.info(f"Przywrócenie pliku gpkg z {len(diffs)} zmian")
             try:
                 self.flush_geodiff_logger()  # clean geodiff logger
                 changeset = os.path.join(
@@ -421,11 +421,11 @@ class DiskStorage(ProjectStorage):
                     )
 
                 logging.info(
-                    f"Geodiff: apply changeset {changeset} of size {os.path.getsize(changeset)}"
+                    f"Geodiff: zastosowanie zmian w {changeset} o rozmiarze {os.path.getsize(changeset)}"
                 )
                 # if we are going backwards we need to reverse changeset!
                 if base_meta.version.name > version:
-                    logging.info(f"Geodiff: inverting changeset")
+                    logging.info(f"Geodiff: odwrócenie zmian w {changeset}")
                     changes = os.path.join(
                         self.geodiff_working_dir,
                         os.path.basename(base_meta.abs_path) + "-diff-inv",
@@ -448,11 +448,11 @@ class DiskStorage(ProjectStorage):
                 )
                 apply_time = time.time() - start
                 gh.geodiff_time = apply_time
-                logging.info(f"Changeset applied in {apply_time} s")
+                logging.info(f"Geodiff: zastosowanie zmian w {changes} w {apply_time} s")
             except (GeoDiffLibError, GeoDiffLibConflictError):
                 project_workspace = self.project.workspace.name
                 logging.exception(
-                    f"Failed to restore file: {self.gediff_log.getvalue()} from project {project_workspace}/{self.project.name}"
+                    f"Przywrócenie pliku: nieudane przywrócenie pliku: {self.gediff_log.getvalue()} z projektu {project_workspace}/{self.project.name}"
                 )
                 return
             finally:
@@ -460,13 +460,13 @@ class DiskStorage(ProjectStorage):
                 move_to_tmp(changeset)
             # move final restored file to place where it is expected (only after it is successfully created)
             logging.info(
-                f"Copying restored file to expected location {file_found.location}"
+                f"Przywrócenie pliku: skopiowanie przywróconego pliku do {file_found.location}"
             )
             start = time.time()
             copy_file(
                 restored_file, os.path.join(self.project_dir, file_found.location)
             )
-            logging.info(f"File copied in {time.time() - start} s")
+            logging.info(f"Przywrócenie pliku: skopiowanie przywróconego pliku do {file_found.location} w {time.time() - start} s")
             copy_time += time.time() - start
             gh.copy_time = copy_time
             db.session.add(gh)
