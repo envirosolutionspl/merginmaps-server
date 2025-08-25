@@ -37,7 +37,7 @@ import { createPiniaInstance, getPiniaInstance } from './store'
   }
 
   setInterval(async () => {
-    if(window.location.pathname === '/login') {
+    if(window.location.pathname === '/login/reset' || window.location.pathname === '/login') {
       return
     }
     try {
