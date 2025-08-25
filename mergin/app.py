@@ -74,7 +74,7 @@ def traceback_hash():
                 source_line_content = traceback_line.split("\n")[-2].strip()
             except IndexError:
                 logging.warning(
-                    f"Failed to parse problem source info from: {traceback_line}"
+                    f"Nie udało się przetworzyć informacji o źródle problemu z: {traceback_line}"
                 )
                 break
             source_file_rel_path = os.path.relpath(source_file_full_path, server_root)
@@ -120,8 +120,8 @@ class GeventTimeoutMiddleware:
             with gevent.Timeout(Configuration.GEVENT_REQUEST_TIMEOUT):
                 return self.app(environ, start_response)
         except gevent.Timeout:
-            logging.error(f"Gevent worker: Request {request.path} timed out")
-            resp = Response("Gateway Timeout", mimetype="text/plain", status=504)
+            logging.error(f"Gevent worker: Żądanie {request.path} przekroczyło limit czasu")
+            resp = Response("504 Przekroczono limit czasu", mimetype="text/plain", status=504)
             return resp(environ, start_response)
 
 
@@ -224,7 +224,7 @@ def create_app(public_keys: List[str] = None) -> Flask:
             and os.path.isfile(current_app.config["MAINTENANCE_FILE"])
             and all(path not in request.path for path in allowed_endpoints)
         ):
-            abort(503, "Service unavailable due to maintenance, please try later")
+            abort(503, "Usługa niedostępna z powodu prac konserwacyjnych, spróbuj później.")
 
     # Adjust CSRF policy for API
     def custom_protect():

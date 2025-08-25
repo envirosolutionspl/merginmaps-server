@@ -104,15 +104,15 @@ def format_time_delta(delta: timedelta) -> str:
     """Format timedelta difference approximately in days or hours"""
     days = round(delta.total_seconds() / (24 * 3600))
     if days > 1:
-        difference = f"{days} days"
+        difference = f"{days} dni"
     elif delta.days > 0:
-        difference = "1 day"
+        difference = "1 dzień"
     else:
         hours = delta.total_seconds() / 3600
         if hours > 1:
-            difference = f"{math.ceil(hours)} hours"
+            difference = f"{math.ceil(hours)} godzin"
         elif hours > 0:
-            difference = "1 hour"
+            difference = "1 godzina"
         else:
             difference = "N/A"
     return difference

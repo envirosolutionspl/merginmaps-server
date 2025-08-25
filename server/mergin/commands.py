@@ -26,49 +26,49 @@ def add_commands(app: Flask):
         ping_celery = current_app.control.inspect().ping()
         if not ping_celery:
             _echo_error(
-                "Celery process not running properly. Configure celery worker and celery beat. This breaks also email sending from the system.",
+                "Proces Celery nie działa poprawnie. Skonfiguruj celery worker oraz celery beat. Powoduje to również problem z wysyłaniem wiadomości e-mail z systemu.",
             )
             return
-        click.secho("Celery is running properly", fg="green")
+        click.secho("Celery działa poprawnie.", fg="green")
         return True
 
     def _send_statistics():
         from .stats.tasks import send_statistics, save_statistics
 
-        _echo_title("Sending statistics.")
+        _echo_title("Wysyłanie statystyk.")
         # save rows to MerginStatistics table
         save_statistics.delay()
 
         if not app.config.get("COLLECT_STATISTICS"):
             click.secho(
-                "Statistics sending is disabled.",
+                "Wysyłanie statystyk jest wyłączone.",
             )
             return
 
         if not _check_celery():
             return
         send_statistics.delay()
-        click.secho("Statistics sent.", fg="green")
+        click.secho("Statystyki zostały wysłane.", fg="green")
 
     def _send_email(email: str):
         """Send check email to specified email address."""
         from .celery import send_email_async
 
-        _echo_title(f"Sending check email to specified email address {email}.")
+        _echo_title(f"Wysyłanie wiadomości testowej na podany adres e-mail {email}.")
         if app.config["MAIL_SUPPRESS_SEND"]:
             _echo_error(
-                "Sending emails is disabled. Please set MAIL_SUPPRESS_SEND=False to enable sending emails."
+                "Wysyłanie wiadomości e-mail jest wyłączone. Ustaw MAIL_SUPPRESS_SEND=False, aby włączyć wysyłanie wiadomości."
             )
             return
         default_sender = app.config.get("MAIL_DEFAULT_SENDER")
         if not default_sender:
             _echo_error(
-                "No default sender set. Please set MAIL_DEFAULT_SENDER environment variable",
+                "Nie ustawiono domyślnego nadawcy. Ustaw zmienną środowiskową MAIL_DEFAULT_SENDER",
             )
             return
         email_data = {
-            "subject": "Mergin Maps server check",
-            "html": "Awesome, your email configuration of Mergin Maps server is working.",
+            "subject": "Sprawdzanie serwera Mergin Maps",
+            "html": "Świetnie, konfiguracja poczty serwera Mergin Maps działa poprawnie.",
             "recipients": [email],
             "sender": default_sender,
         }
@@ -79,7 +79,7 @@ def add_commands(app: Flask):
             send_email_async.delay(**email_data)
         except Exception as e:
             _echo_error(
-                f"Error sending email: {e}",
+                f"Błąd podczas wysyłania wiadomości e-mail: {e}",
             )
 
     def _check_server():  # pylint: disable=W0612
@@ -87,18 +87,18 @@ def add_commands(app: Flask):
 
         _echo_title("Server health check")
         edition_map = {
-            "ce": "Community Edition",
-            "ee": "Enterprise Edition",
+            "ce": "Wersja Community",
+            "ee": "Wersja Enterprise",
         }
         edition = edition_map.get(app.config["SERVER_TYPE"])
         if edition:
-            click.echo(f"Mergin Maps edition: {edition}")
-        click.echo(f"Mergin Maps version: {app.config['VERSION']}")
+            click.echo(f"Wersja Mergin Maps: {edition}")
+        click.echo(f"Wersja Mergin Maps: {app.config['VERSION']}")
 
         base_url = app.config["MERGIN_BASE_URL"]
         if not base_url:
             _echo_error(
-                "No base URL set. Please set MERGIN_BASE_URL environment variable",
+                "Nie ustawiono podstawowego adresu URL. Ustaw zmienną środowiskową MERGIN_BASE_URL",
             )
         else:
             click.secho(f"Base URL of server is {base_url}", fg="green")
@@ -106,16 +106,16 @@ def add_commands(app: Flask):
         contact_email = app.config["CONTACT_EMAIL"]
         if not contact_email:
             _echo_error(
-                "No contact email set. Please set CONTACT_EMAIL environment variable",
+                "Nie ustawiono adresu e-mail kontaktowego. Ustaw zmienną środowiskową CONTACT_EMAIL",
             )
         else:
-            click.secho(f"Your contact email is {contact_email}.", fg="green")
+            click.secho(f"Twój adres e-mail kontaktowy to {contact_email}.", fg="green")
 
         tables = db.engine.table_names()
         if not tables:
-            _echo_error("Database not initialized. Run flask init-db command")
+            _echo_error("Baza danych nie została zainicjalizowana. Uruchom polecenie flask init-db")
         else:
-            click.secho("Database initialized properly", fg="green")
+            click.secho("Baza danych została poprawnie zainicjalizowana", fg="green")
 
         _check_celery()
 
@@ -123,9 +123,9 @@ def add_commands(app: Flask):
         """Create database tables."""
         from .stats.models import MerginInfo
 
-        _echo_title("Database initialization")
+        _echo_title("Inicjalizacja bazy danych")
         with click.progressbar(
-            label="Creating database", length=4, show_eta=False
+            label="Tworzenie bazy danych", length=4, show_eta=False
         ) as progress_bar:
             progress_bar.update(0)
             db.drop_all(bind=None)
@@ -143,7 +143,7 @@ def add_commands(app: Flask):
                 db.session.commit()
             progress_bar.update(4)
 
-        click.secho("Tables created.", fg="green")
+        click.secho("Tabele zostały utworzone.", fg="green")
 
     @app.cli.command()
     def init_db():
@@ -155,7 +155,7 @@ def add_commands(app: Flask):
     @click.option(
         "--recreate",
         "-r",
-        help="Recreate database and admin user.",
+        help="Odtwórz bazę danych oraz użytkownika administracyjnego.",
         is_flag=True,
         required=False,
     )
@@ -167,7 +167,7 @@ def add_commands(app: Flask):
         tables = db.engine.table_names()
         if recreate and tables:
             click.confirm(
-                "Are you sure you want to recreate database and admin user? This will remove all data!",
+                "Czy na pewno chcesz odtworzyć bazę danych i użytkownika administracyjnego? Spowoduje to usunięcie wszystkich danych!",
                 default=False,
                 abort=True,
             )
@@ -175,7 +175,7 @@ def add_commands(app: Flask):
         if not tables or recreate:
             _init_db()
 
-            _echo_title("Creating admin user. Copy generated password.")
+            _echo_title("Tworzenie użytkownika administracyjnego. Skopiuj wygenerowane hasło.")
             username = User.generate_username(email)
             password_chars = string.ascii_letters + string.digits
             password = "".join(random.choice(password_chars) for i in range(12))
@@ -185,11 +185,11 @@ def add_commands(app: Flask):
             db.session.add(user)
             db.session.commit()
             click.secho(
-                "Admin user created. Please save generated password.", fg="green"
+                "Użytkownik administracyjny został utworzony. Zapisz wygenerowane hasło.", fg="green"
             )
             click.secho(f"Email: {email}")
-            click.secho(f"Username: {username}")
-            click.secho(f"Password: {password}")
+            click.secho(f"Nazwa użytkownika: {username}")
+            click.secho(f"Hasło: {password}")
         _check_server()
         _send_email(email)
         _send_statistics()

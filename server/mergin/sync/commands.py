@@ -30,7 +30,7 @@ def add_commands(app: Flask):
         """Create blank project"""
         workspace = current_app.ws_handler.get_by_name(namespace)
         if not workspace:
-            print("ERROR: Workspace not found")
+            print("BŁĄD: nie znaleziono obszaru roboczego")
             return
         user = User.query.filter_by(username=username).first()
         if not user:
@@ -38,7 +38,7 @@ def add_commands(app: Flask):
             return
         p = Project.query.filter_by(name=name, workspace_id=workspace.id).first()
         if p:
-            print("ERROR: Project name already exists")
+            print("BŁĄD: nazwa projektu już istnieje")
             return
         project_params = dict(
             creator=user,
@@ -73,14 +73,14 @@ def add_commands(app: Flask):
             .first()
         )
         if not project:
-            print(f"ERROR: Project does not exist")
+            print(f"BŁĄD: projekt nie istnieje")
             return
         pv = ProjectVersion.query.filter_by(project_id=project.id, name=version).first()
         if not pv:
-            print(f"ERROR: Project version does not exist")
+            print(f"BŁĄD: wersja projektu nie istnieje")
             return
         if os.path.exists(directory):
-            print(f"ERROR: Destination directory {directory} already exist")
+            print(f"BŁĄD: katalog docelowy {directory} już istnieje")
             return
 
         os.mkdir(directory)
@@ -94,7 +94,7 @@ def add_commands(app: Flask):
                 os.path.join(project.storage.project_dir, f.location),
                 os.path.join(directory, f.path),
             )
-        print("Project downloaded successfully")
+        print("Projekt został pomyślnie pobrany")
 
     @project.command()
     @click.argument("project-name")
@@ -103,7 +103,7 @@ def add_commands(app: Flask):
         ws, name = split_project_path(project_name)
         workspace = current_app.ws_handler.get_by_name(ws)
         if not workspace:
-            print(f"ERROR: Workspace does not exist")
+            print(f"BŁĄD: obszar roboczy nie istnieje")
             return
         project = (
             Project.query.filter_by(workspace_id=workspace.id, name=name)
@@ -111,9 +111,9 @@ def add_commands(app: Flask):
             .first()
         )
         if not project:
-            print(f"ERROR: Project does not exist")
+            print(f"BŁĄD: projekt nie istnieje")
             return
         project.removed_at = datetime.utcnow()
         project.removed_by = None
         db.session.commit()
-        print("Project removed successfully")
+        print("Projekt został pomyślnie usunięty")

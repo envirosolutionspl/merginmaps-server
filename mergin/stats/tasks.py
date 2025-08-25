@@ -71,7 +71,7 @@ def send_statistics():
         return
 
     if not db.engine.has_table("mergin_info"):
-        logging.warning("Database not initialized")
+        logging.warning("Baza danych nie jest zainicjowana")
         return
 
     info = MerginInfo.query.first()
@@ -98,6 +98,6 @@ def send_statistics():
             info.last_reported = datetime.utcnow()
             db.session.commit()
         else:
-            logging.warning("Statistics error: " + str(resp.text))
+            logging.warning("Błąd wysłania statystyk: " + str(resp.text))
     except requests.exceptions.RequestException as e:
-        logging.warning("Statistics error: " + str(e))
+        logging.warning("Błąd wysłania statystyk: " + str(e))

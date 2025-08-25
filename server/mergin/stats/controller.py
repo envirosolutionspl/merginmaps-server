@@ -32,18 +32,18 @@ def get_latest_version():
     try:
         req = requests.get(Configuration.STATISTICS_URL + "/latest-versions")
     except requests.exceptions.RequestException:
-        abort(400, "Updates information not available")
+        abort(400, "Informacje o aktualizacjach są niedostępne")
 
     if not req.ok:
-        abort(400, "Updates information not available")
+        abort(400, "Informacje o aktualizacjach są niedostępne")
 
     data = req.json().get(current_app.config["SERVER_TYPE"].lower(), None)
     if not data:
-        abort(400, "Updates information not available")
+        abort(400, "Informacje o aktualizacjach są niedostępne")
 
     parsed_version = parse_version_string(data.get("version", ""))
     if not parsed_version:
-        abort(400, "Updates information not available")
+        abort(400, "Informacje o aktualizacjach są niedostępne")
 
     data = {**data, **parsed_version}
     return data, 200
@@ -60,7 +60,7 @@ def download_report(date_from: str, date_to: str):
         )
         parsed_to = datetime.combine(datetime.strptime(date_to, "%Y-%m-%d"), time.max)
     except ValueError:
-        abort(400, "Invalid date format")
+        abort(400, "Nieprawidłowy format daty")
 
     stats = (
         db.session.query(MerginStatistics.created_at, MerginStatistics.data)

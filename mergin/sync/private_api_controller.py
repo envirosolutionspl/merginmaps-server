@@ -48,7 +48,7 @@ def create_project_access_request(namespace, project_name):  # noqa: E501
         Project.removed_at.is_(None),
     ).first_or_404()
     if project.get_role(current_user.id):
-        abort(409, "You already have access to project")
+        abort(409, "Masz już dostęp do projektu")
 
     access_request = (
         AccessRequest.query.filter_by(
@@ -58,7 +58,7 @@ def create_project_access_request(namespace, project_name):  # noqa: E501
         .first()
     )
     if access_request:
-        abort(409, "Project access request already exists")
+        abort(409, "Zapytanie o dostęp do projektu już istnieje")
 
     access_request = AccessRequest(project, current_user.id)
     db.session.add(access_request)
@@ -76,7 +76,7 @@ def create_project_access_request(namespace, project_name):  # noqa: E501
     )
     for owner in owners:
         email_data = {
-            "subject": "Project access requested",
+            "subject": "Zapytanie o dostęp do projektu",
             "html": render_template(
                 "email/project_access_request.html",
                 expire=access_request.expire,
@@ -112,7 +112,7 @@ def decline_project_access_request(request_id):  # noqa: E501
         access_request.resolve(RequestStatus.DECLINED, current_user.id)
         db.session.commit()
         return "", 200
-    abort(403, "You don't have permissions to remove project access request")
+    abort(403, "Nie masz uprawnień do odrzucenia zapytania o dostęp do projektu")
 
 
 @auth_required
@@ -139,7 +139,7 @@ def accept_project_access_request(request_id):
             access_request.project, user_id=access_request.requested_by
         )
         return "", 200
-    abort(403, "You don't have permissions to accept project access request")
+    abort(403, "Nie masz uprawnień do zaakceptowania zapytania o dostęp do projektu")
 
 
 @auth_required
@@ -172,7 +172,7 @@ def list_namespace_project_access_requests(
 ):
     """Paginated list of active incoming project access requests to workspace"""
     if not check_workspace_permissions(namespace, current_user, "admin"):
-        abort(403, "You don't have permissions to list project access requests")
+        abort(403, "Nie masz uprawnień do listowania zapytania o dostęp do projektu")
     ws = current_app.ws_handler.get_by_name(namespace)
     access_requests = AccessRequest.query.join(AccessRequest.project).filter(
         Project.workspace_id == ws.id,
@@ -234,7 +234,7 @@ def restore_project(id):  # noqa: E501
     if not project.removed_at:
         return "", 201
     if not project.workspace.is_active:
-        abort(400, "Failed to restore: Project workspace is not active")
+        abort(400, "Nie można przywrócić: Przestrzeń robocza projektu nie jest aktywna")
     project.removed_at = None
     project.removed_by = None
     db.session.commit()
@@ -249,7 +249,7 @@ def force_project_delete(id):  # noqa: E501
         .first_or_404()
     )
     if not project.removed_at:
-        abort(400, "Failed to remove: Project is still active")
+        abort(400, "Nie można usunąć: Projekt jest nadal aktywny")
     project.delete()
     return "", 204
 
@@ -294,7 +294,7 @@ def unsubscribe_project(id):  # pylint: disable=W0612
 
     # prevent project owner to self-remove
     if current_role == ProjectRole.OWNER:
-        abort(400, "Owner cannot leave a project")
+        abort(400, "Nie można opuścić projektu: Jest to właściciel")
 
     project.unset_role(current_user.id)
     db.session.add(project)

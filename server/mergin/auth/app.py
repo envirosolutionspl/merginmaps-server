@@ -79,18 +79,18 @@ def auth_required(f=None, permissions=None):
             permissions_fn = []
             for name in permissions:
                 if name not in _permissions:
-                    raise KeyError("Unknown permission: {}".format(name))
+                    raise KeyError("Nieznane uprawnienie: {}".format(name))
                 permissions_fn.append(_permissions[name])
         return functools.partial(auth_required, permissions=permissions_fn)
 
     @functools.wraps(f)
     def wrapped_func(*args, **kwargs):
         if not current_user or not current_user.is_authenticated:
-            return "Authentication information is missing or invalid.", 401
+            return "Brakuje informacji uwierzytelniających lub są one nieprawidłowe.", 401
         if permissions:
             for check_permission in permissions:
                 if not check_permission(current_user):
-                    return "Permission denied.", 403
+                    return "Brak uprawnień.", 403
         return f(*args, **kwargs)
 
     return wrapped_func

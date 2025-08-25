@@ -351,7 +351,7 @@ class StrOrInt(fields.Field):
         if isinstance(value, str) or isinstance(value, int):
             return value
         else:
-            raise ValidationError("Field should be str or int")
+            raise ValidationError("Pole powinno być typu str lub int.")
 
 
 class ProjectAccessDetailSchema(Schema):

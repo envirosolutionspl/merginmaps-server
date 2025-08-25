@@ -30,7 +30,7 @@ class User(db.Model):
     registration_date = db.Column(
         db.DateTime(),
         nullable=False,
-        info={"label": "Date of creation of user account"},
+        info={"label": "Data utworzenia konta użytkownika"},
         default=datetime.datetime.utcnow,
     )
 

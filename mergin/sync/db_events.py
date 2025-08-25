@@ -11,7 +11,7 @@ from ..app import db
 
 def check(session):
     if os.path.isfile(current_app.config["MAINTENANCE_FILE"]):
-        abort(503, "Service unavailable due to maintenance, please try later")
+        abort(503, "Usługa niedostępna z powodu prac serwisowych, spróbuj ponownie później.")
 
 
 def register_events():

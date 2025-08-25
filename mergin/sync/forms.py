@@ -18,7 +18,7 @@ def project_name_validation(name: str) -> str | None:
     """Check whether project name is valid"""
     name = name.strip() if name is not None else name
     if not name:
-        return "Project name cannot be empty"
+        return "Nazwa projektu nie może być pusta"
     errors = [
         has_valid_characters(name),
         has_valid_first_character(name),

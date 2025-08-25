@@ -18,10 +18,10 @@ from ..sync.utils import get_user_agent, get_ip, get_device_id, is_reserved_word
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    username = db.Column(db.String(80), info={"label": "Username"})
+    username = db.Column(db.String(80), info={"label": "Nazwa użytkownika"})
     email = db.Column(db.String(120))
 
-    passwd = db.Column(db.String(80), info={"label": "Password"})  # salted + hashed
+    passwd = db.Column(db.String(80), info={"label": "Hasło"})  # salted + hashed
 
     active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean)
@@ -30,7 +30,7 @@ class User(db.Model):
     registration_date = db.Column(
         db.DateTime(),
         nullable=False,
-        info={"label": "Date of creation of user account"},
+        info={"label": "Data utworzenia konta użytkownika"},
         default=datetime.datetime.utcnow,
     )
     failed_logins=db.Column(db.Integer)

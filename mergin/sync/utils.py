@@ -272,21 +272,21 @@ def is_reserved_word(name: str) -> str | None:
     """Check if name is reserved in system"""
     reserved = r"^support$|^helpdesk$|^merginmaps$|^lutraconsulting$|^mergin$|^lutra$|^input$|^admin$|^sales$"
     if re.match(reserved, name) is not None:
-        return "The provided value is invalid."
+        return "Podana wartość jest nieprawidłowa."
     return None
 
 
 def has_valid_characters(name: str) -> str | None:
     """Check if name contains only valid characters"""
     if re.match(r"^[\w\s\-\.]+$", name) is None:
-        return "Please use only alphanumeric or the following -_. characters."
+        return "Proszę używać wyłącznie znaków alfanumerycznych lub następujących znaków: -_."
     return None
 
 
 def has_valid_first_character(name: str) -> str | None:
     """Check if name contains only valid characters in first position"""
     if re.match(r"^[\s.].*$", name) is not None:
-        return f"Value can not start with space or dot."
+        return f"Wartość nie może zaczynać się od spacji ani kropki."
     return None
 
 
@@ -296,7 +296,7 @@ def check_filename(name: str) -> str | None:
     try:
         validate_filename(name)
     except ValidationError:
-        error = "The provided value is invalid."
+        error = "Podana wartość jest nieprawidłowa."
     return error
 
 

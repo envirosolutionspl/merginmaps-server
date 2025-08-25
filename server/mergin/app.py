@@ -74,7 +74,7 @@ def traceback_hash():
                 source_line_content = traceback_line.split("\n")[-2].strip()
             except IndexError:
                 logging.warning(
-                    f"Failed to parse problem source info from: {traceback_line}"
+                    f"Nie udało się sparsować informacji o źródle problemu z: {traceback_line}"
                 )
                 break
             source_file_rel_path = os.path.relpath(source_file_full_path, server_root)
@@ -224,7 +224,7 @@ def create_app(public_keys: List[str] = None) -> Flask:
             and os.path.isfile(current_app.config["MAINTENANCE_FILE"])
             and all(path not in request.path for path in allowed_endpoints)
         ):
-            abort(503, "Service unavailable due to maintenance, please try later")
+            abort(503, "Usługa niedostępna z powodu prac konserwacyjnych, spróbuj ponownie później")
 
     # Adjust CSRF policy for API
     def custom_protect():
@@ -290,26 +290,6 @@ def create_app(public_keys: List[str] = None) -> Flask:
             }
         )
         return status, 200
-
-    @app.route("/check_token", methods=["POST"])
-    def check_token():
-        return jsonify({"status": "ok", "version": "1.0.0"}), 200
-        token = request.json["token"]
-        try:
-            data = decode_token(
-                app.app.config["SECRET_KEY"],
-                app.app.config["SECURITY_BEARER_SALT"],
-                token,
-                app.app.config["BEARER_TOKEN_EXPIRATION"],
-            )
-            user = User.query.filter_by(
-                id=data["user_id"], username=data["username"], email=data["email"]
-            ).one_or_none()
-            if user and user.active:
-                return json.dumps({"valid": True}), 200
-        except (BadSignature, BadTimeSignature, KeyError):
-            pass
-        return json.dumps({"valid": False}), 200
 
     @app.route("/ping", methods=["GET"])
     def ping():  # pylint: disable=W0612
@@ -496,7 +476,7 @@ class ResponseError:
     """Base class for custom error messages"""
 
     code = "BaseError"
-    detail = "Request failed"
+    detail = "Żądanie nie powiodło się."
 
     def to_dict(self) -> Dict:
         return dict(code=self.code, detail=self.detail + f" ({self.code})")

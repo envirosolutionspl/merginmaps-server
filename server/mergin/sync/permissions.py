@@ -205,7 +205,7 @@ def require_project(ws, project_name, permission) -> Project:
         .first_or_404()
     )
     if not permission.check(project, current_user):
-        abort(403, "You do not have permissions for this project")
+        abort(403, "Nie masz uprawnień do tego projektu")
     return project
 
 
@@ -223,9 +223,9 @@ def require_project_by_uuid(uuid: str, permission: ProjectPermissions, scheduled
     if not workspace:
         abort(404)
     if not is_active_workspace(workspace):
-        abort(404, "Workspace doesn't exist")
+        abort(404, "Obszar roboczy nie istnieje")
     if not permission.check(project, current_user):
-        abort(403, "You do not have permissions for this project")
+        abort(403, "Nie masz uprawnień do tego projektu")
     return project
 
 
@@ -236,7 +236,7 @@ def get_upload(transaction_id):
         abort(404)
 
     if upload.user_id != current_user.id:
-        abort(403, "You do not have permissions for ongoing upload")
+        abort(403, "Nie masz uprawnień do trwającego przesyłania")
 
     upload_dir = os.path.join(upload.project.storage.project_dir, "tmp", transaction_id)
     return upload, upload_dir

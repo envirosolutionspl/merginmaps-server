@@ -58,7 +58,7 @@ class ExtendedEmail(Email):
 
         if re.search(r"[|'—]", field.data):
             raise ValidationError(
-                f"Email address '{field.data}' contains an invalid character."
+                f"Adres e-mail '{field.data}' zawiera niedozwolony znak"
             )
 
 
@@ -69,12 +69,12 @@ class PasswordValidator:
     def __call__(self, form, field):
         if len(field.data) < self.min_length:
             raise ValidationError(
-                "Passwords must be at least {} characters long.".format(self.min_length)
+                f"Hasło musi mieć co najmniej {self.min_length} znaków."
             )
 
         strength = safe.check(field.data, self.min_length)
         if not bool(strength):
-            raise ValidationError("Password is not strong enough")
+            raise ValidationError("Hasło nie jest wystarczająco silne")
 
 
 class LoginForm(FlaskForm):
@@ -86,11 +86,11 @@ class LoginForm(FlaskForm):
 
 class RegisterUserForm(FlaskForm):
     username = CustomStringField(
-        "Username",
+        "Nazwa użytkownika",
         validators=[validators.Length(min=4, max=25), username_validation],
     )
     email = CustomStringField(
-        "Email Address",
+        "Adres e-mail",
         validators=[DataRequired(), ExtendedEmail()],
     )
 
@@ -104,27 +104,27 @@ class RegisterUserForm(FlaskForm):
         ).first()
         if user:
             if user.username.lower() == self.username.data.lower().strip():
-                self.username.errors.append("Already exists")
+                self.username.errors.append("Nazwa użytkownika jest już zajęta")
             if user.email.lower() == self.email.data.lower().strip():
-                self.email.errors.append("Already exists")
+                self.email.errors.append("Adres e-mail jest już zajęty")
             return False
         return True
 
 
 class ResetPasswordForm(FlaskForm):
     email = CustomStringField(
-        "Email Address",
+        "Adres e-mail",
         [DataRequired(), ExtendedEmail()],
     )
 
 
 class UserPasswordForm(FlaskForm):
     password = PasswordField(
-        "Password", [DataRequired(), PasswordValidator(min_length=8)]
+        "Hasło", [DataRequired(), PasswordValidator(min_length=8)]
     )
     confirm = PasswordField(
-        "Confirm password",
-        [DataRequired(), EqualTo("password", message="Passwords must match")],
+        "Potwierdź hasło",
+        [DataRequired(), EqualTo("password", message="Hasła muszą być takie same")],
     )
 
 
@@ -133,23 +133,23 @@ class UserRegistrationForm(RegisterUserForm, UserPasswordForm):
 
 
 class UserChangePasswordForm(UserPasswordForm):
-    old_password = StringField("Old Password", [DataRequired()])
+    old_password = StringField("Stare hasło", [DataRequired()])
 
 
 class UserForm(UpdateForm):
     """Form to update user private props"""
 
     is_admin = BooleanField("Admin", [Optional()])
-    active = BooleanField("Active", [Optional()])
+    active = BooleanField("Aktywny", [Optional()])
 
 
 class UserProfileDataForm(UpdateForm):
     """This form is for user profile update"""
 
-    receive_notifications = BooleanField("Receive notifications", [Optional()])
-    first_name = CustomStringField("First Name", [Optional()])
-    last_name = CustomStringField("Last Name", [Optional()])
-    email = CustomStringField("Email", [Optional(), ExtendedEmail()])
+    receive_notifications = BooleanField("Odbieraj powiadomienia", [Optional()])
+    first_name = CustomStringField("Imię", [Optional()])
+    last_name = CustomStringField("Nazwisko", [Optional()])
+    email = CustomStringField("Adres e-mail", [Optional(), ExtendedEmail()])
 
 
 class ApiLoginForm(LoginForm):

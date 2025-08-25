@@ -30,7 +30,7 @@ def add_commands(app: Flask):
             )
         ).first()
         if user:
-            print("ERROR: User already exists!\n")
+            print("ERROR: Użytkownik już istnieje!\n")
             return
 
         user = User(username=username, passwd=password, is_admin=is_admin, email=email)

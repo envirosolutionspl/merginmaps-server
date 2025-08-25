@@ -32,7 +32,7 @@ def remove_temp_files():
             try:
                 shutil.rmtree(path)
             except OSError as e:
-                print(f"Unable to remove {path}: {str(e)}")
+                print(f"Nie można usunąć {path}: {str(e)}")
 
 
 @celery.task
@@ -42,7 +42,7 @@ def remove_projects_backups():
     start = time.time()
     while True:
         if time.time() - start > 3 * 3600:
-            logging.warning("Exiting remove_projects_backups as it took to long")
+            logging.warning("Zakończono usuwanie projektów w trybie konserwacyjnym, gdyż zajęło to zbyt długo")
             break
 
         # process backlog
