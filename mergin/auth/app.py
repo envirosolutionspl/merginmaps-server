@@ -2,20 +2,35 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
+
 import functools
 from blinker import signal
-from flask import current_app, render_template
+from flask import current_app, render_template, jsonify
 from flask_login import current_user
 from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import func
+import connexion
+
 
 from .commands import add_commands
 from .config import Configuration
 from .models import User, UserProfile
+from datetime import datetime, timedelta, timezone
+from flask import request, redirect, url_for, jsonify, session
+from flask_login import current_user, logout_user
+
 
 # signal for other versions to listen to
 user_account_closed = signal("user_account_closed")
 user_created = signal("user_created")
+IDLE_TIMEOUT = timedelta(minutes=30)
+
+
+def handle_validation_error(exc):
+    """Handler dla błędów walidacji z polskimi komunikatami"""
+    if 'is not a \'email\'' in str(exc.detail):
+        return jsonify({'detail': 'Nieprawidłowy format adresu e-mail.'}), exc.status
+    return exc.to_problem()
 
 
 def register(app):
@@ -24,6 +39,7 @@ def register(app):
     Register db events/hooks.
     """
     app.config.from_object(Configuration)
+    app.config.setdefault("PERMANENT_SESSION_LIFETIME", timedelta(minutes=30))
     app.connexion_app.add_api(
         "auth/api.yaml",
         base_path="/",
@@ -36,6 +52,13 @@ def register(app):
     app.blueprints["auth"] = app.blueprints.pop("/")
     add_commands(app)
 
+    # Rejestracja handlera błędów walidacji
+    app.errorhandler(connexion.exceptions.ProblemException)(handle_validation_error)
+
+    # init_idle_timeout(app)
+
+
+# Reszta kodu pozostaje bez zmian...
 
 _permissions = {}
 

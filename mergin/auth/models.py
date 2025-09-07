@@ -18,10 +18,10 @@ from ..sync.utils import get_user_agent, get_ip, get_device_id, is_reserved_word
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    username = db.Column(db.String(80), info={"label": "Username"})
+    username = db.Column(db.String(80), info={"label": "Nazwa użytkownika"})
     email = db.Column(db.String(120))
 
-    passwd = db.Column(db.String(80), info={"label": "Password"})  # salted + hashed
+    passwd = db.Column(db.String(80), info={"label": "Hasło"})  # salted + hashed
 
     active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean)
@@ -33,6 +33,8 @@ class User(db.Model):
         info={"label": "Data utworzenia konta użytkownika"},
         default=datetime.datetime.utcnow,
     )
+    failed_logins=db.Column(db.Integer)
+    locked_until=db.Column(db.DateTime(), nullable=True, index=True)
 
     __table_args__ = (
         db.Index("ix_user_username", func.lower(username), unique=True),
@@ -226,9 +228,9 @@ class User(db.Model):
 
     @classmethod
     def create(
-        cls, username: str, email: str, password: str, notifications: bool = True
+        cls, username: str, email: str, password: str, is_admin: bool, notifications: bool = True
     ) -> User:
-        user = cls(username.strip(), email.strip(), password, False)
+        user = cls(username.strip(), email.strip(), password, is_admin)
         user.profile = UserProfile(receive_notifications=notifications)
         db.session.add(user)
         db.session.commit()

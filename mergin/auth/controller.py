@@ -4,11 +4,11 @@
 
 import os
 import pytz
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from connexion import NoContent
 from sqlalchemy import func, desc, asc
 from sqlalchemy.sql.operators import is_
-from flask import request, current_app, jsonify, abort, render_template
+from flask import request, current_app, jsonify, abort, render_template, session
 from flask_login import login_user, logout_user, current_user
 from flask_wtf.csrf import generate_csrf
 
@@ -38,9 +38,150 @@ from ..app import db
 from ..sync.models import Project
 from ..sync.utils import files_size
 
-
 EMAIL_CONFIRMATION_EXPIRATION = 12 * 3600
 
+USER_ID_CLAIM = "sub"
+
+IDLE_TIMEOUT = timedelta(minutes=30)
+
+current_sessions = []
+
+def check_session():
+    """
+    Check if user session is valid and active.
+    Returns authentication status and reason if not authenticated.
+    Also tracks user activity time in current_sessions list.
+    Automatically ends session after 2 minutes of inactivity.
+    """
+    time = request.json.get("time")
+    current_time = datetime.now(timezone.utc).timestamp()
+
+    user_id = getattr(current_user, 'id', None) if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated else session.get('user_id', 'anonymous')
+
+    is_user_in_arr = None
+
+    for user in current_sessions:
+        if user['user_id'] == user_id:
+            is_user_in_arr = user
+            if time > user['time']:
+                user['time'] = time
+            break
+
+    if is_user_in_arr == None:
+        current_sessions.append({
+            'user_id': user_id,
+            'time': time,
+        })
+        is_user_in_arr = {
+            'user_id': user_id,
+            'time': time,
+        }
+
+    current_user_time = is_user_in_arr['time']
+
+    time_excepted = current_user_time + 1800
+
+    if not current_user.is_authenticated:
+        return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
+
+    if current_time > time_excepted:
+        logout_user()
+        session.clear()
+        return jsonify({"authenticated": False, "reason": "unauthenticated"}), 401
+
+    return jsonify({
+        "authenticated": True,
+    }), 200
+
+
+def cleanup_old_sessions(max_age_hours=24):
+    """
+    Usuwa stare sesje z current_sessions (starsze niż max_age_hours)
+    i sesje nieaktywne dłużej niż 2 minuty
+    """
+    global current_sessions
+    current_time = datetime.now(timezone.utc).timestamp()
+    max_age_seconds = max_age_hours * 3600
+    INACTIVITY_TIMEOUT = 120  # 2 minuty
+
+    current_sessions = [
+        sess for sess in current_sessions
+        if (current_time - sess.get('last_activity', sess.get('session_start', 0)) < max_age_seconds and
+            current_time - sess.get('last_activity', sess.get('session_start', 0)) < INACTIVITY_TIMEOUT)
+    ]
+
+
+def force_cleanup_inactive_sessions():
+    """
+    Wymusza usunięcie wszystkich nieaktywnych sesji (starszych niż 2 minuty)
+    Można wywołać okresowo jako zadanie w tle
+    """
+    global current_sessions
+    current_time = datetime.now(timezone.utc).timestamp()
+    INACTIVITY_TIMEOUT = 120  # 2 minuty
+
+    before_count = len(current_sessions)
+
+    current_sessions = [
+        sess for sess in current_sessions
+        if current_time - sess.get('last_activity', sess.get('session_start', 0)) < INACTIVITY_TIMEOUT
+    ]
+
+    after_count = len(current_sessions)
+    removed_count = before_count - after_count
+
+    return {
+        'removed_sessions': removed_count,
+        'active_sessions': after_count,
+        'cleanup_time': datetime.now(timezone.utc).isoformat()
+    }
+
+
+def get_session_status(user_id):
+    """
+    Sprawdza status sesji użytkownika bez aktualizowania aktywności
+    """
+    current_time = datetime.now(timezone.utc).timestamp()
+    INACTIVITY_TIMEOUT = 120
+
+    for sess in current_sessions:
+        if sess.get('user_id') == user_id:
+            last_activity = sess.get('last_activity', sess.get('session_start', 0))
+            time_since_last_activity = current_time - last_activity
+
+            return {
+                'user_id': user_id,
+                'active': time_since_last_activity < INACTIVITY_TIMEOUT,
+                'time_since_last_activity': time_since_last_activity,
+                'session_duration': current_time - sess['session_start'],
+                'total_activities': len(sess['activity_times'])
+            }
+
+    return {'user_id': user_id, 'active': False, 'reason': 'session_not_found'}
+
+
+def cleanup_old_sessions(max_age_hours=24):
+    """
+    Usuwa stare sesje z current_sessions (starsze niż max_age_hours)
+    """
+    global current_sessions
+    current_time = datetime.now(timezone.utc).timestamp()
+    max_age_seconds = max_age_hours * 3600
+
+    current_sessions = [
+        sess for sess in current_sessions
+        if current_time - sess.get('last_activity', sess.get('session_start', 0)) < max_age_seconds
+    ]
+
+
+def get_user_activity(user_id):
+    """
+    Pomocnicza funkcja do pobrania aktywności konkretnego użytkownika
+    """
+    for sess in current_sessions:
+        if sess.get('user_id') == user_id:
+            return sess
+    return None
 
 # public endpoints
 def user_profile(user, return_all=True):
@@ -185,7 +326,7 @@ def search_users():  # pylint: disable=W0613,W0612
         abort(404, "Obszar roboczy nie został znaleziony")
 
     if not workspace.user_is_member(current_user):
-        abort(403, "Nie masz uprawnień do wyszukiwania w obszarze roboczym")
+        abort(403, "Brak uprawnień do wyszukiwania w obszarze roboczym")
 
     if ids:
         ids = request.args.get("id")
@@ -219,15 +360,35 @@ def search_users():  # pylint: disable=W0613,W0612
 def login():  # pylint: disable=W0613,W0612
     form = LoginForm()
     if form.validate():
-        user = authenticate(form.login.data, form.password.data)
-        if user and user.active:
+        login_data = form.login.data
+        user = User.get_by_login(login_data)
+
+        if not user:
+            log_login_attempt(None, False)
+            abort(401, "Nieprawidłowa nazwa użytkownika lub hasło")
+        if user.locked_until and user.locked_until > datetime.now():
+            log_login_attempt(user.id, False)
+            abort(403, "Konto użytkownika zostało zablokowane")
+        password_correct = user.check_password(form.password.data)
+
+        log_login_attempt(user.id, password_correct)
+
+        if password_correct and user.active:
             login_user(user)
-            if not os.path.isfile(current_app.config["MAINTENANCE_FILE"]):
+            if not os.path.isfile(current_app.config.get("MAINTENANCE_FILE", "")):
                 LoginHistory.add_record(user.id, request)
             return "", 200
         else:
-            abort(401, "Nieprawidłowe dane logowania")
+            abort(401, "Nieprawidłowa nazwa użytkownika lub hasło")
     return jsonify(form.errors), 401
+
+def log_login_attempt(user_id, password_correct):
+    sql = """
+    INSERT INTO login_attempts (user_id, password_correct)
+    VALUES (:user_id, :password_correct)
+    """
+    db.session.execute(sql, {"user_id": user_id, "password_correct": password_correct})
+    db.session.commit()
 
 
 def admin_login():  # pylint: disable=W0613,W0612
@@ -242,9 +403,9 @@ def admin_login():  # pylint: disable=W0613,W0612
             login_user(user)
             return "", 200
         else:
-            abort(403, "Nie masz uprawnień")
+            abort(403, "Brak uprawnień")
     else:
-        abort(401, "Nieprawidłowe dane logowania")
+        abort(401, "Nieprawidłowa nazwa użytkownika lub hasło")
 
 
 @auth_required
@@ -266,6 +427,19 @@ def change_password():  # pylint: disable=W0613,W0612
         return "", 200
     return jsonify(form.errors), 400
 
+@auth_required(permissions=["admin"])
+def set_user_password_as_admin(username):
+    form = UserPasswordForm.from_json(request.json, meta={"csrf": False})
+    if not form.validate():
+        return jsonify(form.errors), 400
+
+    user = User.query.filter_by(username=username).first_or_404("User not found")
+    user.assign_password(form.password.data)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({"detail": f"Password has been changed for user '{username}'."}), 200
 
 @auth_required
 def resend_confirm_email():  # pylint: disable=W0613,W0612
@@ -274,13 +448,16 @@ def resend_confirm_email():  # pylint: disable=W0613,W0612
         current_user,
         "confirm-email",
         "email/email_confirmation.html",
-        "Potwierdzenie wiadomości e-mail",
+        "Potwierdź adres email",
     )
     return "", 200
 
-
+@auth_required
 def password_reset():  # pylint: disable=W0613,W0612
     form = ResetPasswordForm()
+    if not (workspace and workspace.can_add_users(current_user)):
+        abort(403)
+
     if not form.validate():
         return jsonify(form.errors), 400
 
@@ -288,7 +465,7 @@ def password_reset():  # pylint: disable=W0613,W0612
         func.lower(User.email) == func.lower(form.email.data.strip())
     ).one_or_none()
     if not user:
-        return jsonify({"email": ["Konto z podanym adresem e-mail nie zostało znalezione"]}), 404
+        return jsonify({"email": ["Konto z podanym adresem e-mail nie istnieje"]}), 404
     if not user.active:
         # user should confirm email first
         return jsonify({"email": ["Konto nie jest aktywne"]}), 400
@@ -298,7 +475,7 @@ def password_reset():  # pylint: disable=W0613,W0612
         user,
         "change-password",
         "email/password_reset.html",
-        "Restart hasła",
+        "Resetuj hasło",
     )
     return "", 200
 
@@ -353,7 +530,7 @@ def update_user_profile():  # pylint: disable=W0613,W0612
             func.lower(User.email) == func.lower(form.email.data.strip())
         ).first()
         if user:
-            form.email.errors.append("Adres e-mail jest już zajęty")
+            form.email.errors.append("Adres e-mail jest już w użyciu")
             return jsonify(form.errors), 400
         current_user.verified_email = False
 
@@ -385,7 +562,7 @@ def register_user():  # pylint: disable=W0613,W0612
     form = UserRegistrationForm()
     form.username.data = User.generate_username(form.email.data)
     if form.validate_on_submit():
-        user = User.create(form.username.data, form.email.data, form.password.data)
+        user = User.create(form.username.data, form.email.data, True if request.json.get("role") in ["admin", "owner"] else False, form.password.data)
         user_created.send(user, source="admin")
         token = generate_confirmation_token(
             current_app, user.email, current_app.config["SECURITY_EMAIL_SALT"]
@@ -424,7 +601,7 @@ def update_user(username):  # pylint: disable=W0613,W0612
     if request.json.get("is_admin") is not None and not current_app.config.get(
         "ENABLE_SUPERADMIN_ASSIGNMENT"
     ):
-        abort(400, "Nie można przypisać roli superadmin")
+        abort(400, "Nie można przypisać roli superadministratora")
 
     user = User.query.filter_by(username=username).first_or_404("Użytkownik nie został znaleziony")
     form.update_obj(user)
@@ -532,17 +709,20 @@ def create_user():
     if not form.validate():
         return jsonify(form.errors), 400
 
+    user_role = request.json["role"]
+
     user = User.create(
         form.username.data,
         form.email.data,
         form.password.data,
+        True if user_role in ["admin", "owner"] else False,
         request.json.get("notify_user", False),
     )
     user_created.send(
         user,
         source="api",
         workspace_id=request.json["workspace_id"],
-        workspace_role=request.json["role"],
+        workspace_role=user_role,
     )
 
     if user.profile.receive_notifications:
@@ -557,6 +737,21 @@ def create_user():
 
     return jsonify(UserInfoSchema().dump(user)), 201
 
+@auth_required
+def remove_user():  # pylint: disable=W0613,W0612
+    username = request.json["username"]
+
+    workspace = current_app.ws_handler.get(request.json["workspace_id"])
+    if not (workspace and workspace.can_add_users(current_user)):
+        abort(403)
+
+    user = User.query.filter_by(username=username).first_or_404("Użytkownik nie został znaleziony")
+    #user_deleted.send(user, source="admin")
+    user.inactivate()
+    user_account_closed.send(user)
+    # force 'delete' user
+    user.anonymize()
+    return "", 204
 
 @auth_required(permissions=["admin"])
 def get_server_usage():

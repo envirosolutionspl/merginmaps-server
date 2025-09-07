@@ -58,7 +58,7 @@ class ExtendedEmail(Email):
 
         if re.search(r"[|'—]", field.data):
             raise ValidationError(
-                f"Adres e-mail '{field.data}' zawiera niedozwolony znak"
+                f"Adres e-mail '{field.data}' zawiera niedozwolony znak."
             )
 
 
@@ -69,7 +69,7 @@ class PasswordValidator:
     def __call__(self, form, field):
         if len(field.data) < self.min_length:
             raise ValidationError(
-                f"Hasło musi mieć co najmniej {self.min_length} znaków."
+                "Hasła muszą mieć co najmniej {} znaków.".format(self.min_length)
             )
 
         strength = safe.check(field.data, self.min_length)
@@ -90,7 +90,7 @@ class RegisterUserForm(FlaskForm):
         validators=[validators.Length(min=4, max=25), username_validation],
     )
     email = CustomStringField(
-        "Adres e-mail",
+        "Adres email",
         validators=[DataRequired(), ExtendedEmail()],
     )
 
@@ -104,16 +104,16 @@ class RegisterUserForm(FlaskForm):
         ).first()
         if user:
             if user.username.lower() == self.username.data.lower().strip():
-                self.username.errors.append("Nazwa użytkownika jest już zajęta")
+                self.username.errors.append("Już istnieje")
             if user.email.lower() == self.email.data.lower().strip():
-                self.email.errors.append("Adres e-mail jest już zajęty")
+                self.email.errors.append("Już istnieje")
             return False
         return True
 
 
 class ResetPasswordForm(FlaskForm):
     email = CustomStringField(
-        "Adres e-mail",
+        "Adres email",
         [DataRequired(), ExtendedEmail()],
     )
 
@@ -149,7 +149,7 @@ class UserProfileDataForm(UpdateForm):
     receive_notifications = BooleanField("Odbieraj powiadomienia", [Optional()])
     first_name = CustomStringField("Imię", [Optional()])
     last_name = CustomStringField("Nazwisko", [Optional()])
-    email = CustomStringField("Adres e-mail", [Optional(), ExtendedEmail()])
+    email = CustomStringField("Adres email", [Optional(), ExtendedEmail()])
 
 
 class ApiLoginForm(LoginForm):

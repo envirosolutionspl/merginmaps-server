@@ -70,6 +70,8 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
             "profile",
             "scheduled_removal",
             "registration_date",
+            "failed_logins",
+            "locked_until"
         )
         load_instance = True
 
@@ -109,5 +111,7 @@ class UserInfoSchema(ma.SQLAlchemyAutoSchema):
             "inactive_since",
             "is_admin",
             "passwd",
+            "failed_logins",
+            "locked_until"
         )
         load_instance = True
