@@ -264,7 +264,7 @@ def _extract_first_error(errors):
             # show both key and value
             return val + "(" + key + ")"
 
-    return "Nieznany błąd w polach wejściowych"
+    return "Unknown error in input fields"
 
 
 def login_public():  # noqa: E501
@@ -298,7 +298,7 @@ def login_public():  # noqa: E501
             LoginHistory.add_record(user.id, request)
             return data
         else:
-            abort(401, "Nieprawidłowe dane logowania")
+            abort(401, "Nieprawidłowa nazwa użytkownika lub hasło")
     abort(400, _extract_first_error(form.errors))
 
 
@@ -430,6 +430,11 @@ def change_password():  # pylint: disable=W0613,W0612
 @auth_required(permissions=["admin"])
 def set_user_password_as_admin(username):
     form = UserPasswordForm.from_json(request.json, meta={"csrf": False})
+    workspace = current_app.ws_handler.get(request.json.get("workspace_id"))
+
+    if not (workspace and workspace.can_add_users(current_user)):
+        abort(403)
+
     if not form.validate():
         return jsonify(form.errors), 400
 
@@ -452,11 +457,8 @@ def resend_confirm_email():  # pylint: disable=W0613,W0612
     )
     return "", 200
 
-@auth_required
 def password_reset():  # pylint: disable=W0613,W0612
     form = ResetPasswordForm()
-    if not (workspace and workspace.can_add_users(current_user)):
-        abort(403)
 
     if not form.validate():
         return jsonify(form.errors), 400
@@ -562,7 +564,7 @@ def register_user():  # pylint: disable=W0613,W0612
     form = UserRegistrationForm()
     form.username.data = User.generate_username(form.email.data)
     if form.validate_on_submit():
-        user = User.create(form.username.data, form.email.data, True if request.json.get("role") in ["admin", "owner"] else False, form.password.data)
+        user = User.create(form.username.data, form.email.data, form.password.data, False)
         user_created.send(user, source="admin")
         token = generate_confirmation_token(
             current_app, user.email, current_app.config["SECURITY_EMAIL_SALT"]

@@ -13,6 +13,30 @@ tags:
   - name: public
     description: Public API
 paths:
+  /app/auth/check_session:
+    post:
+      tags:
+        - user
+      summary: Verify if user session token is valid
+      description: Validates the current user session token and checks if it has not expired
+      operationId: mergin.auth.controller.check_session
+      requestBody:
+        description: Current timestamp for token validation
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                time:
+                  type: number
+                  description: Current timestamp in seconds since epoch
+                  example: 1634567890
+      responses:
+        "200":
+          description: Token is valid
+        "400":
+          $ref: "#/components/responses/BadStatusResp"
   /app/auth/user/search:
     get:
       tags:
@@ -574,6 +598,65 @@ paths:
         "404":
           $ref: "#/components/responses/NotFoundResp"
       x-openapi-router-controller: mergin.auth.controller
+  /v1/user/{username}/set-password:
+    post:
+      tags:
+        - admin
+        - user
+      summary: Set user password as admin
+      description: Allows an administrator to set a new password for a specified user.
+      operationId: set_user_password_as_admin
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Username of the user whose password will be set
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - workspace_id
+                - confirm
+              properties:
+                password:
+                  type: string
+                  format: password
+                  description: The new password for the user
+                  example: VeryStrongPassword123!
+                workspace_id:
+                  type: integer
+                  example: 1
+                confirm:
+                  type: string
+                  format: password
+                  description: Confirmation of the new password
+                  example: VeryStrongPassword123!
+      responses:
+        "200":
+          description: Password successfully set
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: Hasło zostało zresetowane pomyślnie.
+        "400":
+          $ref: "#/components/responses/BadStatusResp"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFoundResp"
+      x-openapi-router-controller: mergin.auth.controller
   /v1/auth/login:
     post:
       summary: Login user.
@@ -685,6 +768,39 @@ paths:
               # TODO: fix this to match the ma.SQLAlchemy schema or use UserDetail schema
               schema:
                 $ref: "#/components/schemas/UserInfo"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundResp"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+      x-openapi-router-controller: mergin.auth.controller
+    delete:
+      tags:
+        - user
+        - public
+      summary: Delete user specified by username
+      operationId: remove_user
+      description: User account is immediately and permanently removed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - workspace_id
+              properties:
+                username:
+                  type: string
+                  example: john
+                workspace_id:
+                  type: integer
+                  example: 1
+      responses:
+        "204":
+          description: OK
         "401":
           $ref: "#/components/responses/UnauthorizedError"
         "404":
