@@ -39,7 +39,7 @@ def register(app):
     app.blueprints["/"].name = "auth"
     app.blueprints["auth"] = app.blueprints.pop("/")
     add_commands(app)
-    init_idle_timeout(app)
+    # init_idle_timeout(app)
 
 
 # def init_idle_timeout(app):
