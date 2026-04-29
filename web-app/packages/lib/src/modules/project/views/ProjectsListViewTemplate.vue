@@ -42,7 +42,8 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
       <!-- TODO: Do not understand logic here :() -->
       <AppSection v-else>
         <span>
-          <b>{{ NamespaceNotFound }}</b><br />
+          <b>{{ NamespaceNotFound }}</b>
+          <br />
           {{ PleaseCheckIfAddressIsWrittenCorrectly }}
         </span>
       </AppSection>
@@ -50,17 +51,6 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
     <community-banner v-if="!onlyPublic && loggedUser && loggedUser.email" />
   </div>
 </template>
-
-<script setup lang="ts">
-import returnTranslation from '@/../../lang/translate';
-const lang = import.meta.env.VITE_LANG
-
-const CreateProject = returnTranslation(lang, 'CreateProject');
-const SearchProjectsByName = returnTranslation(lang, 'SearchProjectsByName');
-const NamespaceNotFound = returnTranslation(lang, 'NamespaceNotFound');
-const PleaseCheckIfAddressIsWrittenCorrectly = returnTranslation(lang, 'PleaseCheckIfAddressIsWrittenCorrectly');
-
-</script>
 
 <script lang="ts">
 const lang = import.meta.env.VITE_LANG
@@ -70,12 +60,21 @@ import { defineComponent, ref } from 'vue'
 
 import CommunityBanner from '../components/CommunityBanner.vue'
 
+import returnTranslation from '@/../../lang/translate'
 import { AppContainer, AppSection } from '@/common'
 import AppMenu from '@/common/components/AppMenu.vue'
 import { useDialogStore, useProjectStore } from '@/modules'
 import { useLayoutStore } from '@/modules/layout/store'
 import ProjectForm from '@/modules/project/components/ProjectForm.vue'
 import { useUserStore } from '@/modules/user/store'
+
+const CreateProject = returnTranslation(lang, 'CreateProject')
+const SearchProjectsByName = returnTranslation(lang, 'SearchProjectsByName')
+const NamespaceNotFound = returnTranslation(lang, 'NamespaceNotFound')
+const PleaseCheckIfAddressIsWrittenCorrectly = returnTranslation(
+  lang,
+  'PleaseCheckIfAddressIsWrittenCorrectly'
+)
 
 export default defineComponent({
   name: 'ProjectsListView',
@@ -88,7 +87,14 @@ export default defineComponent({
     const projectsStore = useProjectStore()
     const menu = ref()
 
-    return { menu, projectsStore }
+    return {
+      CreateProject,
+      NamespaceNotFound,
+      PleaseCheckIfAddressIsWrittenCorrectly,
+      SearchProjectsByName,
+      menu,
+      projectsStore
+    }
   },
   computed: {
     ...mapState(useUserStore, ['loggedUser']),
@@ -96,7 +102,9 @@ export default defineComponent({
     ...mapState(useProjectStore, ['projectsSorting', 'projectsCount']),
     header() {
       const lang = import.meta.env.VITE_LANG
-      return this.onlyPublic ? returnTranslation(lang, 'PublicProjects') : returnTranslation(lang, 'MyProjects')
+      return this.onlyPublic
+        ? returnTranslation(lang, 'PublicProjects')
+        : returnTranslation(lang, 'MyProjects')
     },
     onlyPublic() {
       return this.$route.name === 'explore' || !this.loggedUser?.email
@@ -145,7 +153,10 @@ export default defineComponent({
 
     newProjectDialog() {
       const lang = import.meta.env.VITE_LANG
-      const dialog = { persistent: true, header: returnTranslation(lang, 'NewProject') }
+      const dialog = {
+        persistent: true,
+        header: returnTranslation(lang, 'NewProject')
+      }
       this.show({
         component: ProjectForm,
         params: {

@@ -17,6 +17,6 @@ COPY --from=builder /mergin/web-app/packages/app/dist ./app
 # admin app
 COPY --from=builder /mergin/web-app/packages/admin-app/dist ./admin
 # basic nginx config to serve static files
-COPY ./nginx.proxy.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.proxy.conf /etc/nginx/templates/default.conf.template
 EXPOSE 8080
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

@@ -11,6 +11,9 @@ import Components from 'unplugin-vue-components/vite'
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
 
 const serverPort = process.env.FLASK_RUN_PORT ?? 5000
+const weblateProxyTarget =
+  process.env.WEBLATE_PROXY_TARGET ??
+  (process.env.WEBLATE_HOST ? `https://${process.env.WEBLATE_HOST}` : undefined)
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -75,7 +78,17 @@ export default defineConfig(({ mode }) => ({
       },
       '/config': {
         target: `http://127.0.0.1:${serverPort}`
-      }
+      },
+      ...(weblateProxyTarget
+        ? {
+            '/weblate': {
+              target: weblateProxyTarget,
+              changeOrigin: true,
+              secure: true,
+              rewrite: (path) => path.replace(/^\/weblate/, '')
+            }
+          }
+        : {})
     },
     watch: {
       ignored: ['!**/node_modules/@mergin/**']

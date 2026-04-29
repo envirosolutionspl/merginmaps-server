@@ -43,6 +43,60 @@ $ yarn dev  # development client web application dev server on port 8080 (packag
 $ yarn dev:admin  # development admin appplication dev server on port 8081 (package @mergin/admin-app)
 ```
 
+Frontend applications read Vite environment variables from their package `.env`
+files. Keep the same public frontend values in the app and library packages
+when running both applications locally:
+
+```shell
+web-app/packages/app/.env
+web-app/packages/admin-app/.env
+web-app/packages/lib/.env
+web-app/packages/admin-lib/.env
+```
+
+The default language is configured with `VITE_LANG`:
+
+```shell
+VITE_LANG=PL
+```
+
+Production nginx uses `WEBLATE_HOST` from `.prod.env` for the Weblate proxy:
+
+```shell
+WEBLATE_HOST=weblate.enviro-dev.pl
+```
+
+When overriding `WEBLATE_HOST` in `.prod.env`, pass `.prod.env` to Docker
+Compose as the compose environment file, for example:
+
+```shell
+docker-compose --env-file .prod.env -f prod.yml up
+```
+
+The compose files require `WEBLATE_HOST` to be provided by `.prod.env` or the
+shell environment; there is no Weblate domain fallback in the compose files.
+
+Dynamic frontend translations are loaded from a public Weblate component through
+the same-origin `/weblate` proxy. The Weblate configuration is public and does
+not contain secrets:
+
+```shell
+VITE_WEBLATE_URL=/weblate
+VITE_WEBLATE_PROJECT=mergin-maps
+VITE_WEBLATE_COMPONENT=frontend
+VITE_WEBLATE_TIMEOUT_MS=1000
+```
+
+The development Vite server proxies `/weblate` when `WEBLATE_HOST` or
+`WEBLATE_PROXY_TARGET` is provided before running `yarn dev` or
+`yarn dev:admin`.
+Production docker/nginx deployments proxy the same `/weblate` path in
+`nginx.conf`.
+
+If Weblate is not configured or cannot be reached, the frontend falls back to
+the local English translations from `web-app/packages/lang/translations/EN.ts`.
+Restart `yarn dev` or `yarn dev:admin` after changing any `.env` value.
+
 If you are developing a library package (named **-lib*), it is useful to watch the library for changes instead of rebuilding it each time. 
 
 To watch the @mergin/lib library while developing:
