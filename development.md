@@ -15,7 +15,8 @@ $ docker run -d --rm --name mergin_maps_dev_redis -p 6379:6379 redis
 
 ### Server
 ```shell
-$ pip3 install pipenv
+$ pip3 install --upgrade pip==24.0
+$ pip3 install pipenv==2024.0.1
 $ cd server
 # Install dependencies with pipenv
 # Note: You can append --three flag in older versions of pipenv (< 3.16.8 2023-02-04)
@@ -85,11 +86,17 @@ VITE_WEBLATE_URL=/weblate
 VITE_WEBLATE_PROJECT=mergin-maps
 VITE_WEBLATE_COMPONENT=frontend
 VITE_WEBLATE_TIMEOUT_MS=1000
+WEBLATE_HOST=weblate.enviro-dev.pl
 ```
 
-The development Vite server proxies `/weblate` when `WEBLATE_HOST` or
-`WEBLATE_PROXY_TARGET` is provided before running `yarn dev` or
-`yarn dev:admin`.
+The development Vite server proxies `/weblate` using `WEBLATE_HOST` or
+`WEBLATE_PROXY_TARGET` from the app package `.env` file:
+
+```shell
+web-app/packages/app/.env
+web-app/packages/admin-app/.env
+```
+
 Production docker/nginx deployments proxy the same `/weblate` path in
 `nginx.conf`.
 
@@ -97,7 +104,7 @@ If Weblate is not configured or cannot be reached, the frontend falls back to
 the local English translations from `web-app/packages/lang/translations/EN.ts`.
 Restart `yarn dev` or `yarn dev:admin` after changing any `.env` value.
 
-If you are developing a library package (named **-lib*), it is useful to watch the library for changes instead of rebuilding it each time. 
+If you are developing a library package (named **-lib*), it is useful to watch the library for changes instead of rebuilding it each time.
 
 To watch the @mergin/lib library while developing:
 
@@ -110,6 +117,37 @@ yarn watch:lib:types
 
 Watching the type definitions is also useful to pick up any changes to imports or new components that are added.
 
+
+## Running locally in a docker composition
+
+If you want to run the whole stack locally, you can use the docker. Docker will build the images from your local files and run the services.
+
+```shell
+# Run the docker composition with the current Dockerfiles
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Give ownership of the ./projects folder to user that is running the gunicorn container
+sudo chown 901:999 projects
+sudo chown 101:999 logs
+
+# init db and create user
+docker exec -it merginmaps-server flask init-db
+docker exec -it merginmaps-server flask user create admin topsecret --is-admin --email admin@example.com
+```
+
+To check if application is running, you can use following mand to verify you installation:
+
+```shell
+docker exec -it merginmaps-server flask server check
+```
+
+To check if emails are sending correctly, you can use following mand to verify you installation:
+
+```shell
+docker exec -it merginmaps-server flask server send-check-email --email  admin@example.com
+```
+
+In docker-compose.dev.yml is started maildev/maildev image that can be used to test emails (see [https://github.com/maildev/maildev/](https://github.com/maildev/maildev/)). In localhost:1080 you can see the emails sent by the application in web interface.
 
 ## Running tests
 To launch the unit tests run:

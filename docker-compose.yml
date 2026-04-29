@@ -93,7 +93,7 @@ services:
     # run nginx as built-in user but with group mergin-family for files permissions
     user: 101:999
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - ./projects:/data/:z  # map data dir to host
       - ./nginx.conf:/etc/nginx/templates/default.conf.template

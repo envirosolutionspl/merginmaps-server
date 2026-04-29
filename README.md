@@ -137,3 +137,28 @@ Learn more about [geodiff](https://github.com/merginmaps/geodiff) - the low-leve
 ## License
 
 Mergin Maps is open source and dual-licensed under AGPL-3 and MM-Commercial licence.
+
+## Installation
+1. images build <br>
+
+`
+docker build -it lutraconsulting/merginmaps-backend-es:2025.2.2 --no-cache server
+`
+<br>
+
+`
+docker build -it lutraconsulting/merginmaps-frontend-es:2025.2.2 --no-cache web-app
+`
+
+2. [.prod.env](./.prod.env) file set-up
+3. set-up permissions to extra files (eg. [entrypoint.sh](./server/entrypoint.sh)) with [set_permissions.sh](./set_permissions.sh) file. Simply `sh ./set_permissions.sh <filename>`.
+4. initialization <br>
+
+`
+docker compose -f docker-compose.yml up -d
+`
+
+
+## Additional set-up
+
+For correct working on users blocking sessions, there is requirement to add extra table as [login_attempts](./sql/login_attempts.sql) table described.

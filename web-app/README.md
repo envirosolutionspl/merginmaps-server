@@ -43,6 +43,9 @@ Dynamic translations are fetched from Weblate by the frontend through the Vite
 dev proxy or the production nginx proxy. Missing or unavailable translations
 fall back to the local English messages in
 [./packages/lang/translations/EN.ts](./packages/lang/translations/EN.ts).
+The Vite dev proxy reads `WEBLATE_HOST` or `WEBLATE_PROXY_TARGET` from
+[./packages/app/.env](./packages/app/.env) and
+[./packages/admin-app/.env](./packages/admin-app/.env).
 The production nginx proxy reads the upstream Weblate domain from
 `WEBLATE_HOST` in the root `.prod.env`.
 
