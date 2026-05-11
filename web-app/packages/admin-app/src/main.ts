@@ -2,21 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-MerginMaps-Commercial
 
-import { AdminModule } from '@mergin/admin-lib'
-import {
-  DialogModule,
-  FormModule,
-  getHttpService,
-  InstanceModule,
-  LayoutModule,
-  moduleUtils,
-  NotificationModule,
-  ProjectModule,
-  UserModule,
-  useInstanceStore,
-  initCsrfToken
-} from '@mergin/lib'
-
 import 'primevue/resources/primevue.min.css'
 import 'primeflex/primeflex.min.css'
 import '@mergin/lib/dist/sass/themes/mm-theme-light/theme.scss'
@@ -24,8 +9,7 @@ import '@tabler/icons-webfont/tabler-icons.min.css'
 import '@mergin/lib/dist/style.css'
 import '@mergin/admin-lib/dist/style.css'
 
-import { createMerginApp } from './app'
-import { createPiniaInstance, getPiniaInstance } from './store'
+import { initializeRuntimeI18n } from '@/../../lang/runtime'
 
 (function() {
   'use strict';
@@ -113,6 +97,31 @@ import { createPiniaInstance, getPiniaInstance } from './store'
 })();
 
 async function main() {
+  const i18n = await initializeRuntimeI18n()
+  const [
+    { AdminModule },
+    {
+      DialogModule,
+      FormModule,
+      getHttpService,
+      InstanceModule,
+      LayoutModule,
+      moduleUtils,
+      NotificationModule,
+      ProjectModule,
+      UserModule,
+      useInstanceStore,
+      initCsrfToken
+    },
+    { createMerginApp },
+    { createPiniaInstance, getPiniaInstance }
+  ] = await Promise.all([
+    import('@mergin/admin-lib'),
+    import('@mergin/lib'),
+    import('./app'),
+    import('./store')
+  ])
+
   createPiniaInstance()
   const pinia = getPiniaInstance()
   const httpService = getHttpService()
@@ -137,7 +146,9 @@ async function main() {
   const instanceStore = useInstanceStore(pinia)
   const response = await instanceStore.initApp()
   initCsrfToken(response)
-  createMerginApp().mount('#app')
+  const app = createMerginApp()
+  app.use(i18n)
+  app.mount('#app')
   // checkToken()
 }
 
