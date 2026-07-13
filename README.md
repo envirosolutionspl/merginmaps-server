@@ -142,12 +142,12 @@ Mergin Maps is open source and dual-licensed under AGPL-3 and MM-Commercial lice
 1. images build <br>
 
 `
-docker build -t lutraconsulting/merginmaps-backend-es:2025.2.2 --no-cache server
+docker build -it lutraconsulting/merginmaps-backend-es:2025.2.2 --no-cache server
 `
 <br>
 
 `
-docker build -t lutraconsulting/merginmaps-frontend-es:2025.2.2 --no-cache web-app
+docker build -it lutraconsulting/merginmaps-frontend-es:2025.2.2 --no-cache web-app
 `
 
 2. [.prod.env](./.prod.env) file set-up

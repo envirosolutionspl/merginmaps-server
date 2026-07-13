@@ -8,101 +8,77 @@ import { resolve } from 'path'
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 import { PrimeVueResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
-import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 
 const serverPort = process.env.FLASK_RUN_PORT ?? 5000
-const getWeblateProxyTarget = (mode: string) => {
-  const env = loadEnv(mode, __dirname, '')
-  const weblateProxyTarget =
-    process.env.WEBLATE_PROXY_TARGET ?? env.WEBLATE_PROXY_TARGET
-  const weblateHost = process.env.WEBLATE_HOST ?? env.WEBLATE_HOST
-
-  return (
-    weblateProxyTarget ?? (weblateHost ? `https://${weblateHost}` : undefined)
-  )
-}
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
-  const weblateProxyTarget = getWeblateProxyTarget(mode)
+export default defineConfig(({ mode }) => ({
+  base:
+    mode === 'production' && process.env.PUBLIC_PATH
+      ? process.env.PUBLIC_PATH
+      : '/',
+  plugins: [
+    vue(),
+    Components({
+      resolvers: [PrimeVueResolver({ prefix: 'P' })]
+    }),
+    /** Creating index , vendor .js/.css for smaller bundle loaded async in browser */
+    splitVendorChunkPlugin()
+  ],
 
-  return {
-    base:
-      mode === 'production' && process.env.PUBLIC_PATH
-        ? process.env.PUBLIC_PATH
-        : '/',
-    plugins: [
-      vue(),
-      Components({
-        resolvers: [PrimeVueResolver({ prefix: 'P' })]
-      }),
-      /** Creating index , vendor .js/.css for smaller bundle loaded async in browser */
-      splitVendorChunkPlugin()
-    ],
-
-    resolve: {
-      alias: {
-        '@': resolve(__dirname, './src'),
-        url: 'rollup-plugin-node-polyfills/polyfills/url'
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+      url: 'rollup-plugin-node-polyfills/polyfills/url'
+    },
+    dedupe: ['vue', 'pinia', 'vue-router', '@mergin/lib', 'primevue']
+  },
+  build: {
+    sourcemap: mode !== 'production',
+    rollupOptions: {
+      plugins: [
+        // Enable rollup polyfills plugin
+        // used during production bundling
+        rollupNodePolyFill()
+      ]
+    }
+  },
+  optimizeDeps: {
+    exclude: ['vue', '@mergin', 'vue-demi'],
+    esbuildOptions: {
+      define: {
+        global: 'globalThis'
       },
-      dedupe: ['vue', 'pinia', 'vue-router', '@mergin/lib', 'primevue']
-    },
-    build: {
-      sourcemap: mode !== 'production',
-      rollupOptions: {
-        plugins: [
-          // Enable rollup polyfills plugin
-          // used during production bundling
-          rollupNodePolyFill()
-        ]
-      }
-    },
-    optimizeDeps: {
-      exclude: ['vue', '@mergin', 'vue-demi'],
-      esbuildOptions: {
-        define: {
-          global: 'globalThis'
-        },
-        plugins: [
-          NodeGlobalsPolyfillPlugin({
-            process: false,
-            buffer: false
-          })
-        ]
-      }
-      // include: ['linked-dep', 'node_modules']
-    },
-    server: {
-      proxy: {
-        '/v1': {
-          target: `http://127.0.0.1:${serverPort}`
-        },
-        '/v2': {
-          target: `http://127.0.0.1:${serverPort}`
-        },
-        '/app': {
-          target: `http://127.0.0.1:${serverPort}`
-        },
-        '/ping': {
-          target: `http://127.0.0.1:${serverPort}`
-        },
-        '/config': {
-          target: `http://127.0.0.1:${serverPort}`
-        },
-        ...(weblateProxyTarget
-          ? {
-              '/weblate': {
-                target: weblateProxyTarget,
-                changeOrigin: true,
-                secure: true,
-                rewrite: (path) => path.replace(/^\/weblate/, '')
-              }
-            }
-          : {})
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          process: false,
+          buffer: false
+        })
+      ]
+    }
+    // include: ['linked-dep', 'node_modules']
+  },
+  server: {
+    proxy: {
+      '/v1': {
+        target: `http://127.0.0.1:${serverPort}`
       },
-      watch: {
-        ignored: ['!**/node_modules/@mergin/**']
+      '/v2': {
+        target: `http://127.0.0.1:${serverPort}`
+      },
+      '/app': {
+        target: `http://127.0.0.1:${serverPort}`
+      },
+      '/ping': {
+        target: `http://127.0.0.1:${serverPort}`
+      },
+      '/config': {
+        target: `http://127.0.0.1:${serverPort}`
       }
+    },
+    watch: {
+      ignored: ['!**/node_modules/@mergin/**']
     }
   }
-})
+}))
