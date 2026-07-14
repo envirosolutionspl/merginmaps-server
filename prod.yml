@@ -96,13 +96,15 @@ services:
     networks:
       - merginmaps
   proxy:
-    image: nginxinc/nginx-unprivileged:1.27
+    image: nginx:1.27.1-alpine
     container_name: merginmaps-proxy
     restart: always
     environment:
-      WEBLATE_HOST: ${WEBLATE_HOST:?Set WEBLATE_HOST in .prod.env or environment}
+      - WEBLATE_HOST=weblate.enviro-dev.pl
+    # env_file:
+    #   - .prod.env
     # run nginx as built-in user but with group mergin-family for files permissions
-    user: 101:999
+    # user: 101:999
     ports:
       - "8080:8080"
     volumes:
