@@ -86,10 +86,14 @@ services:
     build:
       context: ./web-app
       dockerfile: Dockerfile
+      args:
+        - WEBLATE_HOST=weblate.enviro-dev.pl
     environment:
       - VITE_LANG=PL
     depends_on:
       - server-gunicorn
+    env_file:
+      - .prod.env
     user: 101:999
     links:
       - db
@@ -100,11 +104,13 @@ services:
     container_name: merginmaps-proxy
     restart: always
     environment:
-      WEBLATE_HOST: ${WEBLATE_HOST:?Set WEBLATE_HOST in .prod.env or environment}
+      - WEBLATE_HOST=weblate.enviro-dev.pl
+    env_file:
+      - .prod.env
     # run nginx as built-in user but with group mergin-family for files permissions
     user: 101:999
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - ./projects:/data/:z  # map data dir to host
       - ./nginx.conf:/etc/nginx/templates/default.conf.template
