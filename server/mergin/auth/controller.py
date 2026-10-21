@@ -365,10 +365,7 @@ def login():  # pylint: disable=W0613,W0612
 
         if not user:
             abort(401, "User does not exist")
-        else:
-            log_login_attempt(user.id, False)
-            abort(401, "Invalid username or password")
-        
+
         if user.locked_until and user.locked_until > datetime.now():
             log_login_attempt(user.id, False)
             abort(403, "User account locked")
