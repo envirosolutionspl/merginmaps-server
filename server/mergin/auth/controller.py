@@ -364,8 +364,11 @@ def login():  # pylint: disable=W0613,W0612
         user = User.get_by_login(login_data)
 
         if not user:
-            log_login_attempt(None, False)
+            abort(401, "User does not exist")
+        else:
+            log_login_attempt(user.id, False)
             abort(401, "Invalid username or password")
+        
         if user.locked_until and user.locked_until > datetime.now():
             log_login_attempt(user.id, False)
             abort(403, "User account locked")
@@ -381,6 +384,7 @@ def login():  # pylint: disable=W0613,W0612
         else:
             abort(401, "Invalid username or password")
     return jsonify(form.errors), 401
+
 
 def log_login_attempt(user_id, password_correct):
     sql = """
